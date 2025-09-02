@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+env/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Session files (can be regenerated)
+session_*_summary.txt
+*_data.json
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Log files
+*.log
+
+# Character sheet outputs (can be regenerated)
+sheets/*.html
+sheets/*.pdf
+
+# Keep example sheets
+!sheets/example_*
+
+# Data directory (but keep structure)
+data/*.json
+!data/README.md
+
+# Backups (but keep structure)  
+backups/*.json
+backups/*.txt
+!backups/README.md
