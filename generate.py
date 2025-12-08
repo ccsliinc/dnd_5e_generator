@@ -147,8 +147,12 @@ def prepare_template_data(char_data: dict) -> dict:
 
     # Header data
     header = char_data.get("header", {})
+    meta = char_data.get("meta", {})
 
     return {
+        # Meta
+        "portrait": meta.get("portrait", ""),
+
         # Header info
         "character_name": header.get("character_name", ""),
         "class_level": header.get("class_level", ""),
@@ -398,9 +402,14 @@ def build_html(data: dict) -> str:
         <div class="page-header">
             <div class="header-left">
                 <div class="header-brand">Dungeons & Dragons</div>
-                <div class="box box--label-bottom header-name">
-                    <div class="value--large">{data["character_name"]}</div>
-                    <div class="box__label">Character Name</div>
+                <div class="header-name-row">
+                    <div class="portrait-frame">
+                        <img src="{data["portrait"]}" alt="Character Portrait" class="portrait-img">
+                    </div>
+                    <div class="box box--label-bottom header-name">
+                        <div class="value--large">{data["character_name"]}</div>
+                        <div class="box__label">Character Name</div>
+                    </div>
                 </div>
             </div>
             <div class="header-right">

@@ -46,7 +46,7 @@
     --page-margin: 8mm;
 
     /* Box Styling */
-    --box-radius: 6px;
+    --box-radius: 0;
     --box-border-width: 1px;
     --box-padding: 2mm;
 
@@ -165,11 +165,16 @@ body {
 }
 
 /* Label at top of box */
+.box--label-top {
+    padding-top: 6mm !important;
+}
 .box--label-top > .box__label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     border-bottom: var(--box-border-width) solid var(--border-light);
     border-radius: var(--box-radius) var(--box-radius) 0 0;
-    margin: calc(var(--box-padding) * -1);
-    margin-bottom: 1mm;
 }
 
 /* Centered content */
@@ -213,12 +218,8 @@ body {
 }
 
 .text-content p {
-    text-indent: 3mm;
+    text-indent: 4mm;
     margin-bottom: 1mm;
-}
-
-.text-content p:first-child {
-    text-indent: 0;
 }
 
 /* Generic item list - used for equipment, features, traits */
@@ -260,7 +261,7 @@ body {
    ----------------------------------------------------------------- */
 .page-header {
     display: grid;
-    grid-template-columns: 58mm 1fr;
+    grid-template-columns: 75mm 1fr;
     gap: 3mm;
     margin-bottom: 3mm;
 }
@@ -278,6 +279,27 @@ body {
     text-transform: uppercase;
     color: var(--text-secondary);
     margin-bottom: 1mm;
+}
+
+.header-name-row {
+    display: flex;
+    gap: 2mm;
+    flex: 1;
+}
+
+.portrait-frame {
+    width: 20mm;
+    height: 20mm;
+    border: var(--box-border-width) solid var(--border-dark);
+    background: var(--bg-box);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.portrait-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .header-name {
@@ -632,7 +654,7 @@ body {
 
 .attack-header {
     display: grid;
-    grid-template-columns: 2fr 1fr 1.5fr;
+    grid-template-columns: 1.3fr 0.8fr 1.8fr;
     gap: 1mm;
     font-size: 5.5pt;
     font-weight: 700;
@@ -645,7 +667,7 @@ body {
 
 .attack-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1.5fr;
+    grid-template-columns: 1.3fr 0.8fr 1.8fr;
     gap: 1mm;
     padding: 0.5mm 0;
     font-size: 7pt;
