@@ -281,17 +281,55 @@ def build_html(data: dict) -> str:
     prof_items = "".join([f"<li>{item}</li>" for item in data["proficiencies_languages"]])
     prof_lang_html = f'<ul class="prof-list">{prof_items}</ul>'
 
-    # Equipment
-    equipment_html = "<br>".join(data["equipment"])
+    # Equipment (as list)
+    equip_items = "".join([f"<li>{item}</li>" for item in data["equipment"]])
+    equipment_html = f'<ul class="item-list">{equip_items}</ul>'
 
-    # Features & Traits
-    features_html = "<br>".join(data["features_traits"])
+    # Features & Traits (as list)
+    feature_items = "".join([f"<li>{item}</li>" for item in data["features_traits"]])
+    features_html = f'<ul class="item-list">{feature_items}</ul>'
 
-    # Additional Features & Traits
-    additional_features_html = "<br>".join(data["additional_features_traits"])
+    # Additional Features & Traits (as list)
+    add_feature_items = "".join([f"<li>{item}</li>" for item in data["additional_features_traits"]])
+    additional_features_html = f'<ul class="item-list">{add_feature_items}</ul>'
 
-    # Treasure
-    treasure_html = "<br>".join(data["treasure"])
+    # Treasure (as list)
+    treasure_items = "".join([f"<li>{item}</li>" for item in data["treasure"]])
+    treasure_html = f'<ul class="item-list">{treasure_items}</ul>'
+
+    # Convert backstory to paragraphs (split on \n\n or double newlines)
+    backstory_text = data["backstory"]
+    if backstory_text:
+        paragraphs = [p.strip() for p in backstory_text.split('\n\n') if p.strip()]
+        if not paragraphs:  # If no double newlines, try single
+            paragraphs = [p.strip() for p in backstory_text.split('\n') if p.strip()]
+        backstory_html = "".join([f"<p>{p}</p>" for p in paragraphs])
+    else:
+        backstory_html = ""
+
+    # Character appearance as paragraphs
+    appearance_text = data["character_appearance_description"]
+    if appearance_text:
+        app_paragraphs = [p.strip() for p in appearance_text.split('\n\n') if p.strip()]
+        if not app_paragraphs:
+            app_paragraphs = [p.strip() for p in appearance_text.split('\n') if p.strip()]
+        if not app_paragraphs:
+            app_paragraphs = [appearance_text]
+        appearance_html = "".join([f"<p>{p}</p>" for p in app_paragraphs])
+    else:
+        appearance_html = ""
+
+    # Allies description as paragraphs
+    allies_desc = data["allies_organizations"].get("description", "")
+    if allies_desc:
+        allies_paragraphs = [p.strip() for p in allies_desc.split('\n\n') if p.strip()]
+        if not allies_paragraphs:
+            allies_paragraphs = [p.strip() for p in allies_desc.split('\n') if p.strip()]
+        if not allies_paragraphs:
+            allies_paragraphs = [allies_desc]
+        allies_html = "".join([f"<p>{p}</p>" for p in allies_paragraphs])
+    else:
+        allies_html = ""
 
     # Cantrips
     cantrips_html = ""
@@ -573,18 +611,18 @@ def build_html(data: dict) -> str:
             <div class="column">
                 <div class="box box--label-top large-box" style="min-height: 45mm;">
                     <div class="box__label">Character Appearance</div>
-                    <div class="large-box-content">{data["character_appearance_description"]}</div>
+                    <div class="large-box-content text-content">{appearance_html}</div>
                 </div>
                 <div class="box box--label-top large-box box--flex">
                     <div class="box__label">Character Backstory</div>
-                    <div class="large-box-content">{data["backstory"]}</div>
+                    <div class="large-box-content text-content">{backstory_html}</div>
                 </div>
             </div>
             <div class="column">
                 <div class="box box--label-top large-box" style="min-height: 60mm;">
                     <div class="box__label">Allies & Organizations</div>
                     <div style="font-weight: 600; margin-bottom: 2mm;">{data["allies_organizations"]["name"]}</div>
-                    <div class="large-box-content">{data["allies_organizations"]["description"]}</div>
+                    <div class="large-box-content text-content">{allies_html}</div>
                 </div>
                 <div class="box box--label-top large-box">
                     <div class="box__label">Additional Features & Traits</div>
