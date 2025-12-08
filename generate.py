@@ -328,8 +328,9 @@ def generate_html(template_path: Path, data: dict) -> str:
                         <div class="attack-damage">{attack["damage_type"]}</div>
                     </div>'''
 
-    # Proficiencies & Languages
-    prof_lang_html = ", ".join(data["proficiencies_languages"])
+    # Proficiencies & Languages (as list)
+    prof_items = "".join([f"<li>{item}</li>" for item in data["proficiencies_languages"]])
+    prof_lang_html = f'<ul class="prof-list">{prof_items}</ul>'
 
     # Equipment
     equipment_html = "<br>\n                    ".join(data["equipment"])
@@ -444,8 +445,9 @@ def build_complete_html(data: dict) -> str:
                         <div class="attack-damage"></div>
                     </div>'''
 
-    # Proficiencies & Languages
-    prof_lang_html = ", ".join(data["proficiencies_languages"])
+    # Proficiencies & Languages (as list)
+    prof_items = "".join([f"<li>{item}</li>" for item in data["proficiencies_languages"]])
+    prof_lang_html = f'<ul class="prof-list">{prof_items}</ul>'
 
     # Equipment
     equipment_html = "<br>".join(data["equipment"])
@@ -517,22 +519,25 @@ def build_complete_html(data: dict) -> str:
         :root {{
             --bg-page: #faf8f5;
             --bg-box: #ffffff;
-            --border-dark: #1a1a1a;
-            --border-medium: #4a4a4a;
-            --border-light: #888888;
-            --text-primary: #1a1a1a;
-            --text-secondary: #4a4a4a;
+            --bg-label: #f5f0e6;
+            --border-dark: #6b4423;
+            --border-medium: #8b6b4a;
+            --border-light: #c4a882;
+            --text-primary: #2a2a2a;
+            --text-secondary: #555555;
             --text-label: #666666;
             --accent-primary: #8b4513;
             --accent-secondary: #c9a227;
-            --accent-highlight: rgba(201, 162, 39, 0.1);
+            --accent-highlight: rgba(201, 162, 39, 0.15);
             --font-display: 'Cinzel', serif;
             --font-body: 'Scada', sans-serif;
             --page-width: 210mm;
             --page-height: 297mm;
             --page-margin: 8mm;
-            --box-radius: 3px;
-            --border-width: 1.5px;
+            --box-radius: 2px;
+            --box-radius-lg: 6px;
+            --border-width: 1px;
+            --notch-size: 4mm;
         }}
 
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
@@ -585,8 +590,8 @@ def build_complete_html(data: dict) -> str:
         }}
         .header-name-field {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
-            padding: 2mm 3mm 5mm;
+            border-radius: var(--box-radius-lg);
+            padding: 2mm 3mm 6mm;
             background: var(--bg-box);
             position: relative;
             flex: 1;
@@ -595,7 +600,7 @@ def build_complete_html(data: dict) -> str:
         }}
         .header-name-value {{
             font-family: var(--font-display);
-            font-size: 14pt;
+            font-size: 16pt;
             font-weight: 700;
             color: var(--text-primary);
         }}
@@ -604,10 +609,15 @@ def build_complete_html(data: dict) -> str:
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: var(--text-label);
+            color: var(--text-secondary);
+            background: var(--bg-label);
+            border-top: var(--border-width) solid var(--border-light);
+            padding: 0.8mm 2mm;
             position: absolute;
-            bottom: 1.5mm;
-            left: 3mm;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
         }}
         .header-right {{
             display: grid;
@@ -617,25 +627,35 @@ def build_complete_html(data: dict) -> str:
         }}
         .info-field {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
-            padding: 1mm 2mm 3.5mm;
+            border-radius: var(--box-radius-lg);
+            padding: 1mm 2mm 5mm;
             background: var(--bg-box);
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }}
         .info-label {{
             font-size: 5.5pt;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.3px;
-            color: var(--text-label);
+            color: var(--text-secondary);
+            background: var(--bg-label);
+            border-top: var(--border-width) solid var(--border-light);
+            padding: 0.5mm 1.5mm;
             position: absolute;
-            bottom: 0.8mm;
-            left: 2mm;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            border-radius: 0 0 var(--box-radius-lg) var(--box-radius-lg);
         }}
         .info-value {{
-            font-size: 9pt;
+            font-size: 11pt;
             font-weight: 600;
             color: var(--text-primary);
+            text-align: center;
         }}
 
         .main-content {{
@@ -667,20 +687,57 @@ def build_complete_html(data: dict) -> str:
         }}
         .proficiencies-box {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
-            padding: 2mm;
+            padding: 2mm 2mm 5mm;
             flex: 1;
+            position: relative;
         }}
         .proficiencies-box .box-content {{
             font-size: 7pt;
             line-height: 1.3;
         }}
+        .proficiencies-box .box-title {{
+            font-size: 6pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-label);
+            color: var(--text-secondary);
+            border-top: var(--border-width) solid var(--border-light);
+            padding: 0.5mm 2mm;
+            border-radius: 0 0 var(--box-radius-lg) var(--box-radius-lg);
+        }}
+        .prof-list {{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 7pt;
+            line-height: 1.4;
+            column-count: 2;
+            column-gap: 2mm;
+        }}
+        .prof-list li {{
+            padding: 0.2mm 0;
+            break-inside: avoid;
+        }}
+        .prof-list li::before {{
+            content: '\\2022';
+            color: var(--border-medium);
+            font-weight: bold;
+            display: inline-block;
+            width: 2mm;
+            margin-right: 1mm;
+        }}
         .equipment-box {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
-            padding: 2mm;
+            padding: 2mm 2mm 5mm;
             flex: 1;
             position: relative;
         }}
@@ -690,16 +747,25 @@ def build_complete_html(data: dict) -> str:
             margin-top: 1mm;
         }}
         .equipment-box .box-title {{
+            font-size: 6pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
             position: absolute;
-            bottom: 1mm;
+            bottom: 0;
             left: 0;
             right: 0;
+            background: var(--bg-label);
+            color: var(--text-secondary);
+            border-top: var(--border-width) solid var(--border-light);
+            padding: 0.5mm 2mm;
+            border-radius: 0 0 var(--box-radius-lg) var(--box-radius-lg);
         }}
         .trait-box {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
-            padding: 2mm 2mm 4mm;
+            padding: 2mm 2mm 5mm;
             position: relative;
         }}
         .trait-content {{
@@ -712,8 +778,11 @@ def build_complete_html(data: dict) -> str:
             text-transform: uppercase;
             text-align: center;
             color: var(--text-secondary);
+            background: var(--bg-label);
+            border-top: var(--border-width) solid var(--border-light);
+            padding: 0.5mm 2mm;
             position: absolute;
-            bottom: 1mm;
+            bottom: 0;
             left: 0;
             right: 0;
         }}
@@ -725,22 +794,28 @@ def build_complete_html(data: dict) -> str:
         }}
         .ability-score {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
-            padding: 1.5mm;
+            padding: 1mm 1.5mm 1.5mm;
             display: flex;
             flex-direction: column;
             align-items: center;
         }}
         .ability-name {{
-            font-size: 6pt;
+            font-size: 5pt;
             font-weight: 700;
             text-transform: uppercase;
             color: var(--text-secondary);
+            background: var(--bg-label);
+            border-bottom: var(--border-width) solid var(--border-light);
+            padding: 0.5mm 1.5mm;
+            margin: -1mm -1.5mm 0.5mm;
+            width: calc(100% + 3mm);
+            text-align: center;
         }}
         .ability-value {{
             font-family: var(--font-display);
-            font-size: 18pt;
+            font-size: 16pt;
             font-weight: 700;
             line-height: 1;
         }}
@@ -755,7 +830,7 @@ def build_complete_html(data: dict) -> str:
             justify-content: center;
             font-size: 9pt;
             font-weight: 700;
-            margin-top: 1mm;
+            margin-top: 0.5mm;
         }}
 
         .stat-row {{
@@ -763,7 +838,7 @@ def build_complete_html(data: dict) -> str:
             align-items: center;
             gap: 2mm;
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
             padding: 1.5mm 2mm;
         }}
@@ -777,6 +852,7 @@ def build_complete_html(data: dict) -> str:
             justify-content: center;
             font-size: 9pt;
             font-weight: 700;
+            background: var(--bg-box);
         }}
         .stat-label {{
             font-size: 6.5pt;
@@ -786,17 +862,39 @@ def build_complete_html(data: dict) -> str:
 
         .saves-skills-box {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
             padding: 1.5mm;
         }}
-        .box-title {{
-            font-size: 6.5pt;
+        .saves-skills-box .box-title,
+        .attacks-box .box-title {{
+            font-size: 6pt;
             font-weight: 700;
             text-transform: uppercase;
             text-align: center;
-            margin-bottom: 1mm;
             color: var(--text-secondary);
+            background: var(--bg-label);
+            border-bottom: var(--border-width) solid var(--border-light);
+            padding: 0.5mm 2mm;
+            margin: -1.5mm -1.5mm 1mm;
+            border-radius: var(--box-radius-lg) var(--box-radius-lg) 0 0;
+        }}
+        .hitdice-box .box-title,
+        .death-box .box-title {{
+            font-size: 6pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
+            color: var(--text-secondary);
+            background: var(--bg-label);
+            border-top: var(--border-width) solid var(--border-light);
+            padding: 0.5mm 2mm;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: 0;
+            border-radius: 0 0 var(--box-radius-lg) var(--box-radius-lg);
         }}
         .save-row, .skill-row {{
             display: flex;
@@ -822,7 +920,7 @@ def build_complete_html(data: dict) -> str:
 
         .passive-box {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
             padding: 1.5mm;
             display: flex;
@@ -838,6 +936,7 @@ def build_complete_html(data: dict) -> str:
             justify-content: center;
             font-size: 10pt;
             font-weight: 700;
+            background: var(--bg-box);
         }}
         .passive-label {{
             font-size: 6pt;
@@ -853,14 +952,15 @@ def build_complete_html(data: dict) -> str:
         }}
         .combat-stat {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
-            padding: 2mm;
+            padding: 1mm 2mm 4mm;
             text-align: center;
+            position: relative;
         }}
         .combat-value {{
             font-family: var(--font-display);
-            font-size: 16pt;
+            font-size: 18pt;
             font-weight: 700;
             min-height: 10mm;
             display: flex;
@@ -872,13 +972,21 @@ def build_complete_html(data: dict) -> str:
             font-weight: 700;
             text-transform: uppercase;
             color: var(--text-secondary);
+            background: var(--bg-label);
+            border-top: var(--border-width) solid var(--border-light);
+            padding: 0.5mm 1.5mm;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
         }}
 
         .hp-section {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
-            padding: 2mm;
+            padding: 2mm 2mm 4mm;
+            position: relative;
         }}
         .hp-max-row {{
             display: flex;
@@ -905,12 +1013,20 @@ def build_complete_html(data: dict) -> str:
             text-transform: uppercase;
             text-align: center;
             color: var(--text-secondary);
+            background: var(--bg-label);
+            border-top: var(--border-width) solid var(--border-light);
+            padding: 0.5mm 1.5mm;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
         }}
         .hp-temp {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
-            padding: 2mm;
+            padding: 2mm 2mm 4mm;
+            position: relative;
         }}
         .hp-temp-value {{
             min-height: 6mm;
@@ -928,9 +1044,10 @@ def build_complete_html(data: dict) -> str:
         }}
         .hitdice-box, .death-box {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
-            padding: 1.5mm;
+            padding: 1.5mm 1.5mm 4mm;
+            position: relative;
         }}
         .hitdice-total {{ font-size: 5.5pt; color: var(--text-label); }}
         .hitdice-value {{
@@ -954,16 +1071,16 @@ def build_complete_html(data: dict) -> str:
         .death-circle {{
             width: 3.5mm;
             height: 3.5mm;
-            border: 1px solid var(--border-dark);
+            border: 1.5px solid var(--border-dark);
             border-radius: 50%;
         }}
 
         .attacks-box {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
             padding: 1.5mm;
-            flex: 1;
+            position: relative;
         }}
         .attack-header {{
             display: grid;
@@ -1029,20 +1146,23 @@ def build_complete_html(data: dict) -> str:
         }}
         .large-box {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
-            padding: 2mm;
+            padding: 2mm 2mm 2mm;
+            position: relative;
         }}
         .large-box.flex-1 {{ flex: 1; }}
         .large-box-title {{
-            font-size: 6.5pt;
+            font-size: 6pt;
             font-weight: 700;
             text-transform: uppercase;
             text-align: center;
             color: var(--text-secondary);
-            padding-bottom: 1mm;
-            border-bottom: 1px solid var(--border-light);
-            margin-bottom: 1mm;
+            background: var(--bg-label);
+            border-bottom: var(--border-width) solid var(--border-light);
+            padding: 1mm 2mm;
+            margin: -2mm -2mm 1.5mm;
+            border-radius: var(--box-radius-lg) var(--box-radius-lg) 0 0;
         }}
         .large-box-content {{
             font-size: 7.5pt;
@@ -1059,7 +1179,7 @@ def build_complete_html(data: dict) -> str:
         }}
         .spell-level-box {{
             border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
+            border-radius: var(--box-radius-lg);
             background: var(--bg-box);
             padding: 2mm;
             display: flex;
@@ -1076,15 +1196,16 @@ def build_complete_html(data: dict) -> str:
         .spell-level-num {{
             width: 7mm;
             height: 7mm;
-            background: var(--border-dark);
-            color: white;
+            background: var(--bg-label);
+            color: var(--text-primary);
+            border: var(--border-width) solid var(--border-dark);
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: var(--font-display);
             font-size: 10pt;
             font-weight: 700;
-            border-radius: 2px;
+            border-radius: var(--box-radius-lg);
         }}
         .spell-slots {{
             display: flex;
@@ -1130,7 +1251,90 @@ def build_complete_html(data: dict) -> str:
             border-radius: 50%;
         }}
         .spell-prepared.filled {{ background: var(--border-dark); }}
-        .cantrip-box .spell-level-num {{ background: var(--accent-primary); }}
+        .cantrip-box .spell-level-num {{
+            background: var(--accent-highlight);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }}
+
+        /* Decorative corner accents - applied to all boxes */
+        .header-name-field,
+        .info-field,
+        .ability-score,
+        .stat-row,
+        .saves-skills-box,
+        .passive-box,
+        .proficiencies-box,
+        .combat-stat,
+        .hp-section,
+        .hp-temp,
+        .hitdice-box,
+        .death-box,
+        .attacks-box,
+        .equipment-box,
+        .trait-box,
+        .large-box,
+        .spell-level-box {{
+            position: relative;
+        }}
+        .header-name-field::before,
+        .info-field::before,
+        .ability-score::before,
+        .stat-row::before,
+        .saves-skills-box::before,
+        .passive-box::before,
+        .proficiencies-box::before,
+        .combat-stat::before,
+        .hp-section::before,
+        .hp-temp::before,
+        .hitdice-box::before,
+        .death-box::before,
+        .attacks-box::before,
+        .equipment-box::before,
+        .trait-box::before,
+        .large-box::before,
+        .spell-level-box::before {{
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: var(--notch-size);
+            height: var(--notch-size);
+            border-top: 1px solid var(--accent-secondary);
+            border-left: 1px solid var(--accent-secondary);
+            border-radius: 2px 0 0 0;
+            pointer-events: none;
+            z-index: 1;
+        }}
+        .header-name-field::after,
+        .info-field::after,
+        .ability-score::after,
+        .stat-row::after,
+        .saves-skills-box::after,
+        .passive-box::after,
+        .proficiencies-box::after,
+        .combat-stat::after,
+        .hp-section::after,
+        .hp-temp::after,
+        .hitdice-box::after,
+        .death-box::after,
+        .attacks-box::after,
+        .equipment-box::after,
+        .trait-box::after,
+        .large-box::after,
+        .spell-level-box::after {{
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: var(--notch-size);
+            height: var(--notch-size);
+            border-bottom: 1px solid var(--accent-secondary);
+            border-right: 1px solid var(--accent-secondary);
+            border-radius: 0 0 2px 0;
+            pointer-events: none;
+            z-index: 1;
+        }}
     </style>
 </head>
 <body>
