@@ -100,8 +100,8 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   4. CORNER ACCENTS - 4 corners via single pseudo-element
-   Uses CSS gradients to draw all 4 corner L-shapes
+   4. CORNER ACCENTS - Faded notch effect on all 4 corners
+   Creates elegant "ticket stub" look with fading corner lines
    ----------------------------------------------------------------- */
 .box::before {
     content: '';
@@ -110,29 +110,29 @@ body {
     pointer-events: none;
     z-index: 1;
     background:
-        /* Top-left horizontal */
-        linear-gradient(var(--corner-color), var(--corner-color))
+        /* Top-left horizontal - fades right */
+        linear-gradient(to right, var(--corner-color), transparent)
             0 0 / var(--corner-size) var(--corner-width) no-repeat,
-        /* Top-left vertical */
-        linear-gradient(var(--corner-color), var(--corner-color))
+        /* Top-left vertical - fades down */
+        linear-gradient(to bottom, var(--corner-color), transparent)
             0 0 / var(--corner-width) var(--corner-size) no-repeat,
-        /* Top-right horizontal */
-        linear-gradient(var(--corner-color), var(--corner-color))
+        /* Top-right horizontal - fades left */
+        linear-gradient(to left, var(--corner-color), transparent)
             100% 0 / var(--corner-size) var(--corner-width) no-repeat,
-        /* Top-right vertical */
-        linear-gradient(var(--corner-color), var(--corner-color))
+        /* Top-right vertical - fades down */
+        linear-gradient(to bottom, var(--corner-color), transparent)
             100% 0 / var(--corner-width) var(--corner-size) no-repeat,
-        /* Bottom-left horizontal */
-        linear-gradient(var(--corner-color), var(--corner-color))
+        /* Bottom-left horizontal - fades right */
+        linear-gradient(to right, var(--corner-color), transparent)
             0 100% / var(--corner-size) var(--corner-width) no-repeat,
-        /* Bottom-left vertical */
-        linear-gradient(var(--corner-color), var(--corner-color))
+        /* Bottom-left vertical - fades up */
+        linear-gradient(to top, var(--corner-color), transparent)
             0 100% / var(--corner-width) var(--corner-size) no-repeat,
-        /* Bottom-right horizontal */
-        linear-gradient(var(--corner-color), var(--corner-color))
+        /* Bottom-right horizontal - fades left */
+        linear-gradient(to left, var(--corner-color), transparent)
             100% 100% / var(--corner-size) var(--corner-width) no-repeat,
-        /* Bottom-right vertical */
-        linear-gradient(var(--corner-color), var(--corner-color))
+        /* Bottom-right vertical - fades up */
+        linear-gradient(to top, var(--corner-color), transparent)
             100% 100% / var(--corner-width) var(--corner-size) no-repeat;
 }
 
@@ -198,6 +198,61 @@ body {
 .value--medium {
     font-size: 11pt;
     font-weight: 600;
+}
+
+/* -----------------------------------------------------------------
+   6.5 TEXT CONTENT STYLES - Paragraphs and lists
+   ----------------------------------------------------------------- */
+
+/* Justified text with paragraph indentation */
+.text-content {
+    font-size: 7.5pt;
+    line-height: 1.5;
+    text-align: justify;
+    hyphens: auto;
+}
+
+.text-content p {
+    text-indent: 3mm;
+    margin-bottom: 1mm;
+}
+
+.text-content p:first-child {
+    text-indent: 0;
+}
+
+/* Generic item list - used for equipment, features, traits */
+.item-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 7pt;
+    line-height: 1.4;
+}
+
+.item-list li {
+    padding: 0.3mm 0;
+    padding-left: 3mm;
+    position: relative;
+}
+
+.item-list li::before {
+    content: '◆';
+    color: var(--accent-secondary);
+    font-size: 5pt;
+    position: absolute;
+    left: 0;
+    top: 0.5mm;
+}
+
+/* Two-column list variant */
+.item-list--columns {
+    column-count: 2;
+    column-gap: 3mm;
+}
+
+.item-list--columns li {
+    break-inside: avoid;
 }
 
 /* -----------------------------------------------------------------
@@ -421,6 +476,7 @@ body {
     flex: 1;
 }
 
+/* Proficiencies uses the item-list base with columns */
 .prof-list {
     list-style: none;
     padding: 0;
@@ -428,21 +484,23 @@ body {
     font-size: 7pt;
     line-height: 1.4;
     column-count: 2;
-    column-gap: 2mm;
+    column-gap: 3mm;
 }
 
 .prof-list li {
     padding: 0.2mm 0;
+    padding-left: 3mm;
+    position: relative;
     break-inside: avoid;
 }
 
 .prof-list li::before {
-    content: '\2022';
-    color: var(--border-medium);
-    font-weight: bold;
-    display: inline-block;
-    width: 2mm;
-    margin-right: 1mm;
+    content: '◆';
+    color: var(--accent-secondary);
+    font-size: 5pt;
+    position: absolute;
+    left: 0;
+    top: 0.3mm;
 }
 
 /* -----------------------------------------------------------------
@@ -595,8 +653,21 @@ body {
     min-height: 5mm;
 }
 
-.attack-name { font-weight: 600; }
-.attack-bonus { text-align: center; }
+.attack-name {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.attack-bonus {
+    text-align: center;
+    white-space: nowrap;
+}
+.attack-damage {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 /* -----------------------------------------------------------------
    18. EQUIPMENT BOX
