@@ -54,7 +54,7 @@
     --page-margin: 8mm;
 
     /* Box Styling */
-    --box-radius: 6px;
+    --box-radius: 0;
     --box-border-width: 1px;
     --box-padding: 2mm;
 
@@ -173,11 +173,16 @@ body {
 }
 
 /* Label at top of box */
+.box--label-top {
+    padding-top: 6mm !important;
+}
 .box--label-top > .box__label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     border-bottom: var(--box-border-width) solid var(--border-light);
     border-radius: var(--box-radius) var(--box-radius) 0 0;
-    margin: calc(var(--box-padding) * -1);
-    margin-bottom: 1mm;
 }
 
 /* Centered content */
@@ -221,12 +226,8 @@ body {
 }
 
 .text-content p {
-    text-indent: 3mm;
+    text-indent: 4mm;
     margin-bottom: 1mm;
-}
-
-.text-content p:first-child {
-    text-indent: 0;
 }
 
 /* Generic item list - used for equipment, features, traits */
@@ -268,7 +269,7 @@ body {
    ----------------------------------------------------------------- */
 .page-header {
     display: grid;
-    grid-template-columns: 58mm 1fr;
+    grid-template-columns: 75mm 1fr;
     gap: 3mm;
     margin-bottom: 3mm;
 }
@@ -286,6 +287,27 @@ body {
     text-transform: uppercase;
     color: var(--text-secondary);
     margin-bottom: 1mm;
+}
+
+.header-name-row {
+    display: flex;
+    gap: 2mm;
+    flex: 1;
+}
+
+.portrait-frame {
+    width: 20mm;
+    height: 20mm;
+    border: var(--box-border-width) solid var(--border-dark);
+    background: var(--bg-box);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.portrait-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .header-name {
@@ -640,7 +662,7 @@ body {
 
 .attack-header {
     display: grid;
-    grid-template-columns: 2fr 1fr 1.5fr;
+    grid-template-columns: 1.3fr 0.8fr 1.8fr;
     gap: 1mm;
     font-size: 5.5pt;
     font-weight: 700;
@@ -653,7 +675,7 @@ body {
 
 .attack-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1.5fr;
+    grid-template-columns: 1.3fr 0.8fr 1.8fr;
     gap: 1mm;
     padding: 0.5mm 0;
     font-size: 7pt;
@@ -867,9 +889,14 @@ body {
         <div class="page-header">
             <div class="header-left">
                 <div class="header-brand">Dungeons & Dragons</div>
-                <div class="box box--label-bottom header-name">
-                    <div class="value--large">Thorek Bearward</div>
-                    <div class="box__label">Character Name</div>
+                <div class="header-name-row">
+                    <div class="portrait-frame">
+                        <img src="images/Gemini_Generated_Image_f9muy7f9muy7f9mu.png" alt="Character Portrait" class="portrait-img">
+                    </div>
+                    <div class="box box--label-bottom header-name">
+                        <div class="value--large">Thorek Bearward</div>
+                        <div class="box__label">Character Name</div>
+                    </div>
                 </div>
             </div>
             <div class="header-right">
@@ -1259,7 +1286,7 @@ body {
                 </div>
                 <div class="box box--label-top large-box box--flex">
                     <div class="box__label">Character Backstory</div>
-                    <div class="large-box-content text-content"><p>Thorek was a simple woodsman living on the edge of the great forest, making his living as a carpenter and guide. One fateful autumn, an orc warband descended upon his village. During the attack, he found a wounded bear cub whose mother had been slain by the orcs. Together, they fought off the raiders - Thorek with his grandfather's warhammer, and the young bear with surprising ferocity.</p><p>The village elder proclaimed them both heroes, and from that day forward, Thorek and the bear - whom he named Ironjaw for his powerful bite - became inseparable companions. Now they travel the land as defenders of the common folk.</p></div>
+                    <div class="large-box-content text-content"><p>Thorek was a simple woodsman living on the edge of the great forest, making his living as a carpenter and guide. One fateful autumn, an orc warband descended upon his village. During the attack, he discovered a wounded bear cub whose mother had been slain by the orcs. Together, they fought off the raiders. Thorek wielded his grandfather's warhammer while the young bear battled with surprising ferocity.</p><p>The village elder proclaimed them both heroes, and from that day forward, Thorek and the bear became inseparable companions. He named the bear Ironjaw for his powerful bite, and now they travel the land together as defenders of the common folk.</p></div>
                 </div>
             </div>
             <div class="column">
