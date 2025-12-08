@@ -1,0 +1,988 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Kazrek Spellforge - D&D Character Sheet v2</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+        
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.3;
+            background: #ffffff;
+            color: #333;
+        }
+        
+        .page {
+            width: 210mm;
+            height: 297mm;
+            background: #ffffff;
+            position: relative;
+            page-break-after: always;
+            overflow: hidden;
+            padding: 8mm;
+        }
+        
+        .page:last-child {
+            page-break-after: avoid;
+        }
+        
+        /* Decorative Corner Graphics */
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 30mm;
+            height: 30mm;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M0,0 Q25,0 50,25 Q75,50 100,0 L100,100 Q75,75 50,50 Q25,25 0,100 Z" fill="%23d4af37" opacity="0.1"/></svg>');
+            background-size: contain;
+        }
+        
+        .page::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30mm;
+            height: 30mm;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M100,0 Q75,0 50,25 Q25,50 0,0 L0,100 Q25,75 50,50 Q75,25 100,100 Z" fill="%23d4af37" opacity="0.1"/></svg>');
+            background-size: contain;
+        }
+        
+        /* Ornate Border */
+        .ornate-border {
+            position: absolute;
+            top: 6mm;
+            left: 6mm;
+            right: 6mm;
+            bottom: 6mm;
+            border: 2px solid #d4af37;
+            border-radius: 3mm;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 10mm,
+                    rgba(212, 175, 55, 0.05) 10mm,
+                    rgba(212, 175, 55, 0.05) 10.5mm
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 10mm,
+                    rgba(212, 175, 55, 0.05) 10mm,
+                    rgba(212, 175, 55, 0.05) 10.5mm
+                );
+        }
+        
+        .content-area {
+            position: relative;
+            z-index: 1;
+            padding: 4mm;
+        }
+        
+        /* Header Styling */
+        .character-header {
+            text-align: center;
+            margin-bottom: 8mm;
+            position: relative;
+        }
+        
+        .character-name {
+            font-family: 'Cinzel', serif;
+            font-size: 28pt;
+            font-weight: 700;
+            color: #2c3e50;
+            text-shadow: 1px 1px 2px rgba(212, 175, 55, 0.3);
+            margin-bottom: 3mm;
+        }
+        
+        .character-title {
+            font-family: 'Cinzel', serif;
+            font-size: 14pt;
+            color: #34495e;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        /* Decorative Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            margin: 5mm 0;
+            position: relative;
+        }
+        
+        .divider::before {
+            content: '⚔';
+            position: absolute;
+            left: 50%;
+            top: -8px;
+            transform: translateX(-50%);
+            background: white;
+            padding: 0 5px;
+            font-size: 16px;
+            color: #d4af37;
+        }
+        
+        /* Print-Friendly Info Boxes */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2mm;
+            margin-bottom: 6mm;
+        }
+        
+        .info-box {
+            background: transparent;
+            border: 2px solid #d4af37;
+            border-radius: 3mm;
+            padding: 3mm;
+            text-align: center;
+            position: relative;
+        }
+        
+        .info-box::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 3mm;
+            z-index: -1;
+        }
+        
+        .info-label {
+            font-weight: 700;
+            font-size: 7pt;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1mm;
+        }
+        
+        .info-value {
+            font-size: 10pt;
+            color: #34495e;
+            font-weight: 500;
+        }
+        
+        /* Hexagonal Ability Scores - Outline Only */
+        .abilities-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4mm;
+            margin-bottom: 8mm;
+        }
+        
+        .ability-hex {
+            position: relative;
+            width: 25mm;
+            height: 25mm;
+            margin: 0 auto;
+        }
+        
+        .ability-hex::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid #d4af37;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            z-index: 1;
+        }
+        
+        .ability-hex::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            right: 1px;
+            bottom: 1px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><defs><pattern id="dots" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="0.5" fill="%23d4af37" opacity="0.1"/></pattern></defs><rect width="50" height="50" fill="url(%23dots)"/></svg>');
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            z-index: 1;
+        }
+        
+        .ability-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+        
+        .ability-name {
+            font-size: 6pt;
+            font-weight: 700;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .ability-score {
+            font-size: 14pt;
+            font-weight: 700;
+            color: #d4af37;
+            margin: 1mm 0;
+        }
+        
+        .ability-modifier {
+            font-size: 8pt;
+            font-weight: 600;
+            color: #34495e;
+            border: 1px solid #d4af37;
+            padding: 1mm 2mm;
+            border-radius: 2mm;
+            background: rgba(212, 175, 55, 0.05);
+        }
+        
+        /* Combat Stats - Outline Style */
+        .combat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3mm;
+            margin-bottom: 8mm;
+        }
+        
+        .combat-stat {
+            background: transparent;
+            border: 2px solid #e74c3c;
+            border-radius: 5mm;
+            padding: 4mm;
+            text-align: center;
+            position: relative;
+        }
+        
+        .combat-stat::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border: 1px solid rgba(231, 76, 60, 0.2);
+            border-radius: 4mm;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10,2 L12,8 L18,8 L13,12 L15,18 L10,14 L5,18 L7,12 L2,8 L8,8 Z" fill="%23e74c3c" opacity="0.03"/></svg>');
+            background-repeat: repeat;
+            background-size: 10mm 10mm;
+        }
+        
+        .combat-label {
+            font-size: 7pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2mm;
+            color: #e74c3c;
+        }
+        
+        .combat-value {
+            font-size: 20pt;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        /* Section Headers */
+        .section-container {
+            border: 2px solid #3498db;
+            border-radius: 5mm;
+            padding: 4mm;
+            margin-bottom: 6mm;
+            background: rgba(52, 152, 219, 0.02);
+            position: relative;
+        }
+        
+        .section-container::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            border: 1px solid rgba(52, 152, 219, 0.1);
+            border-radius: 4mm;
+        }
+        
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 14pt;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 3mm;
+            color: #3498db;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+        }
+        
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2mm;
+        }
+        
+        .skill-item {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 2mm;
+            padding: 2mm;
+            font-size: 8pt;
+            display: flex;
+            align-items: center;
+        }
+        
+        .prof-circle {
+            width: 4mm;
+            height: 4mm;
+            border: 1px solid #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 2mm;
+            font-size: 6pt;
+            font-weight: 700;
+            color: #3498db;
+        }
+        
+        .prof-circle.filled {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        /* Spells Section */
+        .spells-container {
+            border: 2px solid #9b59b6;
+            border-radius: 5mm;
+            padding: 4mm;
+            background: rgba(155, 89, 182, 0.02);
+            margin-bottom: 6mm;
+            position: relative;
+        }
+        
+        .spell-level-block {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 3mm;
+            padding: 3mm;
+            margin-bottom: 3mm;
+        }
+        
+        .spell-level-title {
+            font-weight: 700;
+            font-size: 10pt;
+            margin-bottom: 2mm;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #9b59b6;
+        }
+        
+        .spell-slots-track {
+            display: flex;
+            gap: 1mm;
+        }
+        
+        .spell-slot {
+            width: 6mm;
+            height: 6mm;
+            border: 2px solid #9b59b6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 8pt;
+            color: #9b59b6;
+        }
+        
+        .spell-list {
+            font-size: 9pt;
+            line-height: 1.4;
+            color: #34495e;
+        }
+        
+        /* Session Notes */
+        .notes-container {
+            border: 2px solid #f39c12;
+            border-radius: 5mm;
+            padding: 4mm;
+            background: rgba(243, 156, 18, 0.02);
+            height: 40mm;
+            position: relative;
+        }
+        
+        .notes-title {
+            font-family: 'Cinzel', serif;
+            font-size: 12pt;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 3mm;
+            color: #f39c12;
+        }
+        
+        .notes-lines {
+            height: calc(100% - 8mm);
+            background-image: 
+                repeating-linear-gradient(
+                    transparent,
+                    transparent 4mm,
+                    rgba(243, 156, 18, 0.2) 4mm,
+                    rgba(243, 156, 18, 0.2) 4.1mm
+                );
+            border-radius: 2mm;
+            padding: 2mm;
+        }
+        
+        /* Equipment Section */
+        .equipment-container {
+            border: 2px solid #27ae60;
+            border-radius: 5mm;
+            padding: 4mm;
+            background: rgba(39, 174, 96, 0.02);
+        }
+        
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3mm;
+        }
+        
+        .equipment-list {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(39, 174, 96, 0.3);
+            border-radius: 3mm;
+            padding: 3mm;
+            font-size: 8pt;
+            line-height: 1.4;
+        }
+        
+        .currency-box {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(39, 174, 96, 0.3);
+            border-radius: 3mm;
+            padding: 3mm;
+            text-align: center;
+        }
+        
+        .coin-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1mm;
+        }
+        
+        .coin-item {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #d4af37;
+            border-radius: 2mm;
+            padding: 1mm;
+            font-size: 8pt;
+            font-weight: 600;
+        }
+        
+        /* Attacks Table */
+        .attacks-container {
+            border: 2px solid #e67e22;
+            border-radius: 5mm;
+            padding: 4mm;
+            background: rgba(230, 126, 34, 0.02);
+            margin-bottom: 6mm;
+        }
+        
+        .attacks-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 3mm;
+            overflow: hidden;
+        }
+        
+        .attacks-table th,
+        .attacks-table td {
+            padding: 2mm;
+            text-align: center;
+            border-bottom: 1px solid rgba(230, 126, 34, 0.2);
+            font-size: 8pt;
+        }
+        
+        .attacks-table th {
+            background: rgba(230, 126, 34, 0.1);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #e67e22;
+        }
+        
+        /* Features Section */
+        .features-container {
+            border: 2px solid #34495e;
+            border-radius: 5mm;
+            padding: 4mm;
+            background: rgba(52, 73, 94, 0.02);
+        }
+        
+        .feature-item {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(52, 73, 94, 0.2);
+            border-radius: 3mm;
+            padding: 2mm;
+            margin-bottom: 2mm;
+            font-size: 8pt;
+            line-height: 1.4;
+        }
+        
+        .feature-name {
+            font-weight: 700;
+            color: #d4af37;
+            margin-bottom: 1mm;
+        }
+        
+        /* Character Portrait Area */
+        .portrait-container {
+            width: 35mm;
+            height: 45mm;
+            border: 2px solid #d4af37;
+            border-radius: 5mm;
+            background: rgba(212, 175, 55, 0.05);
+            float: right;
+            margin: 0 0 3mm 3mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8pt;
+            color: #666;
+            text-align: center;
+        }
+        
+        /* Subtle Background Pattern */
+        .page {
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+        }
+        
+        /* Print Optimizations */
+        @media print {
+            body { 
+                background: none;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            .page { 
+                box-shadow: none;
+                background-image: none;
+            }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- PAGE 1: Character Overview & Core Stats -->
+    <div class="page">
+        <div class="ornate-border"></div>
+        <div class="content-area">
+            <div class="character-header">
+                <div class="character-name">Kazrek Spellforge</div>
+                <div class="character-title">Sorcerer • Mountain Dwarf • Hermit</div>
+                <div class="divider"></div>
+            </div>
+            
+            <div class="portrait-container">
+                <div>Character<br/>Portrait<br/><br/>📸<br/><br/><small>Paste photo or<br/>sketch here</small></div>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-box">
+                    <div class="info-label">Class & Level</div>
+                    <div class="info-value">Sorcerer 2</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Background</div>
+                    <div class="info-value">Hermit</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Race</div>
+                    <div class="info-value">Mountain Dwarf</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Alignment</div>
+                    <div class="info-value">Chaotic Good</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Experience</div>
+                    <div class="info-value">____ / 900</div>
+                </div>
+            </div>
+            
+            <div class="abilities-container">
+                
+        <div class="ability-hex">
+            <div class="ability-content">
+                <div class="ability-name">STR</div>
+                <div class="ability-score">12</div>
+                <div class="ability-modifier">+1</div>
+            </div>
+        </div>
+        
+        <div class="ability-hex">
+            <div class="ability-content">
+                <div class="ability-name">DEX</div>
+                <div class="ability-score">12</div>
+                <div class="ability-modifier">+1</div>
+            </div>
+        </div>
+        
+        <div class="ability-hex">
+            <div class="ability-content">
+                <div class="ability-name">CON</div>
+                <div class="ability-score">18</div>
+                <div class="ability-modifier">+4</div>
+            </div>
+        </div>
+        
+        <div class="ability-hex">
+            <div class="ability-content">
+                <div class="ability-name">INT</div>
+                <div class="ability-score">13</div>
+                <div class="ability-modifier">+1</div>
+            </div>
+        </div>
+        
+        <div class="ability-hex">
+            <div class="ability-content">
+                <div class="ability-name">WIS</div>
+                <div class="ability-score">10</div>
+                <div class="ability-modifier">+0</div>
+            </div>
+        </div>
+        
+        <div class="ability-hex">
+            <div class="ability-content">
+                <div class="ability-name">CHA</div>
+                <div class="ability-score">15</div>
+                <div class="ability-modifier">+2</div>
+            </div>
+        </div>
+        
+            </div>
+            
+            <div class="combat-grid">
+                <div class="combat-stat">
+                    <div class="combat-label">Armor Class</div>
+                    <div class="combat-value">11</div>
+                </div>
+                <div class="combat-stat">
+                    <div class="combat-label">Initiative</div>
+                    <div class="combat-value">+1</div>
+                </div>
+                <div class="combat-stat">
+                    <div class="combat-label">Speed</div>
+                    <div class="combat-value">25 ft</div>
+                </div>
+            </div>
+            
+            <div class="combat-grid">
+                <div class="combat-stat">
+                    <div class="combat-label">Hit Point Max</div>
+                    <div class="combat-value">20</div>
+                </div>
+                <div class="combat-stat">
+                    <div class="combat-label">Current HP</div>
+                    <div class="combat-value">____</div>
+                </div>
+                <div class="combat-stat">
+                    <div class="combat-label">Temp HP</div>
+                    <div class="combat-value">____</div>
+                </div>
+            </div>
+            
+            <div class="section-container">
+                <div class="section-title">⚔️ Skills & Proficiencies ⚔️</div>
+                <div class="skills-grid">
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+1</strong> Acrobatics
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+0</strong> Animal Handling
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle filled">●</div>
+            <strong>+3</strong> Arcana
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+1</strong> Athletics
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+2</strong> Deception
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+1</strong> History
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+0</strong> Insight
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+2</strong> Intimidation
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+1</strong> Investigation
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle filled">●</div>
+            <strong>+2</strong> Medicine
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+1</strong> Nature
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+0</strong> Perception
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+2</strong> Performance
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle filled">●</div>
+            <strong>+4</strong> Persuasion
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+1</strong> Religion
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+1</strong> Sleight of Hand
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+1</strong> Stealth
+        </div>
+        
+        <div class="skill-item">
+            <div class="prof-circle ">○</div>
+            <strong>+0</strong> Survival
+        </div>
+        </div>
+            </div>
+            
+            <div class="notes-container">
+                <div class="notes-title">📝 This Session's Notes</div>
+                <div class="notes-lines"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PAGE 2: Combat & Spells -->
+    <div class="page">
+        <div class="ornate-border"></div>
+        <div class="content-area">
+            <div class="character-header">
+                <div class="character-name" style="font-size: 20pt;">Kazrek Spellforge</div>
+                <div class="character-title">Combat & Magic Arsenal</div>
+                <div class="divider"></div>
+            </div>
+            
+            <div class="attacks-container">
+                <div class="section-title">⚔️ Attacks & Weapons ⚔️</div>
+                <table class="attacks-table">
+                    <thead>
+                        <tr>
+                            <th>Weapon</th>
+                            <th>Attack Bonus</th>
+                            <th>Damage</th>
+                            <th>Range</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+        <tr>
+            <td><strong>Dagger</strong></td>
+            <td>+3</td>
+            <td>1d4+1 piercing</td>
+            <td>Thrown 20/60</td>
+        </tr>
+        
+        <tr>
+            <td><strong>Light Crossbow</strong></td>
+            <td>+3</td>
+            <td>1d8+1 piercing</td>
+            <td>80/320</td>
+        </tr>
+        <tr><td>____________________</td><td>____</td><td>____________________</td><td>________</td></tr><tr><td>____________________</td><td>____</td><td>____________________</td><td>________</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="spells-container">
+                <div class="section-title">✨ Spellcasting Magic ✨</div>
+                
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; margin-bottom: 4mm; text-align: center; font-weight: 600;">
+        <div>Class: Sorcerer</div>
+        <div>Ability: Charisma</div>
+        <div>Save DC: 12</div>
+        <div>Attack: +4</div>
+    </div>
+    
+    <div class="spell-level-block">
+        <div class="spell-level-title">
+            <span>✨ CANTRIPS (0 Level)</span>
+        </div>
+        <div class="spell-list">
+    Light • Prestidigitation • Ray of Frost • Shocking Grasp</div></div>
+            <div class="spell-level-block">
+                <div class="spell-level-title">
+                    <span>🔥 1ST LEVEL SPELLS</span>
+                    <div class="spell-slots-track">
+            <div class="spell-slot">○</div><div class="spell-slot">○</div><div class="spell-slot">○</div></div></div><div class="spell-list">Burning Hands • Magic Missile • Shield</div></div>
+        <div class="spell-level-block">
+            <div class="spell-level-title">
+                <span>🔮 SORCERY POINTS: 2</span>
+            </div>
+        </div>
+            </div>
+            
+            <div class="equipment-container">
+                <div class="section-title">🎒 Equipment & Treasure 🎒</div>
+                <div class="equipment-grid"><div class="equipment-list"><div style="margin-bottom: 3mm;"><strong>⚔️ Weapons & Armor:</strong><br/>• 2 Daggers<br/>• Light Crossbow with 20 bolts<br/></div><div><strong>🎒 Gear & Supplies:</strong><br/>• Explorer's Pack<br/>• Arcane Focus (Crystal)<br/>• Scroll case with notes<br/>• Winter blanket<br/>• Common clothes<br/>• Herbalism Kit<br/>• 1 lb white mushrooms<br/>• ½ lb snake meat<br/></div></div><div class="currency-box"><div style="font-weight: 700; margin-bottom: 2mm; font-size: 10pt;">💰 CURRENCY</div><div class="coin-stack"><div class="coin-item">🥉 1 CP</div><div class="coin-item">🥈 1 SP</div><div class="coin-item">🥇 16 GP</div><div class="coin-item">✨ 1 commemorative platinum coin</div></div></div></div>
+            </div>
+            
+            <div class="notes-container">
+                <div class="notes-title">💰 Loot & Rewards This Session</div>
+                <div class="notes-lines"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PAGE 3: Features & Character Details -->
+    <div class="page">
+        <div class="ornate-border"></div>
+        <div class="content-area">
+            <div class="character-header">
+                <div class="character-name" style="font-size: 20pt;">Kazrek Spellforge</div>
+                <div class="character-title">Features, Traits & Background</div>
+                <div class="divider"></div>
+            </div>
+            
+            <div class="features-container">
+                <div class="section-title">🌟 Racial & Class Features 🌟</div>
+                
+            <div class="feature-item">
+                <div class="feature-name">🧬 Darkvision (Racial)</div>
+                <div>60 feet darkvision in dim light</div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-name">🧬 Dwarven Resilience (Racial)</div>
+                <div>Advantage on saves vs poison, resistance to poison damage</div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-name">🧬 Stonecunning (Racial)</div>
+                <div>Double proficiency on History checks about stonework</div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-name">⚡ Spellcasting (Class)</div>
+                <div>Charisma-based spellcasting with known spells</div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-name">⚡ Font of Magic (Class)</div>
+                <div>2 sorcery points, can convert to spell slots or use for metamagic</div>
+            </div>
+            
+    <div class="feature-item">
+        <div class="feature-name">📚 Background: Hermit</div>
+        <div><strong>Languages:</strong> Common, Dwarvish, Draconic</div>
+        <div><strong>Tool Proficiencies:</strong> Herbalism Kit, Smith's Tools</div>
+    </div>
+    
+            </div>
+            
+            <div class="notes-container" style="height: 30mm; margin-bottom: 6mm;">
+                <div class="notes-title">🎭 Roleplay Notes & Character Development</div>
+                <div class="notes-lines"></div>
+            </div>
+            
+            <div class="notes-container" style="height: 30mm; margin-bottom: 6mm;">
+                <div class="notes-title">🗺️ Campaign Notes & Plot Threads</div>
+                <div class="notes-lines"></div>
+            </div>
+            
+            <div class="notes-container" style="height: 25mm;">
+                <div class="notes-title">🎯 Goals & Objectives</div>
+                <div class="notes-lines"></div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 8mm; font-size: 8pt; color: #666;">
+                <span style="font-family: 'Cinzel', serif; font-weight: 600;">Generated on September 01, 2025</span><br/>
+                <span>v2.0 Print-Friendly • Epic Adventures Await! 🐉</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="no-print" style="position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: white; padding: 15px; border-radius: 10px; z-index: 1000;">
+        <strong>🖨️ Print Instructions v2:</strong><br/>
+        1. File → Print (Ctrl/Cmd + P)<br/>
+        2. Select "More settings"<br/>
+        3. Check "Background graphics"<br/>
+        4. Set margins to "Minimum"<br/>
+        5. Print 3 pages!<br/>
+        <br/>
+        <strong>✨ v2 Features:</strong><br/>
+        • Print-friendly (no solid colors)<br/>
+        • Subtle patterns & borders<br/>
+        • Character portrait area<br/>
+        • Ornate corner graphics<br/>
+    </div>
+</body>
+</html>
