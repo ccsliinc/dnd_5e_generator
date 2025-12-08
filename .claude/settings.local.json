@@ -18,7 +18,9 @@
       "Bash(open:*)",
       "Bash(pdftoppm:*)",
       "Bash(mv:*)",
-      "Bash(rmdir:*)"
+      "Bash(rmdir:*)",
+      "Bash(git commit:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
