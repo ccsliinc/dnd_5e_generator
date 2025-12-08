@@ -6,7 +6,19 @@
       "Bash(pip install:*)",
       "Bash(python:*)",
       "Bash(git reset:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(tree:*)",
+      "mcp__puppeteer__puppeteer_screenshot",
+      "mcp__puppeteer__puppeteer_fill",
+      "mcp__puppeteer__puppeteer_click",
+      "mcp__puppeteer__puppeteer_evaluate",
+      "Bash(open sheets/Kazrek_Expanded_Notes_v3.html)",
+      "Bash(open sheets/Kazrek_Refined_Sheet_v3.html)",
+      "Bash(mkdir:*)",
+      "Bash(open:*)",
+      "Bash(pdftoppm:*)",
+      "Bash(mv:*)",
+      "Bash(rmdir:*)"
     ],
     "deny": [],
     "ask": []
