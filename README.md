@@ -2,6 +2,15 @@
 
 Generate printable HTML character sheets from JSON data files.
 
+## Quick Start
+
+1. Unzip the package
+2. Run: `python3 generate.py thorek.json`
+3. Open the generated HTML file in your browser
+4. Print!
+
+No dependencies required - uses only Python standard library.
+
 ## Usage
 
 ```bash
