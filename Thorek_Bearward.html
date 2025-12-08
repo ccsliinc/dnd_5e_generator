@@ -4,865 +4,827 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thorek Bearward - Character Sheet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Scada:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Scada:wght@400;700&display=swap');
+/* =================================================================
+   D&D 5e Character Sheet - Stylesheet
+   =================================================================
 
-        :root {
-            --bg-page: #faf8f5;
-            --bg-box: #ffffff;
-            --bg-label: #f5f0e6;
-            --border-dark: #6b4423;
-            --border-medium: #8b6b4a;
-            --border-light: #c4a882;
-            --text-primary: #2a2a2a;
-            --text-secondary: #555555;
-            --text-label: #666666;
-            --accent-primary: #8b4513;
-            --accent-secondary: #c9a227;
-            --accent-highlight: rgba(201, 162, 39, 0.15);
-            --font-display: 'Cinzel', serif;
-            --font-body: 'Scada', sans-serif;
-            --page-width: 210mm;
-            --page-height: 297mm;
-            --page-margin: 8mm;
-            --box-radius: 2px;
-            --box-radius-lg: 6px;
-            --border-width: 1px;
-            --notch-size: 4mm;
-        }
+   STRUCTURE:
+   1. CSS Variables (edit colors, sizes here - ONE place)
+   2. Base Box Class (all boxes inherit from this)
+   3. Corner Accents (4-corner decorative accents)
+   4. Label Modifiers (top/bottom label positions)
+   5. Layout Components (page, grid, columns)
+   6. Specific Components (only unique overrides)
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        @page { size: A4; margin: 0; }
-        body {
-            font-family: var(--font-body);
-            font-size: 9pt;
-            line-height: 1.3;
-            color: var(--text-primary);
-            background: #e0e0e0;
-        }
+   ================================================================= */
 
-        .page {
-            width: var(--page-width);
-            height: var(--page-height);
-            margin: 10mm auto;
-            padding: var(--page-margin);
-            background: var(--bg-page);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            position: relative;
-            overflow: hidden;
-            page-break-after: always;
-        }
-        .page:last-child { page-break-after: avoid; }
+/* -----------------------------------------------------------------
+   1. CSS VARIABLES - Single source of truth
+   ----------------------------------------------------------------- */
+:root {
+    /* Colors - Background */
+    --bg-page: #faf8f5;
+    --bg-box: #ffffff;
+    --bg-label: #f5f0e6;
 
-        @media print {
-            body { background: none; }
-            .page { margin: 0; box-shadow: none; }
-        }
+    /* Colors - Borders (warm brown tones) */
+    --border-dark: #6b4423;
+    --border-medium: #8b6b4a;
+    --border-light: #c4a882;
 
-        /* === HEADER - Official 5e Style === */
-        .page-header {
-            display: grid;
-            grid-template-columns: 58mm 1fr;
-            gap: 3mm;
-            margin-bottom: 3mm;
-        }
-        .header-left {
-            display: flex;
-            flex-direction: column;
-        }
-        .header-brand {
-            font-family: var(--font-display);
-            font-size: 7pt;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 1mm;
-        }
-        .header-name-field {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            padding: 2mm 3mm 6mm;
-            background: var(--bg-box);
-            position: relative;
-            flex: 1;
-            display: flex;
-            align-items: center;
-        }
-        .header-name-value {
-            font-family: var(--font-display);
-            font-size: 16pt;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .header-name-label {
-            font-size: 6pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-            background: var(--bg-label);
-            border-top: var(--border-width) solid var(--border-light);
-            padding: 0.8mm 2mm;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            text-align: center;
-        }
-        .header-right {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: 1fr 1fr;
-            gap: 1.5mm;
-        }
-        .info-field {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            padding: 1mm 2mm 5mm;
-            background: var(--bg-box);
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .info-label {
-            font-size: 5.5pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            color: var(--text-secondary);
-            background: var(--bg-label);
-            border-top: var(--border-width) solid var(--border-light);
-            padding: 0.5mm 1.5mm;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            text-align: center;
-            border-radius: 0 0 var(--box-radius-lg) var(--box-radius-lg);
-        }
-        .info-value {
-            font-size: 11pt;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-align: center;
-        }
+    /* Colors - Text */
+    --text-primary: #2a2a2a;
+    --text-secondary: #555555;
+    --text-label: #666666;
 
-        .main-content {
-            display: grid;
-            grid-template-columns: 62mm 1fr 52mm;
-            gap: 2mm;
-            height: calc(100% - 32mm);
-        }
-        .column {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5mm;
-        }
-        /* Left section: abilities + saves/skills side by side */
-        .left-section {
-            display: grid;
-            grid-template-columns: 20mm 1fr;
-            gap: 1.5mm;
-        }
-        .abilities-column {
-            display: flex;
-            flex-direction: column;
-            gap: 1mm;
-        }
-        .stats-column {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5mm;
-        }
-        .proficiencies-box {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 2mm 2mm 5mm;
-            flex: 1;
-            position: relative;
-        }
-        .proficiencies-box .box-content {
-            font-size: 7pt;
-            line-height: 1.3;
-        }
-        .proficiencies-box .box-title {
-            font-size: 6pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            text-align: center;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--bg-label);
-            color: var(--text-secondary);
-            border-top: var(--border-width) solid var(--border-light);
-            padding: 0.5mm 2mm;
-            border-radius: 0 0 var(--box-radius-lg) var(--box-radius-lg);
-        }
-        .prof-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            font-size: 7pt;
-            line-height: 1.4;
-            column-count: 2;
-            column-gap: 2mm;
-        }
-        .prof-list li {
-            padding: 0.2mm 0;
-            break-inside: avoid;
-        }
-        .prof-list li::before {
-            content: '\2022';
-            color: var(--border-medium);
-            font-weight: bold;
-            display: inline-block;
-            width: 2mm;
-            margin-right: 1mm;
-        }
-        .equipment-box {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 2mm 2mm 5mm;
-            flex: 1;
-            position: relative;
-        }
-        .equipment-box .box-content {
-            font-size: 7pt;
-            line-height: 1.3;
-            margin-top: 1mm;
-        }
-        .equipment-box .box-title {
-            font-size: 6pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            text-align: center;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--bg-label);
-            color: var(--text-secondary);
-            border-top: var(--border-width) solid var(--border-light);
-            padding: 0.5mm 2mm;
-            border-radius: 0 0 var(--box-radius-lg) var(--box-radius-lg);
-        }
-        .trait-box {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 2mm 2mm 5mm;
-            position: relative;
-        }
-        .trait-content {
-            font-size: 7pt;
-            line-height: 1.3;
-        }
-        .trait-label {
-            font-size: 6pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            text-align: center;
-            color: var(--text-secondary);
-            background: var(--bg-label);
-            border-top: var(--border-width) solid var(--border-light);
-            padding: 0.5mm 2mm;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-        }
+    /* Colors - Accents */
+    --accent-primary: #8b4513;
+    --accent-secondary: #c9a227;
+    --accent-highlight: rgba(201, 162, 39, 0.15);
 
-        .ability-block {
-            display: flex;
-            flex-direction: column;
-            gap: 1mm;
-        }
-        .ability-score {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 1mm 1.5mm 1.5mm;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .ability-name {
-            font-size: 5pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            background: var(--bg-label);
-            border-bottom: var(--border-width) solid var(--border-light);
-            padding: 0.5mm 1.5mm;
-            margin: -1mm -1.5mm 0.5mm;
-            width: calc(100% + 3mm);
-            text-align: center;
-        }
-        .ability-value {
-            font-family: var(--font-display);
-            font-size: 16pt;
-            font-weight: 700;
-            line-height: 1;
-        }
-        .ability-modifier {
-            width: 10mm;
-            height: 6mm;
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: 0 0 5mm 5mm;
-            background: var(--bg-box);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9pt;
-            font-weight: 700;
-            margin-top: 0.5mm;
-        }
+    /* Typography */
+    --font-display: 'Cinzel', serif;
+    --font-body: 'Scada', sans-serif;
 
-        .stat-row {
-            display: flex;
-            align-items: center;
-            gap: 2mm;
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 1.5mm 2mm;
-        }
-        .stat-circle {
-            width: 7mm;
-            height: 7mm;
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9pt;
-            font-weight: 700;
-            background: var(--bg-box);
-        }
-        .stat-label {
-            font-size: 6.5pt;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
+    /* Page Dimensions */
+    --page-width: 210mm;
+    --page-height: 297mm;
+    --page-margin: 8mm;
 
-        .saves-skills-box {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 1.5mm;
-        }
-        .saves-skills-box .box-title,
-        .attacks-box .box-title {
-            font-size: 6pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            text-align: center;
-            color: var(--text-secondary);
-            background: var(--bg-label);
-            border-bottom: var(--border-width) solid var(--border-light);
-            padding: 0.5mm 2mm;
-            margin: -1.5mm -1.5mm 1mm;
-            border-radius: var(--box-radius-lg) var(--box-radius-lg) 0 0;
-        }
-        .hitdice-box .box-title,
-        .death-box .box-title {
-            font-size: 6pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            text-align: center;
-            color: var(--text-secondary);
-            background: var(--bg-label);
-            border-top: var(--border-width) solid var(--border-light);
-            padding: 0.5mm 2mm;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            margin: 0;
-            border-radius: 0 0 var(--box-radius-lg) var(--box-radius-lg);
-        }
-        .save-row, .skill-row {
-            display: flex;
-            align-items: center;
-            gap: 1mm;
-            padding: 0.3mm 0;
-            font-size: 7pt;
-        }
-        .prof-circle {
-            width: 3mm;
-            height: 3mm;
-            border: 1px solid var(--border-dark);
-            border-radius: 50%;
-        }
-        .prof-circle.filled { background: var(--border-dark); }
-        .save-mod, .skill-mod {
-            width: 5mm;
-            font-weight: 700;
-            text-align: right;
-            font-size: 7pt;
-        }
-        .skill-ability { font-size: 5.5pt; color: var(--text-label); }
+    /* Box Styling */
+    --box-radius: 6px;
+    --box-border-width: 1px;
+    --box-padding: 2mm;
 
-        .passive-box {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 1.5mm;
-            display: flex;
-            align-items: center;
-            gap: 2mm;
-        }
-        .passive-value {
-            width: 8mm;
-            height: 8mm;
-            border: var(--border-width) solid var(--border-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10pt;
-            font-weight: 700;
-            background: var(--bg-box);
-        }
-        .passive-label {
-            font-size: 6pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            line-height: 1.2;
-        }
+    /* Corner Accents */
+    --corner-size: 4mm;
+    --corner-color: var(--accent-secondary);
+    --corner-width: 1px;
+    --corner-offset: 2px;
+}
 
-        .combat-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 2mm;
-        }
-        .combat-stat {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 1mm 2mm 4mm;
-            text-align: center;
-            position: relative;
-        }
-        .combat-value {
-            font-family: var(--font-display);
-            font-size: 18pt;
-            font-weight: 700;
-            min-height: 10mm;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .combat-label {
-            font-size: 5.5pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            background: var(--bg-label);
-            border-top: var(--border-width) solid var(--border-light);
-            padding: 0.5mm 1.5mm;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-        }
+/* -----------------------------------------------------------------
+   2. BASE RESET & PAGE
+   ----------------------------------------------------------------- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+@page { size: A4; margin: 0; }
 
-        .hp-section {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 2mm 2mm 4mm;
-            position: relative;
-        }
-        .hp-max-row {
-            display: flex;
-            align-items: center;
-            gap: 2mm;
-            margin-bottom: 1mm;
-            padding-bottom: 1mm;
-            border-bottom: 1px solid var(--border-light);
-        }
-        .hp-max-label { font-size: 5.5pt; font-weight: 700; text-transform: uppercase; }
-        .hp-max-value { flex: 1; font-size: 11pt; font-weight: 700; text-align: center; }
-        .hp-current {
-            min-height: 12mm;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-display);
-            font-size: 20pt;
-            font-weight: 700;
-        }
-        .hp-label {
-            font-size: 6pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            text-align: center;
-            color: var(--text-secondary);
-            background: var(--bg-label);
-            border-top: var(--border-width) solid var(--border-light);
-            padding: 0.5mm 1.5mm;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-        }
-        .hp-temp {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 2mm 2mm 4mm;
-            position: relative;
-        }
-        .hp-temp-value {
-            min-height: 6mm;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12pt;
-            font-weight: 700;
-        }
+body {
+    font-family: var(--font-body);
+    font-size: 9pt;
+    line-height: 1.3;
+    color: var(--text-primary);
+    background: #e0e0e0;
+}
 
-        .hitdice-death-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2mm;
-        }
-        .hitdice-box, .death-box {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 1.5mm 1.5mm 4mm;
-            position: relative;
-        }
-        .hitdice-total { font-size: 5.5pt; color: var(--text-label); }
-        .hitdice-value {
-            font-size: 10pt;
-            font-weight: 700;
-            text-align: center;
-            min-height: 6mm;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .death-row {
-            display: flex;
-            align-items: center;
-            gap: 1mm;
-            font-size: 6pt;
-            margin-bottom: 1mm;
-        }
-        .death-label { width: 12mm; }
-        .death-circles { display: flex; gap: 1mm; }
-        .death-circle {
-            width: 3.5mm;
-            height: 3.5mm;
-            border: 1.5px solid var(--border-dark);
-            border-radius: 50%;
-        }
+@media print {
+    body { background: none; }
+    .page { margin: 0; box-shadow: none; }
+}
 
-        .attacks-box {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 1.5mm;
-            position: relative;
-        }
-        .attack-header {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1.5fr;
-            gap: 1mm;
-            font-size: 5.5pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-label);
-            padding-bottom: 1mm;
-            border-bottom: 1px solid var(--border-light);
-            margin-bottom: 1mm;
-        }
-        .attack-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1.5fr;
-            gap: 1mm;
-            padding: 0.5mm 0;
-            font-size: 7pt;
-            border-bottom: 1px solid #eee;
-            min-height: 5mm;
-        }
-        .attack-name { font-weight: 600; }
-        .attack-bonus { text-align: center; }
+.page {
+    width: var(--page-width);
+    height: var(--page-height);
+    margin: 10mm auto;
+    padding: var(--page-margin);
+    background: var(--bg-page);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+}
+.page:last-child { page-break-after: avoid; }
 
-        .coin-row {
-            display: flex;
-            justify-content: space-around;
-            padding: 1mm 0;
-            border-bottom: 1px solid var(--border-light);
-            margin-bottom: 1mm;
-        }
-        .coin { text-align: center; }
-        .coin-value {
-            width: 7mm;
-            height: 5mm;
-            border: 1px solid var(--border-dark);
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 7pt;
-            font-weight: 700;
-            margin-bottom: 0.5mm;
-        }
-        .coin-label {
-            font-size: 5pt;
-            font-weight: 700;
-            color: var(--text-label);
-        }
+/* -----------------------------------------------------------------
+   3. BASE BOX CLASS - All boxes inherit from this
+   ----------------------------------------------------------------- */
+.box {
+    border: var(--box-border-width) solid var(--border-dark);
+    border-radius: var(--box-radius);
+    background: var(--bg-box);
+    position: relative;
+}
 
-        /* Page 2 styles */
-        .page2-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3mm;
-            height: calc(100% - 32mm);
-        }
-        .page2-grid .column {
-            display: flex;
-            flex-direction: column;
-            gap: 2mm;
-        }
-        .large-box {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 2mm 2mm 2mm;
-            position: relative;
-        }
-        .large-box.flex-1 { flex: 1; }
-        .large-box-title {
-            font-size: 6pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            text-align: center;
-            color: var(--text-secondary);
-            background: var(--bg-label);
-            border-bottom: var(--border-width) solid var(--border-light);
-            padding: 1mm 2mm;
-            margin: -2mm -2mm 1.5mm;
-            border-radius: var(--box-radius-lg) var(--box-radius-lg) 0 0;
-        }
-        .large-box-content {
-            font-size: 7.5pt;
-            line-height: 1.4;
-        }
+/* -----------------------------------------------------------------
+   4. CORNER ACCENTS - 4 corners via single pseudo-element
+   Uses CSS gradients to draw all 4 corner L-shapes
+   ----------------------------------------------------------------- */
+.box::before {
+    content: '';
+    position: absolute;
+    inset: var(--corner-offset);
+    pointer-events: none;
+    z-index: 1;
+    background:
+        /* Top-left horizontal */
+        linear-gradient(var(--corner-color), var(--corner-color))
+            0 0 / var(--corner-size) var(--corner-width) no-repeat,
+        /* Top-left vertical */
+        linear-gradient(var(--corner-color), var(--corner-color))
+            0 0 / var(--corner-width) var(--corner-size) no-repeat,
+        /* Top-right horizontal */
+        linear-gradient(var(--corner-color), var(--corner-color))
+            100% 0 / var(--corner-size) var(--corner-width) no-repeat,
+        /* Top-right vertical */
+        linear-gradient(var(--corner-color), var(--corner-color))
+            100% 0 / var(--corner-width) var(--corner-size) no-repeat,
+        /* Bottom-left horizontal */
+        linear-gradient(var(--corner-color), var(--corner-color))
+            0 100% / var(--corner-size) var(--corner-width) no-repeat,
+        /* Bottom-left vertical */
+        linear-gradient(var(--corner-color), var(--corner-color))
+            0 100% / var(--corner-width) var(--corner-size) no-repeat,
+        /* Bottom-right horizontal */
+        linear-gradient(var(--corner-color), var(--corner-color))
+            100% 100% / var(--corner-size) var(--corner-width) no-repeat,
+        /* Bottom-right vertical */
+        linear-gradient(var(--corner-color), var(--corner-color))
+            100% 100% / var(--corner-width) var(--corner-size) no-repeat;
+}
 
-        /* Page 3 styles */
-        .spell-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-auto-rows: 1fr;
-            gap: 2mm;
-            height: calc(100% - 38mm);
-        }
-        .spell-level-box {
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius-lg);
-            background: var(--bg-box);
-            padding: 2mm;
-            display: flex;
-            flex-direction: column;
-        }
-        .spell-level-header {
-            display: flex;
-            align-items: center;
-            gap: 2mm;
-            margin-bottom: 1.5mm;
-            padding-bottom: 1mm;
-            border-bottom: 1px solid var(--border-light);
-        }
-        .spell-level-num {
-            width: 7mm;
-            height: 7mm;
-            background: var(--bg-label);
-            color: var(--text-primary);
-            border: var(--border-width) solid var(--border-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-display);
-            font-size: 10pt;
-            font-weight: 700;
-            border-radius: var(--box-radius-lg);
-        }
-        .spell-slots {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5mm;
-            font-size: 5.5pt;
-        }
-        .spell-slots-row {
-            display: flex;
-            align-items: center;
-            gap: 1mm;
-        }
-        .spell-slot-box {
-            width: 5mm;
-            height: 4mm;
-            border: 1px solid var(--border-dark);
-            border-radius: 2px;
-            font-size: 6pt;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .spell-list {
-            font-size: 7pt;
-            line-height: 1.4;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .spell-item {
-            display: flex;
-            align-items: center;
-            gap: 1.5mm;
-            padding: 0.8mm 0;
-            min-height: 4mm;
-            border-bottom: 1px solid #ddd;
-        }
-        .spell-prepared {
-            width: 3mm;
-            height: 3mm;
-            border: 1px solid var(--border-dark);
-            border-radius: 50%;
-        }
-        .spell-prepared.filled { background: var(--border-dark); }
-        .cantrip-box .spell-level-num {
-            background: var(--accent-highlight);
-            border-color: var(--accent-primary);
-            color: var(--accent-primary);
-        }
+/* -----------------------------------------------------------------
+   5. LABEL MODIFIERS - Position labels top or bottom
+   ----------------------------------------------------------------- */
 
-        /* Decorative corner accents - applied to all boxes */
-        .header-name-field,
-        .info-field,
-        .ability-score,
-        .stat-row,
-        .saves-skills-box,
-        .passive-box,
-        .proficiencies-box,
-        .combat-stat,
-        .hp-section,
-        .hp-temp,
-        .hitdice-box,
-        .death-box,
-        .attacks-box,
-        .equipment-box,
-        .trait-box,
-        .large-box,
-        .spell-level-box {
-            position: relative;
-        }
-        .header-name-field::before,
-        .info-field::before,
-        .ability-score::before,
-        .stat-row::before,
-        .saves-skills-box::before,
-        .passive-box::before,
-        .proficiencies-box::before,
-        .combat-stat::before,
-        .hp-section::before,
-        .hp-temp::before,
-        .hitdice-box::before,
-        .death-box::before,
-        .attacks-box::before,
-        .equipment-box::before,
-        .trait-box::before,
-        .large-box::before,
-        .spell-level-box::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: var(--notch-size);
-            height: var(--notch-size);
-            border-top: 1px solid var(--accent-secondary);
-            border-left: 1px solid var(--accent-secondary);
-            border-radius: 2px 0 0 0;
-            pointer-events: none;
-            z-index: 1;
-        }
-        .header-name-field::after,
-        .info-field::after,
-        .ability-score::after,
-        .stat-row::after,
-        .saves-skills-box::after,
-        .passive-box::after,
-        .proficiencies-box::after,
-        .combat-stat::after,
-        .hp-section::after,
-        .hp-temp::after,
-        .hitdice-box::after,
-        .death-box::after,
-        .attacks-box::after,
-        .equipment-box::after,
-        .trait-box::after,
-        .large-box::after,
-        .spell-level-box::after {
-            content: '';
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: var(--notch-size);
-            height: var(--notch-size);
-            border-bottom: 1px solid var(--accent-secondary);
-            border-right: 1px solid var(--accent-secondary);
-            border-radius: 0 0 2px 0;
-            pointer-events: none;
-            z-index: 1;
-        }
+/* Label at bottom of box */
+.box__label {
+    font-size: 6pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 0.3px;
+    color: var(--text-secondary);
+    background: var(--bg-label);
+    padding: 0.5mm 2mm;
+}
+
+.box--label-bottom {
+    padding-bottom: 5mm;
+}
+.box--label-bottom > .box__label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: var(--box-border-width) solid var(--border-light);
+    border-radius: 0 0 var(--box-radius) var(--box-radius);
+}
+
+/* Label at top of box */
+.box--label-top > .box__label {
+    border-bottom: var(--box-border-width) solid var(--border-light);
+    border-radius: var(--box-radius) var(--box-radius) 0 0;
+    margin: calc(var(--box-padding) * -1);
+    margin-bottom: 1mm;
+}
+
+/* Centered content */
+.box--centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* -----------------------------------------------------------------
+   6. COMMON VALUE STYLES
+   ----------------------------------------------------------------- */
+.value--large {
+    font-family: var(--font-display);
+    font-size: 16pt;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.value--xlarge {
+    font-family: var(--font-display);
+    font-size: 18pt;
+    font-weight: 700;
+}
+
+.value--medium {
+    font-size: 11pt;
+    font-weight: 600;
+}
+
+/* -----------------------------------------------------------------
+   7. PAGE HEADER
+   ----------------------------------------------------------------- */
+.page-header {
+    display: grid;
+    grid-template-columns: 58mm 1fr;
+    gap: 3mm;
+    margin-bottom: 3mm;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-brand {
+    font-family: var(--font-display);
+    font-size: 7pt;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 1mm;
+}
+
+.header-name {
+    padding: 2mm 3mm 6mm;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.header-name .value--large {
+    text-align: center;
+}
+
+.header-right {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr 1fr;
+    gap: 1.5mm;
+}
+
+.info-field {
+    padding: 1mm 2mm 5mm;
+}
+
+/* -----------------------------------------------------------------
+   8. MAIN CONTENT LAYOUT
+   ----------------------------------------------------------------- */
+.main-content {
+    display: grid;
+    grid-template-columns: 62mm 1fr 52mm;
+    gap: 2mm;
+    height: calc(100% - 32mm);
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5mm;
+}
+
+.left-section {
+    display: grid;
+    grid-template-columns: 20mm 1fr;
+    gap: 1.5mm;
+}
+
+.abilities-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1mm;
+}
+
+.stats-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5mm;
+}
+
+/* -----------------------------------------------------------------
+   9. ABILITY SCORES
+   ----------------------------------------------------------------- */
+.ability-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1mm;
+}
+
+.ability-score {
+    padding: 1mm 1.5mm 1.5mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ability-score .box__label {
+    font-size: 5pt;
+    margin: -1mm -1.5mm 0.5mm;
+    width: calc(100% + 3mm);
+    border-bottom: var(--box-border-width) solid var(--border-light);
+    border-radius: var(--box-radius) var(--box-radius) 0 0;
+}
+
+.ability-modifier {
+    width: 10mm;
+    height: 6mm;
+    border: var(--box-border-width) solid var(--border-dark);
+    border-radius: 0 0 5mm 5mm;
+    background: var(--bg-box);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9pt;
+    font-weight: 700;
+    margin-top: 0.5mm;
+}
+
+/* -----------------------------------------------------------------
+   10. STAT ROWS (Inspiration, Proficiency Bonus)
+   ----------------------------------------------------------------- */
+.stat-row {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    padding: 1.5mm 2mm;
+}
+
+.stat-circle {
+    width: 7mm;
+    height: 7mm;
+    border: var(--box-border-width) solid var(--border-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9pt;
+    font-weight: 700;
+    background: var(--bg-box);
+}
+
+.stat-label {
+    font-size: 6.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* -----------------------------------------------------------------
+   11. SAVES & SKILLS
+   ----------------------------------------------------------------- */
+.saves-skills-box {
+    padding: 1.5mm;
+}
+.saves-skills-box.box--flex { flex: 1; }
+
+.save-row, .skill-row {
+    display: flex;
+    align-items: center;
+    gap: 1mm;
+    padding: 0.3mm 0;
+    font-size: 7pt;
+}
+
+.prof-circle {
+    width: 3mm;
+    height: 3mm;
+    border: 1px solid var(--border-dark);
+    border-radius: 50%;
+}
+.prof-circle.filled { background: var(--border-dark); }
+
+.save-mod, .skill-mod {
+    width: 5mm;
+    font-weight: 700;
+    text-align: right;
+    font-size: 7pt;
+}
+
+.skill-ability {
+    font-size: 5.5pt;
+    color: var(--text-label);
+}
+
+/* -----------------------------------------------------------------
+   12. PASSIVE PERCEPTION
+   ----------------------------------------------------------------- */
+.passive-box {
+    padding: 1.5mm;
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+}
+
+.passive-value {
+    width: 8mm;
+    height: 8mm;
+    border: var(--box-border-width) solid var(--border-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10pt;
+    font-weight: 700;
+    background: var(--bg-box);
+}
+
+.passive-label {
+    font-size: 6pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+/* -----------------------------------------------------------------
+   13. PROFICIENCIES LIST
+   ----------------------------------------------------------------- */
+.proficiencies-box {
+    padding: var(--box-padding) var(--box-padding) 5mm;
+    flex: 1;
+}
+
+.prof-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 7pt;
+    line-height: 1.4;
+    column-count: 2;
+    column-gap: 2mm;
+}
+
+.prof-list li {
+    padding: 0.2mm 0;
+    break-inside: avoid;
+}
+
+.prof-list li::before {
+    content: '\2022';
+    color: var(--border-medium);
+    font-weight: bold;
+    display: inline-block;
+    width: 2mm;
+    margin-right: 1mm;
+}
+
+/* -----------------------------------------------------------------
+   14. COMBAT STATS
+   ----------------------------------------------------------------- */
+.combat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2mm;
+}
+
+.combat-stat {
+    padding: 1mm 2mm 4mm;
+    text-align: center;
+}
+
+.combat-value {
+    min-height: 10mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* -----------------------------------------------------------------
+   15. HP SECTIONS
+   ----------------------------------------------------------------- */
+.hp-section {
+    padding: 2mm 2mm 4mm;
+}
+
+.hp-max-row {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    margin-bottom: 1mm;
+    padding-bottom: 1mm;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.hp-max-label {
+    font-size: 5.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.hp-max-value {
+    flex: 1;
+    font-size: 11pt;
+    font-weight: 700;
+    text-align: center;
+}
+
+.hp-current {
+    min-height: 12mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 20pt;
+    font-weight: 700;
+}
+
+.hp-temp {
+    padding: 2mm 2mm 4mm;
+}
+
+.hp-temp-value {
+    min-height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12pt;
+    font-weight: 700;
+}
+
+/* -----------------------------------------------------------------
+   16. HIT DICE & DEATH SAVES
+   ----------------------------------------------------------------- */
+.hitdice-death-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2mm;
+}
+
+.hitdice-box, .death-box {
+    padding: 1.5mm 1.5mm 4mm;
+}
+
+.hitdice-total {
+    font-size: 5.5pt;
+    color: var(--text-label);
+}
+
+.hitdice-value {
+    font-size: 10pt;
+    font-weight: 700;
+    text-align: center;
+    min-height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.death-row {
+    display: flex;
+    align-items: center;
+    gap: 1mm;
+    font-size: 6pt;
+    margin-bottom: 1mm;
+}
+
+.death-label { width: 12mm; }
+
+.death-circles { display: flex; gap: 1mm; }
+
+.death-circle {
+    width: 3.5mm;
+    height: 3.5mm;
+    border: 1.5px solid var(--border-dark);
+    border-radius: 50%;
+}
+
+/* -----------------------------------------------------------------
+   17. ATTACKS BOX
+   ----------------------------------------------------------------- */
+.attacks-box {
+    padding: 1.5mm;
+}
+
+.attack-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr;
+    gap: 1mm;
+    font-size: 5.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-label);
+    padding-bottom: 1mm;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 1mm;
+}
+
+.attack-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr;
+    gap: 1mm;
+    padding: 0.5mm 0;
+    font-size: 7pt;
+    border-bottom: 1px solid #eee;
+    min-height: 5mm;
+}
+
+.attack-name { font-weight: 600; }
+.attack-bonus { text-align: center; }
+
+/* -----------------------------------------------------------------
+   18. EQUIPMENT BOX
+   ----------------------------------------------------------------- */
+.equipment-box {
+    padding: var(--box-padding) var(--box-padding) 5mm;
+    flex: 1;
+}
+
+.equipment-box .box-content {
+    font-size: 7pt;
+    line-height: 1.3;
+    margin-top: 1mm;
+}
+
+.coin-row {
+    display: flex;
+    justify-content: space-around;
+    padding: 1mm 0;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 1mm;
+}
+
+.coin { text-align: center; }
+
+.coin-value {
+    width: 7mm;
+    height: 5mm;
+    border: 1px solid var(--border-dark);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7pt;
+    font-weight: 700;
+    margin-bottom: 0.5mm;
+}
+
+.coin-label {
+    font-size: 5pt;
+    font-weight: 700;
+    color: var(--text-label);
+}
+
+/* -----------------------------------------------------------------
+   19. TRAIT BOXES (Right Column)
+   ----------------------------------------------------------------- */
+.trait-box {
+    padding: var(--box-padding) var(--box-padding) 5mm;
+}
+.trait-box.box--flex { flex: 1; }
+
+.trait-content {
+    font-size: 7pt;
+    line-height: 1.3;
+}
+
+/* -----------------------------------------------------------------
+   20. PAGE 2 - BACKGROUND
+   ----------------------------------------------------------------- */
+.page2-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm;
+    height: calc(100% - 32mm);
+}
+
+.page2-grid .column {
+    display: flex;
+    flex-direction: column;
+    gap: 2mm;
+}
+
+.large-box {
+    padding: var(--box-padding);
+}
+.large-box.box--flex { flex: 1; }
+
+.large-box-content {
+    font-size: 7.5pt;
+    line-height: 1.4;
+}
+
+/* -----------------------------------------------------------------
+   21. PAGE 3 - SPELLCASTING
+   ----------------------------------------------------------------- */
+.spell-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 2mm;
+    height: calc(100% - 38mm);
+}
+
+.spell-level-box {
+    padding: var(--box-padding);
+    display: flex;
+    flex-direction: column;
+}
+
+.spell-level-header {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    margin-bottom: 1.5mm;
+    padding-bottom: 1mm;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.spell-level-num {
+    width: 7mm;
+    height: 7mm;
+    background: var(--bg-label);
+    color: var(--text-primary);
+    border: var(--box-border-width) solid var(--border-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 10pt;
+    font-weight: 700;
+    border-radius: var(--box-radius);
+}
+
+.spell-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5mm;
+    font-size: 5.5pt;
+}
+
+.spell-slots-row {
+    display: flex;
+    align-items: center;
+    gap: 1mm;
+}
+
+.spell-slot-box {
+    width: 5mm;
+    height: 4mm;
+    border: 1px solid var(--border-dark);
+    border-radius: 2px;
+    font-size: 6pt;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spell-list {
+    font-size: 7pt;
+    line-height: 1.4;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.spell-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5mm;
+    padding: 0.8mm 0;
+    min-height: 4mm;
+    border-bottom: 1px solid #ddd;
+}
+
+.spell-prepared {
+    width: 3mm;
+    height: 3mm;
+    border: 1px solid var(--border-dark);
+    border-radius: 50%;
+}
+.spell-prepared.filled { background: var(--border-dark); }
+
+/* Cantrip special styling */
+.cantrip-box .spell-level-num {
+    background: var(--accent-highlight);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
     </style>
 </head>
 <body>
-    <!-- PAGE 1: Main Stats -->
+    <!-- ================================================================
+         PAGE 1: Main Stats
+         ================================================================ -->
     <div class="page">
         <div class="page-header">
             <div class="header-left">
                 <div class="header-brand">Dungeons & Dragons</div>
-                <div class="header-name-field">
-                    <div class="header-name-value">Thorek Bearward</div>
-                    <div class="header-name-label">Character Name</div>
+                <div class="box box--label-bottom header-name">
+                    <div class="value--large">Thorek Bearward</div>
+                    <div class="box__label">Character Name</div>
                 </div>
             </div>
             <div class="header-right">
-                <div class="info-field">
-                    <div class="info-value">Ranger 3</div>
-                    <div class="info-label">Class & Level</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Ranger 3</div>
+                    <div class="box__label">Class & Level</div>
                 </div>
-                <div class="info-field">
-                    <div class="info-value">Folk Hero</div>
-                    <div class="info-label">Background</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Folk Hero</div>
+                    <div class="box__label">Background</div>
                 </div>
-                <div class="info-field">
-                    <div class="info-value"></div>
-                    <div class="info-label">Player Name</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium"></div>
+                    <div class="box__label">Player Name</div>
                 </div>
-                <div class="info-field">
-                    <div class="info-value">Hill Dwarf</div>
-                    <div class="info-label">Race</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Hill Dwarf</div>
+                    <div class="box__label">Race</div>
                 </div>
-                <div class="info-field">
-                    <div class="info-value">Neutral Good</div>
-                    <div class="info-label">Alignment</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Neutral Good</div>
+                    <div class="box__label">Alignment</div>
                 </div>
-                <div class="info-field">
-                    <div class="info-value">900</div>
-                    <div class="info-label">Experience Points</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">900</div>
+                    <div class="box__label">Experience Points</div>
                 </div>
             </div>
         </div>
@@ -873,49 +835,49 @@
                 <div class="left-section">
                     <div class="abilities-column">
                         <div class="ability-block">
-                    <div class="ability-score">
-                        <div class="ability-name">STR</div>
-                        <div class="ability-value">15</div>
+                    <div class="box ability-score">
+                        <div class="box__label">STR</div>
+                        <div class="value--large">15</div>
                         <div class="ability-modifier">+2</div>
                     </div>
-                    <div class="ability-score">
-                        <div class="ability-name">DEX</div>
-                        <div class="ability-value">13</div>
+                    <div class="box ability-score">
+                        <div class="box__label">DEX</div>
+                        <div class="value--large">13</div>
                         <div class="ability-modifier">+1</div>
                     </div>
-                    <div class="ability-score">
-                        <div class="ability-name">CON</div>
-                        <div class="ability-value">16</div>
+                    <div class="box ability-score">
+                        <div class="box__label">CON</div>
+                        <div class="value--large">16</div>
                         <div class="ability-modifier">+3</div>
                     </div>
-                    <div class="ability-score">
-                        <div class="ability-name">INT</div>
-                        <div class="ability-value">8</div>
+                    <div class="box ability-score">
+                        <div class="box__label">INT</div>
+                        <div class="value--large">8</div>
                         <div class="ability-modifier">-1</div>
                     </div>
-                    <div class="ability-score">
-                        <div class="ability-name">WIS</div>
-                        <div class="ability-value">15</div>
+                    <div class="box ability-score">
+                        <div class="box__label">WIS</div>
+                        <div class="value--large">15</div>
                         <div class="ability-modifier">+2</div>
                     </div>
-                    <div class="ability-score">
-                        <div class="ability-name">CHA</div>
-                        <div class="ability-value">9</div>
+                    <div class="box ability-score">
+                        <div class="box__label">CHA</div>
+                        <div class="value--large">9</div>
                         <div class="ability-modifier">-1</div>
                     </div>
                         </div>
                     </div>
                     <div class="stats-column">
-                        <div class="stat-row">
+                        <div class="box stat-row">
                             <div class="stat-circle"></div>
                             <div class="stat-label">Inspiration</div>
                         </div>
-                        <div class="stat-row">
+                        <div class="box stat-row">
                             <div class="stat-circle">+2</div>
                             <div class="stat-label">Proficiency Bonus</div>
                         </div>
-                        <div class="saves-skills-box">
-                            <div class="box-title">Saving Throws</div>
+                        <div class="box box--label-top saves-skills-box">
+                            <div class="box__label">Saving Throws</div>
                     <div class="save-row">
                         <div class="prof-circle filled"></div>
                         <div class="save-mod">+4</div>
@@ -947,8 +909,8 @@
                         <div class="save-name">Charisma</div>
                     </div>
                         </div>
-                        <div class="saves-skills-box" style="flex: 1;">
-                            <div class="box-title">Skills</div>
+                        <div class="box box--label-top saves-skills-box box--flex">
+                            <div class="box__label">Skills</div>
                     <div class="skill-row">
                         <div class="prof-circle "></div>
                         <div class="skill-mod">+1</div>
@@ -1042,51 +1004,51 @@
                         </div>
                     </div>
                 </div>
-                <div class="passive-box">
+                <div class="box passive-box">
                     <div class="passive-value">14</div>
                     <div class="passive-label">Passive Wisdom<br>(Perception)</div>
                 </div>
-                <div class="proficiencies-box">
-                    <div class="box-title">Other Proficiencies & Languages</div>
-                    <div class="box-content"><ul class="prof-list"><li>Light armor</li><li>Medium armor</li><li>Shields</li><li>Simple weapons</li><li>Martial weapons</li><li>Battleaxe</li><li>Handaxe</li><li>Light hammer</li><li>Warhammer</li><li>Carpenter's tools</li><li>Herbalism kit</li><li>Common</li><li>Dwarvish</li><li>Orc</li></ul></div>
+                <div class="box box--label-bottom proficiencies-box">
+                    <ul class="prof-list"><li>Light armor</li><li>Medium armor</li><li>Shields</li><li>Simple weapons</li><li>Martial weapons</li><li>Battleaxe</li><li>Handaxe</li><li>Light hammer</li><li>Warhammer</li><li>Carpenter's tools</li><li>Herbalism kit</li><li>Common</li><li>Dwarvish</li><li>Orc</li></ul>
+                    <div class="box__label">Other Proficiencies & Languages</div>
                 </div>
             </div>
 
             <!-- MIDDLE COLUMN -->
             <div class="column">
                 <div class="combat-row">
-                    <div class="combat-stat">
-                        <div class="combat-value">15</div>
-                        <div class="combat-label">Armor Class</div>
+                    <div class="box box--label-bottom combat-stat">
+                        <div class="combat-value value--xlarge">15</div>
+                        <div class="box__label">Armor Class</div>
                     </div>
-                    <div class="combat-stat">
-                        <div class="combat-value">+1</div>
-                        <div class="combat-label">Initiative</div>
+                    <div class="box box--label-bottom combat-stat">
+                        <div class="combat-value value--xlarge">+1</div>
+                        <div class="box__label">Initiative</div>
                     </div>
-                    <div class="combat-stat">
-                        <div class="combat-value">25</div>
-                        <div class="combat-label">Speed</div>
+                    <div class="box box--label-bottom combat-stat">
+                        <div class="combat-value value--xlarge">25</div>
+                        <div class="box__label">Speed</div>
                     </div>
                 </div>
-                <div class="hp-section">
+                <div class="box box--label-bottom hp-section">
                     <div class="hp-max-row">
                         <div class="hp-max-label">Hit Point Maximum</div>
                         <div class="hp-max-value">34</div>
                     </div>
                     <div class="hp-current"></div>
-                    <div class="hp-label">Current Hit Points</div>
+                    <div class="box__label">Current Hit Points</div>
                 </div>
-                <div class="hp-temp">
+                <div class="box box--label-bottom hp-temp">
                     <div class="hp-temp-value"></div>
-                    <div class="hp-label">Temporary Hit Points</div>
+                    <div class="box__label">Temporary Hit Points</div>
                 </div>
                 <div class="hitdice-death-row">
-                    <div class="hitdice-box">
+                    <div class="box box--label-bottom hitdice-box">
                         <div class="hitdice-total">Total: 3d10</div>
                         <div class="hitdice-value"></div>
-                        <div class="box-title">Hit Dice</div>
+                        <div class="box__label">Hit Dice</div>
                     </div>
-                    <div class="death-box">
+                    <div class="box box--label-bottom death-box">
                         <div class="death-row">
                             <div class="death-label">Successes</div>
                             <div class="death-circles">
@@ -1103,11 +1065,11 @@
                                 <div class="death-circle"></div>
                             </div>
                         </div>
-                        <div class="box-title">Death Saves</div>
+                        <div class="box__label">Death Saves</div>
                     </div>
                 </div>
-                <div class="attacks-box">
-                    <div class="box-title">Attacks & Spellcasting</div>
+                <div class="box box--label-top attacks-box">
+                    <div class="box__label">Attacks & Spellcasting</div>
                     <div class="attack-header">
                         <div>Name</div>
                         <div>Atk Bonus</div>
@@ -1139,7 +1101,7 @@
                         <div class="attack-damage">1d6+4 piercing</div>
                     </div>
                 </div>
-                <div class="equipment-box">
+                <div class="box box--label-bottom equipment-box">
                     <div class="coin-row">
                         <div class="coin"><div class="coin-value">0</div><div class="coin-label">CP</div></div>
                         <div class="coin"><div class="coin-value">0</div><div class="coin-label">SP</div></div>
@@ -1148,133 +1110,137 @@
                         <div class="coin"><div class="coin-value">0</div><div class="coin-label">PP</div></div>
                     </div>
                     <div class="box-content">Scale Mail (AC 14 + Dex)<br>Shield (+2 AC)<br>Longbow<br>Warhammer<br>Handaxe (2)<br>20 Arrows<br>Explorer's Pack<br>Carpenter's tools<br>Herbalism kit<br>Shovel<br>Iron pot<br>Common clothes<br>Belt pouch</div>
-                    <div class="box-title">Equipment</div>
+                    <div class="box__label">Equipment</div>
                 </div>
             </div>
 
             <!-- RIGHT COLUMN - 5 Boxes -->
             <div class="column">
-                <div class="trait-box">
+                <div class="box box--label-bottom trait-box">
                     <div class="trait-content">I judge people by their actions, not their words. When I set my mind to something, I follow through no matter what gets in my way.</div>
-                    <div class="trait-label">Personality Traits</div>
+                    <div class="box__label">Personality Traits</div>
                 </div>
-                <div class="trait-box">
+                <div class="box box--label-bottom trait-box">
                     <div class="trait-content">Respect. People deserve to be treated with dignity and respect. Freedom. Tyrants must not be allowed to oppress the people.</div>
-                    <div class="trait-label">Ideals</div>
+                    <div class="box__label">Ideals</div>
                 </div>
-                <div class="trait-box">
+                <div class="box box--label-bottom trait-box">
                     <div class="trait-content">Ironjaw and I saved a village from a marauding orc warband. The bear has been my companion ever since.</div>
-                    <div class="trait-label">Bonds</div>
+                    <div class="box__label">Bonds</div>
                 </div>
-                <div class="trait-box">
+                <div class="box box--label-bottom trait-box">
                     <div class="trait-content">The tyrant who rules my land will stop at nothing to see me killed. I'm convinced of the significance of my destiny, and blind to my shortcomings.</div>
-                    <div class="trait-label">Flaws</div>
+                    <div class="box__label">Flaws</div>
                 </div>
-                <div class="trait-box" style="flex: 1;">
+                <div class="box box--label-bottom trait-box box--flex">
                     <div class="trait-content">Darkvision (60 ft)<br>Dwarven Resilience (Adv. vs poison)<br>Dwarven Toughness (+1 HP/level)<br>Stonecunning<br>Favored Enemy: Orcs & Goblins<br>Natural Explorer: Forest<br>Fighting Style: Archery (+2 ranged)<br>Beast Master: Ironjaw (Black Bear)<br>Rustic Hospitality</div>
-                    <div class="trait-label">Features & Traits</div>
+                    <div class="box__label">Features & Traits</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- PAGE 2: Background -->
+    <!-- ================================================================
+         PAGE 2: Background
+         ================================================================ -->
     <div class="page">
         <div class="page-header">
             <div class="header-left">
                 <div class="header-brand">Dungeons & Dragons</div>
-                <div class="header-name-field">
-                    <div class="header-name-value">Thorek Bearward</div>
-                    <div class="header-name-label">Character Name</div>
+                <div class="box box--label-bottom header-name">
+                    <div class="value--large">Thorek Bearward</div>
+                    <div class="box__label">Character Name</div>
                 </div>
             </div>
             <div class="header-right">
-                <div class="info-field">
-                    <div class="info-value">65</div>
-                    <div class="info-label">Age</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">65</div>
+                    <div class="box__label">Age</div>
                 </div>
-                <div class="info-field">
-                    <div class="info-value">4'2"</div>
-                    <div class="info-label">Height</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">4'2"</div>
+                    <div class="box__label">Height</div>
                 </div>
-                <div class="info-field">
-                    <div class="info-value">165 lbs</div>
-                    <div class="info-label">Weight</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">165 lbs</div>
+                    <div class="box__label">Weight</div>
                 </div>
-                <div class="info-field">
-                    <div class="info-value">Amber</div>
-                    <div class="info-label">Eyes</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Amber</div>
+                    <div class="box__label">Eyes</div>
                 </div>
-                <div class="info-field">
-                    <div class="info-value">Tan, weathered</div>
-                    <div class="info-label">Skin</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Tan, weathered</div>
+                    <div class="box__label">Skin</div>
                 </div>
-                <div class="info-field">
-                    <div class="info-value">Brown, full beard</div>
-                    <div class="info-label">Hair</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Brown, full beard</div>
+                    <div class="box__label">Hair</div>
                 </div>
             </div>
         </div>
 
         <div class="page2-grid">
             <div class="column">
-                <div class="large-box" style="min-height: 45mm;">
-                    <div class="large-box-title">Character Appearance</div>
+                <div class="box box--label-top large-box" style="min-height: 45mm;">
+                    <div class="box__label">Character Appearance</div>
                     <div class="large-box-content">A sturdy hill dwarf with weathered tan skin and keen amber eyes that constantly scan the treeline. His brown beard is thick and well-kept, often with bits of forest debris caught in it. He moves with the quiet confidence of someone who has spent years navigating wild places, and the faint smell of pine and bear musk follows him.</div>
                 </div>
-                <div class="large-box flex-1">
-                    <div class="large-box-title">Character Backstory</div>
+                <div class="box box--label-top large-box box--flex">
+                    <div class="box__label">Character Backstory</div>
                     <div class="large-box-content">Thorek was a simple woodsman living on the edge of the great forest, making his living as a carpenter and guide. One fateful autumn, an orc warband descended upon his village. During the attack, he found a wounded bear cub whose mother had been slain by the orcs. Together, they fought off the raiders - Thorek with his grandfather's warhammer, and the young bear with surprising ferocity.
 
 The village elder proclaimed them both heroes, and from that day forward, Thorek and the bear - whom he named Ironjaw for his powerful bite - became inseparable companions. Now they travel the land as defenders of the common folk.</div>
                 </div>
             </div>
             <div class="column">
-                <div class="large-box" style="min-height: 60mm;">
-                    <div class="large-box-title">Allies & Organizations</div>
+                <div class="box box--label-top large-box" style="min-height: 60mm;">
+                    <div class="box__label">Allies & Organizations</div>
                     <div style="font-weight: 600; margin-bottom: 2mm;">The Village of Millhaven</div>
                     <div class="large-box-content">The village Thorek and Ironjaw saved from the orc warband. The villagers consider him a hero and will always offer shelter and aid. He also has connections with local woodcutters and the trappers guild.</div>
                 </div>
-                <div class="large-box">
-                    <div class="large-box-title">Additional Features & Traits</div>
+                <div class="box box--label-top large-box">
+                    <div class="box__label">Additional Features & Traits</div>
                     <div class="large-box-content">IRONJAW (Black Bear Companion):<br>AC: 13, HP: 25 (19 base + 6 from ring)<br>Speed: 40 ft, climb 30 ft<br>STR 15, DEX 10, CON 14, INT 2, WIS 12, CHA 7<br>Keen Smell (Adv. on smell Perception)<br>Multiattack: Bite +4 (1d6+6) & Claws +4 (2d4+6)<br>Ring bonus: +2 dmg, magical attacks, charm/fear adv.</div>
                 </div>
-                <div class="large-box flex-1">
-                    <div class="large-box-title">Treasure</div>
+                <div class="box box--label-top large-box box--flex">
+                    <div class="box__label">Treasure</div>
                     <div class="large-box-content">Ring of the Wild Hunt (Rare, attuned)<br>- Ironjaw: +2 damage, +6 HP, magical attacks<br>- Ironjaw: Adv. vs charm/frighten</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- PAGE 3: Spellcasting -->
+    <!-- ================================================================
+         PAGE 3: Spellcasting
+         ================================================================ -->
     <div class="page">
         <div class="page-header">
             <div class="header-left">
                 <div class="header-brand">Dungeons & Dragons</div>
-                <div class="header-name-field">
-                    <div class="header-name-value">Ranger</div>
-                    <div class="header-name-label">Spellcasting Class</div>
+                <div class="box box--label-bottom header-name">
+                    <div class="value--large">Ranger</div>
+                    <div class="box__label">Spellcasting Class</div>
                 </div>
             </div>
             <div class="header-right" style="grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr;">
-                <div class="info-field">
-                    <div class="info-value">Wisdom</div>
-                    <div class="info-label">Spellcasting Ability</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Wisdom</div>
+                    <div class="box__label">Spellcasting Ability</div>
                 </div>
-                <div class="info-field">
-                    <div class="info-value">12</div>
-                    <div class="info-label">Spell Save DC</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">12</div>
+                    <div class="box__label">Spell Save DC</div>
                 </div>
-                <div class="info-field">
-                    <div class="info-value">+4</div>
-                    <div class="info-label">Spell Attack Bonus</div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">+4</div>
+                    <div class="box__label">Spell Attack Bonus</div>
                 </div>
             </div>
         </div>
 
         <div class="spell-grid">
-            <div class="spell-level-box cantrip-box">
+            <div class="box spell-level-box cantrip-box">
                 <div class="spell-level-header">
                     <div class="spell-level-num">0</div>
                     <div style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase;">Cantrips</div>
@@ -1283,7 +1249,7 @@ The village elder proclaimed them both heroes, and from that day forward, Thorek
                 </div>
             </div>
             
-            <div class="spell-level-box">
+            <div class="box spell-level-box">
                 <div class="spell-level-header">
                     <div class="spell-level-num">1</div>
                     <div class="spell-slots">
@@ -1332,7 +1298,7 @@ The village elder proclaimed them both heroes, and from that day forward, Thorek
                     </div>
                 </div>
             </div>
-            <div class="spell-level-box">
+            <div class="box spell-level-box">
                 <div class="spell-level-header">
                     <div class="spell-level-num">2</div>
                     <div class="spell-slots">
@@ -1381,7 +1347,7 @@ The village elder proclaimed them both heroes, and from that day forward, Thorek
                     </div>
                 </div>
             </div>
-            <div class="spell-level-box">
+            <div class="box spell-level-box">
                 <div class="spell-level-header">
                     <div class="spell-level-num">3</div>
                     <div class="spell-slots">
@@ -1430,7 +1396,7 @@ The village elder proclaimed them both heroes, and from that day forward, Thorek
                     </div>
                 </div>
             </div>
-            <div class="spell-level-box">
+            <div class="box spell-level-box">
                 <div class="spell-level-header">
                     <div class="spell-level-num">4</div>
                     <div class="spell-slots">
@@ -1479,7 +1445,7 @@ The village elder proclaimed them both heroes, and from that day forward, Thorek
                     </div>
                 </div>
             </div>
-            <div class="spell-level-box">
+            <div class="box spell-level-box">
                 <div class="spell-level-header">
                     <div class="spell-level-num">5</div>
                     <div class="spell-slots">
@@ -1528,7 +1494,7 @@ The village elder proclaimed them both heroes, and from that day forward, Thorek
                     </div>
                 </div>
             </div>
-            <div class="spell-level-box">
+            <div class="box spell-level-box">
                 <div class="spell-level-header">
                     <div class="spell-level-num">6</div>
                     <div class="spell-slots">
@@ -1577,7 +1543,7 @@ The village elder proclaimed them both heroes, and from that day forward, Thorek
                     </div>
                 </div>
             </div>
-            <div class="spell-level-box">
+            <div class="box spell-level-box">
                 <div class="spell-level-header">
                     <div class="spell-level-num">7</div>
                     <div class="spell-slots">
@@ -1626,7 +1592,7 @@ The village elder proclaimed them both heroes, and from that day forward, Thorek
                     </div>
                 </div>
             </div>
-            <div class="spell-level-box">
+            <div class="box spell-level-box">
                 <div class="spell-level-header">
                     <div class="spell-level-num">8</div>
                     <div class="spell-slots">
@@ -1675,7 +1641,7 @@ The village elder proclaimed them both heroes, and from that day forward, Thorek
                     </div>
                 </div>
             </div>
-            <div class="spell-level-box">
+            <div class="box spell-level-box">
                 <div class="spell-level-header">
                     <div class="spell-level-num">9</div>
                     <div class="spell-slots">
