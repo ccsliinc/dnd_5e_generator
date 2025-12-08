@@ -563,70 +563,159 @@ def build_complete_html(data: dict) -> str:
             .page {{ margin: 0; box-shadow: none; }}
         }}
 
-        .header-banner {{
-            height: 20mm;
-            background: linear-gradient(135deg, var(--border-dark) 0%, #2a2a2a 50%, var(--border-dark) 100%);
-            border-radius: var(--box-radius);
-            margin-bottom: 3mm;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }}
-        .header-title {{
-            font-family: var(--font-display);
-            font-size: 16pt;
-            font-weight: 700;
-            color: #f0f0f0;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }}
-        .header-accent {{ color: var(--accent-secondary); }}
-
-        .char-info-row {{
+        /* === HEADER - Official 5e Style === */
+        .page-header {{
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 2mm;
-            margin-bottom: 2mm;
+            grid-template-columns: 58mm 1fr;
+            gap: 3mm;
+            margin-bottom: 3mm;
         }}
-        .info-field {{
+        .header-left {{
+            display: flex;
+            flex-direction: column;
+        }}
+        .header-brand {{
+            font-family: var(--font-display);
+            font-size: 7pt;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 1mm;
+        }}
+        .header-name-field {{
             border: var(--border-width) solid var(--border-dark);
             border-radius: var(--box-radius);
-            padding: 1.5mm 2mm 4mm;
+            padding: 2mm 3mm 5mm;
             background: var(--bg-box);
             position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
         }}
-        .info-label {{
+        .header-name-value {{
+            font-family: var(--font-display);
+            font-size: 14pt;
+            font-weight: 700;
+            color: var(--text-primary);
+        }}
+        .header-name-label {{
             font-size: 6pt;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: var(--text-label);
             position: absolute;
-            bottom: 1mm;
+            bottom: 1.5mm;
+            left: 3mm;
+        }}
+        .header-right {{
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: 1fr 1fr;
+            gap: 1.5mm;
+        }}
+        .info-field {{
+            border: var(--border-width) solid var(--border-dark);
+            border-radius: var(--box-radius);
+            padding: 1mm 2mm 3.5mm;
+            background: var(--bg-box);
+            position: relative;
+        }}
+        .info-label {{
+            font-size: 5.5pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--text-label);
+            position: absolute;
+            bottom: 0.8mm;
             left: 2mm;
         }}
         .info-value {{
-            font-size: 10pt;
+            font-size: 9pt;
             font-weight: 600;
             color: var(--text-primary);
-        }}
-        .info-value.name {{
-            font-family: var(--font-display);
-            font-size: 14pt;
-            font-weight: 700;
         }}
 
         .main-content {{
             display: grid;
-            grid-template-columns: 52mm 1fr 58mm;
-            gap: 3mm;
-            height: calc(100% - 55mm);
+            grid-template-columns: 62mm 1fr 52mm;
+            gap: 2mm;
+            height: calc(100% - 32mm);
         }}
         .column {{
             display: flex;
             flex-direction: column;
             gap: 1.5mm;
+        }}
+        /* Left section: abilities + saves/skills side by side */
+        .left-section {{
+            display: grid;
+            grid-template-columns: 20mm 1fr;
+            gap: 1.5mm;
+        }}
+        .abilities-column {{
+            display: flex;
+            flex-direction: column;
+            gap: 1mm;
+        }}
+        .stats-column {{
+            display: flex;
+            flex-direction: column;
+            gap: 1.5mm;
+        }}
+        .proficiencies-box {{
+            border: var(--border-width) solid var(--border-dark);
+            border-radius: var(--box-radius);
+            background: var(--bg-box);
+            padding: 2mm;
+            flex: 1;
+        }}
+        .proficiencies-box .box-content {{
+            font-size: 7pt;
+            line-height: 1.3;
+        }}
+        .equipment-box {{
+            border: var(--border-width) solid var(--border-dark);
+            border-radius: var(--box-radius);
+            background: var(--bg-box);
+            padding: 2mm;
+            flex: 1;
+            position: relative;
+        }}
+        .equipment-box .box-content {{
+            font-size: 7pt;
+            line-height: 1.3;
+            margin-top: 1mm;
+        }}
+        .equipment-box .box-title {{
+            position: absolute;
+            bottom: 1mm;
+            left: 0;
+            right: 0;
+        }}
+        .trait-box {{
+            border: var(--border-width) solid var(--border-dark);
+            border-radius: var(--box-radius);
+            background: var(--bg-box);
+            padding: 2mm 2mm 4mm;
+            position: relative;
+        }}
+        .trait-content {{
+            font-size: 7pt;
+            line-height: 1.3;
+        }}
+        .trait-label {{
+            font-size: 6pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
+            color: var(--text-secondary);
+            position: absolute;
+            bottom: 1mm;
+            left: 0;
+            right: 0;
         }}
 
         .ability-block {{
@@ -900,62 +989,6 @@ def build_complete_html(data: dict) -> str:
         .attack-name {{ font-weight: 600; }}
         .attack-bonus {{ text-align: center; }}
 
-        .personality-box {{
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
-            background: var(--bg-box);
-            padding: 2mm;
-            flex: 1;
-        }}
-        .personality-section {{
-            margin-bottom: 2mm;
-            padding-bottom: 2mm;
-            border-bottom: 1px solid var(--border-light);
-        }}
-        .personality-section:last-child {{
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }}
-        .personality-label {{
-            font-size: 6pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 1mm;
-        }}
-        .personality-value {{
-            font-size: 7pt;
-            line-height: 1.3;
-        }}
-
-        .bottom-row {{
-            display: grid;
-            grid-template-columns: 1fr 1.3fr 1fr;
-            gap: 2mm;
-            margin-top: 2mm;
-        }}
-        .bottom-box {{
-            border: var(--border-width) solid var(--border-dark);
-            border-radius: var(--box-radius);
-            background: var(--bg-box);
-            padding: 2mm;
-        }}
-        .bottom-title {{
-            font-size: 6pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            text-align: center;
-            color: var(--text-secondary);
-            padding-bottom: 1mm;
-            border-bottom: 1px solid var(--border-light);
-            margin-bottom: 1mm;
-        }}
-        .bottom-content {{
-            font-size: 6.5pt;
-            line-height: 1.3;
-        }}
-
         .coin-row {{
             display: flex;
             justify-content: space-around;
@@ -987,14 +1020,18 @@ def build_complete_html(data: dict) -> str:
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 3mm;
-            height: calc(100% - 45mm);
+            height: calc(100% - 32mm);
+        }}
+        .page2-grid .column {{
+            display: flex;
+            flex-direction: column;
+            gap: 2mm;
         }}
         .large-box {{
             border: var(--border-width) solid var(--border-dark);
             border-radius: var(--box-radius);
             background: var(--bg-box);
             padding: 2mm;
-            margin-bottom: 2mm;
         }}
         .large-box.flex-1 {{ flex: 1; }}
         .large-box-title {{
@@ -1013,22 +1050,20 @@ def build_complete_html(data: dict) -> str:
         }}
 
         /* Page 3 styles */
-        .spell-header {{
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 2mm;
-            margin-bottom: 3mm;
-        }}
         .spell-grid {{
             display: grid;
             grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: 1fr;
             gap: 2mm;
+            height: calc(100% - 38mm);
         }}
         .spell-level-box {{
             border: var(--border-width) solid var(--border-dark);
             border-radius: var(--box-radius);
             background: var(--bg-box);
             padding: 2mm;
+            display: flex;
+            flex-direction: column;
         }}
         .spell-level-header {{
             display: flex;
@@ -1073,18 +1108,24 @@ def build_complete_html(data: dict) -> str:
             align-items: center;
             justify-content: center;
         }}
-        .spell-list {{ font-size: 7pt; line-height: 1.4; }}
+        .spell-list {{
+            font-size: 7pt;
+            line-height: 1.4;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }}
         .spell-item {{
             display: flex;
             align-items: center;
-            gap: 1mm;
-            padding: 0.3mm 0;
+            gap: 1.5mm;
+            padding: 0.8mm 0;
             min-height: 4mm;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #ddd;
         }}
         .spell-prepared {{
-            width: 2.5mm;
-            height: 2.5mm;
+            width: 3mm;
+            height: 3mm;
             border: 1px solid var(--border-dark);
             border-radius: 50%;
         }}
@@ -1095,68 +1136,78 @@ def build_complete_html(data: dict) -> str:
 <body>
     <!-- PAGE 1: Main Stats -->
     <div class="page">
-        <div class="header-banner">
-            <div class="header-title">Dungeons <span class="header-accent">&</span> Dragons</div>
-        </div>
-
-        <div class="char-info-row">
-            <div class="info-field">
-                <div class="info-value name">{data["character_name"]}</div>
-                <div class="info-label">Character Name</div>
+        <div class="page-header">
+            <div class="header-left">
+                <div class="header-brand">Dungeons & Dragons</div>
+                <div class="header-name-field">
+                    <div class="header-name-value">{data["character_name"]}</div>
+                    <div class="header-name-label">Character Name</div>
+                </div>
             </div>
-            <div class="info-field">
-                <div class="info-value">{data["class_level"]}</div>
-                <div class="info-label">Class & Level</div>
+            <div class="header-right">
+                <div class="info-field">
+                    <div class="info-value">{data["class_level"]}</div>
+                    <div class="info-label">Class & Level</div>
+                </div>
+                <div class="info-field">
+                    <div class="info-value">{data["background"]}</div>
+                    <div class="info-label">Background</div>
+                </div>
+                <div class="info-field">
+                    <div class="info-value">{data["player_name"]}</div>
+                    <div class="info-label">Player Name</div>
+                </div>
+                <div class="info-field">
+                    <div class="info-value">{data["race"]}</div>
+                    <div class="info-label">Race</div>
+                </div>
+                <div class="info-field">
+                    <div class="info-value">{data["alignment"]}</div>
+                    <div class="info-label">Alignment</div>
+                </div>
+                <div class="info-field">
+                    <div class="info-value">{data["experience_points"]}</div>
+                    <div class="info-label">Experience Points</div>
+                </div>
             </div>
-            <div class="info-field">
-                <div class="info-value">{data["background"]}</div>
-                <div class="info-label">Background</div>
-            </div>
-            <div class="info-field">
-                <div class="info-value">{data["player_name"]}</div>
-                <div class="info-label">Player Name</div>
-            </div>
-        </div>
-        <div class="char-info-row">
-            <div class="info-field">
-                <div class="info-value">{data["race"]}</div>
-                <div class="info-label">Race</div>
-            </div>
-            <div class="info-field">
-                <div class="info-value">{data["alignment"]}</div>
-                <div class="info-label">Alignment</div>
-            </div>
-            <div class="info-field">
-                <div class="info-value">{data["experience_points"]}</div>
-                <div class="info-label">Experience Points</div>
-            </div>
-            <div class="info-field"></div>
         </div>
 
         <div class="main-content">
+            <!-- LEFT COLUMN -->
             <div class="column">
-                <div class="ability-block">{abilities_html}
-                </div>
-                <div class="stat-row">
-                    <div class="stat-circle">{data["inspiration"]}</div>
-                    <div class="stat-label">Inspiration</div>
-                </div>
-                <div class="stat-row">
-                    <div class="stat-circle">{data["proficiency_bonus"]}</div>
-                    <div class="stat-label">Proficiency Bonus</div>
-                </div>
-                <div class="saves-skills-box">
-                    <div class="box-title">Saving Throws</div>{saves_html}
-                </div>
-                <div class="saves-skills-box" style="flex: 1;">
-                    <div class="box-title">Skills</div>{skills_html}
+                <div class="left-section">
+                    <div class="abilities-column">
+                        <div class="ability-block">{abilities_html}
+                        </div>
+                    </div>
+                    <div class="stats-column">
+                        <div class="stat-row">
+                            <div class="stat-circle">{data["inspiration"]}</div>
+                            <div class="stat-label">Inspiration</div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-circle">{data["proficiency_bonus"]}</div>
+                            <div class="stat-label">Proficiency Bonus</div>
+                        </div>
+                        <div class="saves-skills-box">
+                            <div class="box-title">Saving Throws</div>{saves_html}
+                        </div>
+                        <div class="saves-skills-box" style="flex: 1;">
+                            <div class="box-title">Skills</div>{skills_html}
+                        </div>
+                    </div>
                 </div>
                 <div class="passive-box">
                     <div class="passive-value">{data["passive_perception"]}</div>
                     <div class="passive-label">Passive Wisdom<br>(Perception)</div>
                 </div>
+                <div class="proficiencies-box">
+                    <div class="box-title">Other Proficiencies & Languages</div>
+                    <div class="box-content">{prof_lang_html}</div>
+                </div>
             </div>
 
+            <!-- MIDDLE COLUMN -->
             <div class="column">
                 <div class="combat-row">
                     <div class="combat-stat">
@@ -1218,91 +1269,81 @@ def build_complete_html(data: dict) -> str:
                         <div>Damage/Type</div>
                     </div>{attacks_html}
                 </div>
+                <div class="equipment-box">
+                    <div class="coin-row">
+                        <div class="coin"><div class="coin-value">{data["currency"]["cp"]}</div><div class="coin-label">CP</div></div>
+                        <div class="coin"><div class="coin-value">{data["currency"]["sp"]}</div><div class="coin-label">SP</div></div>
+                        <div class="coin"><div class="coin-value">{data["currency"]["ep"]}</div><div class="coin-label">EP</div></div>
+                        <div class="coin"><div class="coin-value">{data["currency"]["gp"]}</div><div class="coin-label">GP</div></div>
+                        <div class="coin"><div class="coin-value">{data["currency"]["pp"]}</div><div class="coin-label">PP</div></div>
+                    </div>
+                    <div class="box-content">{equipment_html}</div>
+                    <div class="box-title">Equipment</div>
+                </div>
             </div>
 
+            <!-- RIGHT COLUMN - 5 Boxes -->
             <div class="column">
-                <div class="personality-box">
-                    <div class="personality-section">
-                        <div class="personality-label">Personality Traits</div>
-                        <div class="personality-value">{data["personality_traits"]}</div>
-                    </div>
-                    <div class="personality-section">
-                        <div class="personality-label">Ideals</div>
-                        <div class="personality-value">{data["ideals"]}</div>
-                    </div>
-                    <div class="personality-section">
-                        <div class="personality-label">Bonds</div>
-                        <div class="personality-value">{data["bonds"]}</div>
-                    </div>
-                    <div class="personality-section">
-                        <div class="personality-label">Flaws</div>
-                        <div class="personality-value">{data["flaws"]}</div>
-                    </div>
+                <div class="trait-box">
+                    <div class="trait-content">{data["personality_traits"]}</div>
+                    <div class="trait-label">Personality Traits</div>
                 </div>
-            </div>
-        </div>
-
-        <div class="bottom-row">
-            <div class="bottom-box">
-                <div class="bottom-title">Other Proficiencies & Languages</div>
-                <div class="bottom-content">{prof_lang_html}</div>
-            </div>
-            <div class="bottom-box">
-                <div class="bottom-title">Equipment</div>
-                <div class="coin-row">
-                    <div class="coin"><div class="coin-value">{data["currency"]["cp"]}</div><div class="coin-label">CP</div></div>
-                    <div class="coin"><div class="coin-value">{data["currency"]["sp"]}</div><div class="coin-label">SP</div></div>
-                    <div class="coin"><div class="coin-value">{data["currency"]["ep"]}</div><div class="coin-label">EP</div></div>
-                    <div class="coin"><div class="coin-value">{data["currency"]["gp"]}</div><div class="coin-label">GP</div></div>
-                    <div class="coin"><div class="coin-value">{data["currency"]["pp"]}</div><div class="coin-label">PP</div></div>
+                <div class="trait-box">
+                    <div class="trait-content">{data["ideals"]}</div>
+                    <div class="trait-label">Ideals</div>
                 </div>
-                <div class="bottom-content">{equipment_html}</div>
-            </div>
-            <div class="bottom-box">
-                <div class="bottom-title">Features & Traits</div>
-                <div class="bottom-content">{features_html}</div>
+                <div class="trait-box">
+                    <div class="trait-content">{data["bonds"]}</div>
+                    <div class="trait-label">Bonds</div>
+                </div>
+                <div class="trait-box">
+                    <div class="trait-content">{data["flaws"]}</div>
+                    <div class="trait-label">Flaws</div>
+                </div>
+                <div class="trait-box" style="flex: 1;">
+                    <div class="trait-content">{features_html}</div>
+                    <div class="trait-label">Features & Traits</div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- PAGE 2: Background -->
     <div class="page">
-        <div class="header-banner">
-            <div class="header-title">Dungeons <span class="header-accent">&</span> Dragons</div>
-        </div>
-
-        <div class="char-info-row">
-            <div class="info-field">
-                <div class="info-value name">{data["character_name"]}</div>
-                <div class="info-label">Character Name</div>
+        <div class="page-header">
+            <div class="header-left">
+                <div class="header-brand">Dungeons & Dragons</div>
+                <div class="header-name-field">
+                    <div class="header-name-value">{data["character_name"]}</div>
+                    <div class="header-name-label">Character Name</div>
+                </div>
             </div>
-            <div class="info-field">
-                <div class="info-value">{data["appearance"]["age"]}</div>
-                <div class="info-label">Age</div>
+            <div class="header-right">
+                <div class="info-field">
+                    <div class="info-value">{data["appearance"]["age"]}</div>
+                    <div class="info-label">Age</div>
+                </div>
+                <div class="info-field">
+                    <div class="info-value">{data["appearance"]["height"]}</div>
+                    <div class="info-label">Height</div>
+                </div>
+                <div class="info-field">
+                    <div class="info-value">{data["appearance"]["weight"]}</div>
+                    <div class="info-label">Weight</div>
+                </div>
+                <div class="info-field">
+                    <div class="info-value">{data["appearance"]["eyes"]}</div>
+                    <div class="info-label">Eyes</div>
+                </div>
+                <div class="info-field">
+                    <div class="info-value">{data["appearance"]["skin"]}</div>
+                    <div class="info-label">Skin</div>
+                </div>
+                <div class="info-field">
+                    <div class="info-value">{data["appearance"]["hair"]}</div>
+                    <div class="info-label">Hair</div>
+                </div>
             </div>
-            <div class="info-field">
-                <div class="info-value">{data["appearance"]["height"]}</div>
-                <div class="info-label">Height</div>
-            </div>
-            <div class="info-field">
-                <div class="info-value">{data["appearance"]["weight"]}</div>
-                <div class="info-label">Weight</div>
-            </div>
-        </div>
-        <div class="char-info-row">
-            <div class="info-field">
-                <div class="info-value">{data["appearance"]["eyes"]}</div>
-                <div class="info-label">Eyes</div>
-            </div>
-            <div class="info-field">
-                <div class="info-value">{data["appearance"]["skin"]}</div>
-                <div class="info-label">Skin</div>
-            </div>
-            <div class="info-field">
-                <div class="info-value">{data["appearance"]["hair"]}</div>
-                <div class="info-label">Hair</div>
-            </div>
-            <div class="info-field"></div>
         </div>
 
         <div class="page2-grid">
@@ -1336,26 +1377,27 @@ def build_complete_html(data: dict) -> str:
 
     <!-- PAGE 3: Spellcasting -->
     <div class="page">
-        <div class="header-banner">
-            <div class="header-title">Dungeons <span class="header-accent">&</span> Dragons</div>
-        </div>
-
-        <div class="spell-header">
-            <div class="info-field">
-                <div class="info-value">{data["spellcasting"]["class"]}</div>
-                <div class="info-label">Spellcasting Class</div>
+        <div class="page-header">
+            <div class="header-left">
+                <div class="header-brand">Dungeons & Dragons</div>
+                <div class="header-name-field">
+                    <div class="header-name-value">{data["spellcasting"]["class"]}</div>
+                    <div class="header-name-label">Spellcasting Class</div>
+                </div>
             </div>
-            <div class="info-field">
-                <div class="info-value">{data["spellcasting"]["ability"]}</div>
-                <div class="info-label">Spellcasting Ability</div>
-            </div>
-            <div class="info-field">
-                <div class="info-value">{data["spellcasting"]["spell_save_dc"]}</div>
-                <div class="info-label">Spell Save DC</div>
-            </div>
-            <div class="info-field">
-                <div class="info-value">{data["spellcasting"]["spell_attack_bonus"]}</div>
-                <div class="info-label">Spell Attack Bonus</div>
+            <div class="header-right" style="grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr;">
+                <div class="info-field">
+                    <div class="info-value">{data["spellcasting"]["ability"]}</div>
+                    <div class="info-label">Spellcasting Ability</div>
+                </div>
+                <div class="info-field">
+                    <div class="info-value">{data["spellcasting"]["spell_save_dc"]}</div>
+                    <div class="info-label">Spell Save DC</div>
+                </div>
+                <div class="info-field">
+                    <div class="info-value">{data["spellcasting"]["spell_attack_bonus"]}</div>
+                    <div class="info-label">Spell Attack Bonus</div>
+                </div>
             </div>
         </div>
 
