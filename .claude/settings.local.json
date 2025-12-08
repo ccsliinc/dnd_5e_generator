@@ -20,7 +20,14 @@
       "Bash(mv:*)",
       "Bash(rmdir:*)",
       "Bash(git commit:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git push:*)",
+      "Bash(chmod:*)",
+      "Bash(./package.sh:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_run_code"
     ],
     "deny": [],
     "ask": []

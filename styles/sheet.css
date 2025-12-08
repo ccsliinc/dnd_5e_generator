@@ -17,8 +17,8 @@
    ----------------------------------------------------------------- */
 :root {
     /* Colors - Background */
-    --bg-page: #faf8f5;
-    --bg-box: #ffffff;
+    --bg-page: #ffffff;
+    --bg-box: #faf8f5;
     --bg-label: #f5f0e6;
 
     /* Colors - Borders (warm brown tones) */
@@ -105,7 +105,13 @@ body {
 .box {
     border: var(--box-border-width) solid var(--border-dark);
     border-radius: var(--box-radius);
-    background: var(--bg-box);
+    background:
+        /* Corner aging - old paper effect with white center */
+        radial-gradient(ellipse 50% 50% at 0% 0%, #f0ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 100% 0%, #f0ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 0% 100%, #f0ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 100% 100%, #f0ebe3 0%, transparent 55%),
+        #ffffff;
     position: relative;
 }
 
