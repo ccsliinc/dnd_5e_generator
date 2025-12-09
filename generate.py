@@ -525,6 +525,68 @@ def build_html(data: dict) -> str:
                 </div>'''
 
     # =========================================================================
+    # TURN STRUCTURE & COMBAT REFERENCE
+    # =========================================================================
+
+    # Turn structure
+    turn_structure = data.get("reference", {}).get("turn_structure", {})
+    turn_html = ""
+    if turn_structure:
+        phases_html = ""
+        for phase in turn_structure.get("phases", []):
+            phases_html += f'''
+                        <div class="turn-phase">
+                            <span class="turn-phase-name">{phase["name"]}</span>
+                            <span class="turn-phase-desc">{phase["desc"]}</span>
+                        </div>'''
+        turn_html = f'''
+                <div class="box ref-box turn-box">
+                    <div class="ref-section-title">{turn_structure.get("title", "Your Turn")}</div>{phases_html}
+                    <div class="turn-reaction">
+                        <span class="turn-phase-name">Reaction</span>
+                        <span class="turn-phase-desc">{turn_structure.get("reaction", "")}</span>
+                    </div>
+                </div>'''
+
+    # Combat reference (actions, conditions, cover)
+    combat_ref = data.get("reference", {}).get("combat_reference", {})
+    combat_html = ""
+    if combat_ref:
+        # Actions
+        actions_html = ""
+        for action in combat_ref.get("actions", []):
+            actions_html += f'''
+                        <div class="combat-action">
+                            <span class="combat-action-name">{action["name"]}</span>
+                            <span class="combat-action-desc">{action["desc"]}</span>
+                        </div>'''
+
+        # Conditions
+        conditions_html = ""
+        for cond in combat_ref.get("conditions_quick", []):
+            conditions_html += f'''
+                        <div class="combat-condition">
+                            <span class="combat-condition-name">{cond["name"]}</span>
+                            <span class="combat-condition-desc">{cond["desc"]}</span>
+                        </div>'''
+
+        # Cover
+        cover_html = ""
+        for cover in combat_ref.get("cover", []):
+            cover_html += f'''
+                        <div class="combat-cover">
+                            <span class="combat-cover-type">{cover["type"]}</span>
+                            <span class="combat-cover-bonus">{cover["bonus"]}</span>
+                        </div>'''
+
+        combat_html = f'''
+                <div class="box ref-box combat-ref-box">
+                    <div class="ref-section-title">Actions</div>{actions_html}
+                    <div class="ref-section-title" style="margin-top: 2mm;">Conditions</div>{conditions_html}
+                    <div class="ref-section-title" style="margin-top: 2mm;">Cover</div>{cover_html}
+                </div>'''
+
+    # =========================================================================
     # COMPLETE HTML DOCUMENT
     # =========================================================================
     return f'''<!DOCTYPE html>
@@ -694,7 +756,7 @@ def build_html(data: dict) -> str:
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN - 5 Boxes -->
+            <!-- RIGHT COLUMN - 6 Boxes -->
             <div class="column">
                 <div class="box box--label-bottom trait-box">
                     <div class="trait-content">{data["personality_traits"]}</div>
@@ -712,9 +774,13 @@ def build_html(data: dict) -> str:
                     <div class="trait-content">{data["flaws"]}</div>
                     <div class="box__label">Flaws</div>
                 </div>
-                <div class="box box--label-bottom trait-box box--flex">
+                <div class="box box--label-bottom trait-box">
                     <div class="trait-content">{features_html}</div>
                     <div class="box__label">Features & Traits</div>
+                </div>
+                <div class="box box--label-top notes-box box--flex">
+                    <div class="box__label">Notes</div>
+                    <div class="notes-lines"></div>
                 </div>
             </div>
         </div>{gallery_html}
@@ -835,6 +901,14 @@ def build_html(data: dict) -> str:
                 </div>
             </div>
             {spell_levels_html}
+            <div class="box spell-level-box notes-box">
+                <div class="box__label" style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: var(--accent-primary);">Spell Notes</div>
+                <div class="notes-lines"></div>
+            </div>
+            <div class="box spell-level-box notes-box">
+                <div class="box__label" style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: var(--accent-primary);">Spell Notes</div>
+                <div class="notes-lines"></div>
+            </div>
         </div>
     </div>
 
@@ -867,7 +941,7 @@ def build_html(data: dict) -> str:
         </div>
 
         <div class="page4-grid">
-            <div class="column">
+            <div class="column">{turn_html}
                 <div class="box ref-box">
                     <div class="ref-section-title">Weapons</div>{weapons_html}
                 </div>
@@ -875,7 +949,7 @@ def build_html(data: dict) -> str:
                     <div class="ref-section-title">Spells</div>{spells_ref_html}
                 </div>
             </div>
-            <div class="column">
+            <div class="column">{combat_html}
                 <div class="box ref-box">
                     <div class="ref-section-title">Features & Abilities</div>{features_ref_html}
                 </div>{companion_html}
