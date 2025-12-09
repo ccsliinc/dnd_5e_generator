@@ -98,19 +98,9 @@ body {
         width: 210mm !important;
         background: white !important;
     }
-    /* Force white backgrounds for all boxes when printing */
-    .box {
-        background: white !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-    /* Keep label backgrounds for visual structure */
-    .box__label {
-        background: var(--bg-label) !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-    /* Keep coin colors for visual appeal */
+    /* Preserve box gradients, labels, and coin colors when printing */
+    .box,
+    .box__label,
     .coin-icon {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
