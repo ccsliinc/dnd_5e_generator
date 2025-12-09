@@ -2,12 +2,12 @@
   "meta": {
     "version": "1.0",
     "generated": null,
-    "portrait": "images/thorek_ironjaw_autumn.png",
+    "portrait": "images/web/thorek_ironjaw_autumn.jpg",
     "gallery": [
-      "images/ring_nature_moss.png",
-      "images/thorek_face_closeup.png",
-      "images/thorek_ranger_forest.png",
-      "images/ironjaw_fullbody_armored.png"
+      "images/web/ring_nature_moss.jpg",
+      "images/web/thorek_face_closeup.jpg",
+      "images/web/thorek_ranger_forest.jpg",
+      "images/web/ironjaw_fullbody_armored.jpg"
     ]
   },
 
@@ -349,7 +349,7 @@
 
   "companion": {
     "name": "Ironjaw",
-    "image": "images/ironjaw_portrait_armored.png",
+    "image": "images/web/ironjaw_portrait_armored.jpg",
     "type": "Black Bear",
     "size": "Medium beast",
     "armor_class": 13,
