@@ -310,7 +310,41 @@
         "name": "Rustic Hospitality",
         "description": "You can find a place to hide, rest, or recuperate among commoners, unless you've shown yourself a danger. They will shield you from the law or anyone searching for you, though not at risk of their lives."
       }
-    ]
+    ],
+    "turn_structure": {
+      "title": "Your Turn",
+      "phases": [
+        { "name": "Movement", "desc": "Move up to your speed (can split before/after action)" },
+        { "name": "Action", "desc": "Attack, Cast Spell, Dash, Disengage, Dodge, Help, Hide, Ready, Search, Use Object" },
+        { "name": "Bonus Action", "desc": "If available (some spells, class features, two-weapon fighting)" },
+        { "name": "Free Interaction", "desc": "Draw/sheathe weapon, open door, pick up item, speak briefly" }
+      ],
+      "reaction": "Once per round, even on others' turns (opportunity attacks, some spells)"
+    },
+    "combat_reference": {
+      "actions": [
+        { "name": "Attack", "desc": "Make one melee or ranged attack (or more with Extra Attack)" },
+        { "name": "Cast a Spell", "desc": "Cast a spell with casting time of 1 action" },
+        { "name": "Dash", "desc": "Gain extra movement equal to your speed" },
+        { "name": "Disengage", "desc": "Your movement doesn't provoke opportunity attacks" },
+        { "name": "Dodge", "desc": "Attacks against you have disadvantage; DEX saves have advantage" },
+        { "name": "Help", "desc": "Give ally advantage on next ability check or attack roll" },
+        { "name": "Hide", "desc": "Make DEX (Stealth) check to hide" },
+        { "name": "Ready", "desc": "Prepare action for a trigger (uses reaction when triggered)" }
+      ],
+      "conditions_quick": [
+        { "name": "Prone", "desc": "Disadvantage on attacks; melee attacks against have advantage, ranged have disadvantage; stand costs half movement" },
+        { "name": "Grappled", "desc": "Speed becomes 0; ends if grappler incapacitated or effect moves you out of reach" },
+        { "name": "Frightened", "desc": "Disadvantage on ability checks and attacks while source of fear is in sight; can't move closer to source" },
+        { "name": "Incapacitated", "desc": "Can't take actions or reactions" },
+        { "name": "Stunned", "desc": "Incapacitated, can't move, auto-fail STR/DEX saves, attacks against have advantage" }
+      ],
+      "cover": [
+        { "type": "Half Cover", "bonus": "+2 AC and DEX saves" },
+        { "type": "Three-Quarters", "bonus": "+5 AC and DEX saves" },
+        { "type": "Total Cover", "bonus": "Can't be targeted directly" }
+      ]
+    }
   },
 
   "companion": {
