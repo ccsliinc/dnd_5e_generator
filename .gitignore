@@ -35,5 +35,5 @@ tmp/
 *.bak
 *.backup
 
-# Generated files (can be regenerated)
-*.html
+# Generated output (can be regenerated)
+output/

@@ -1021,10 +1021,28 @@ def build_html(data: dict) -> str:
 
 def main():
     """Main entry point."""
+    base_dir = Path(__file__).parent
+    characters_dir = base_dir / "characters"
+    output_dir = base_dir / "output"
+
+    # Ensure output directory exists
+    output_dir.mkdir(exist_ok=True)
+
     if len(sys.argv) > 1:
-        json_path = Path(sys.argv[1])
+        # Allow full path or just filename
+        arg = sys.argv[1]
+        json_path = Path(arg)
+        if not json_path.exists():
+            # Try in characters folder
+            json_path = characters_dir / arg
     else:
-        json_path = Path(__file__).parent / "kazrek.json"
+        # Default to first JSON in characters folder
+        json_files = list(characters_dir.glob("*.json"))
+        if json_files:
+            json_path = json_files[0]
+        else:
+            print("Error: No character files found in characters/")
+            sys.exit(1)
 
     if not json_path.exists():
         print(f"Error: {json_path} not found")
@@ -1040,10 +1058,10 @@ def main():
     # Generate HTML
     html = build_html(template_data)
 
-    # Output filename
+    # Output to output/ folder
     char_name = char_data.get("header", {}).get("character_name", "character")
     safe_name = char_name.replace(" ", "_")
-    output_path = Path(__file__).parent / f"{safe_name}.html"
+    output_path = output_dir / f"{safe_name}.html"
 
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html)
