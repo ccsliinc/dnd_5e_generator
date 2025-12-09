@@ -12,7 +12,7 @@ You are helping create a D&D 5e character. Ask the user questions to fill out ea
 - What alignment? (e.g., Neutral Good, Chaotic Neutral)
 - Current XP?
 - Player name? (optional)
-- Do you have a portrait image file? (path like "images/name.png")
+- Do you have a portrait image file? (stored in `images/[character_name]/`)
 
 ### 2. Ability Scores
 Ask for each: Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma
@@ -89,7 +89,11 @@ After gathering all info, generate this JSON structure:
   "meta": {
     "version": "1.0",
     "generated": null,
-    "portrait": "images/character.png"
+    "portrait": "../../images/[character_name]/portrait.jpg",
+    "gallery": [
+      "../../images/[character_name]/image1.jpg",
+      "../../images/[character_name]/image2.jpg"
+    ]
   },
 
   "header": {
@@ -239,5 +243,7 @@ After gathering all info, generate this JSON structure:
 - Spells format: `{ "name": "Spell Name", "prepared": true }`
 - Calculate proficiency bonus from level: 1-4=+2, 5-8=+3, 9-12=+4, etc.
 - Initiative is calculated automatically from Dexterity if left null
-- Save the file as `characters/charactername.json`
-- Run `python3 generate.py` to generate the sheet in `output/`
+- Save the file as `characters/[name].json`
+- Store images in `images/[name]/` folder (use lowercase, underscores)
+- Image paths use `../../images/[name]/` (relative from characters/ folder)
+- Run `./tools/build-sheet.sh characters/[name].json` to generate
