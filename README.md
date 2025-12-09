@@ -6,10 +6,10 @@ Generate printable HTML character sheets from JSON data files.
 
 ```bash
 # One command does everything
-./build-sheet.sh
+./tools/build-sheet.sh
 
 # Or specify character and DPI
-./build-sheet.sh thorek.json 150
+./tools/build-sheet.sh example.json 150
 ```
 
 This generates HTML, prints to PDF, compresses it, and opens both for review.
@@ -25,10 +25,10 @@ This generates HTML, prints to PDF, compresses it, and opens both for review.
 ┌─────────────────────────────────────────────────────────────────┐
 │  STEP 1: Generate HTML                                          │
 │                                                                 │
-│  characters/thorek.json  ──▶  generate.py  ──▶  output/*.html   │
+│  characters/example.json  ──▶  generate.py  ──▶  output/*.html  │
 │                                    │                            │
 │                            styles/sheet.css                     │
-│                            images/web/*.jpg                     │
+│                            images/example/*.jpg                 │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -64,20 +64,20 @@ This generates HTML, prints to PDF, compresses it, and opens both for review.
 ```
 d_and_d/
 ├── characters/
-│   └── thorek.json         # Character data (input)
+│   └── example.json        # Character data (input)
 ├── images/
-│   ├── *.png               # Original hi-res images
-│   └── web/*.jpg           # Optimized for web/print
+│   └── example/*.jpg       # Character images
 ├── styles/
 │   └── sheet.css           # Stylesheet
+├── tools/
+│   ├── build-sheet.sh      # Full pipeline script
+│   └── package.sh          # Create distribution zip
 ├── output/                  # Generated files (gitignored)
-│   ├── *.html
-│   ├── *.pdf               # Full quality vector
-│   └── compressed/
+│   └── <CharacterName>/
+│       ├── *.html
+│       ├── *.pdf           # Full quality vector
 │       └── *_print.pdf     # Compressed for printing
-├── generate.py             # HTML generator
-├── build-sheet.sh          # Full pipeline script
-└── package.sh              # Create distribution zip
+└── generate.py             # HTML generator
 ```
 
 ## Requirements
@@ -93,7 +93,7 @@ If you prefer to run steps individually:
 
 ```bash
 # Generate HTML only
-python3 generate.py thorek.json
+python3 generate.py example.json
 
 # Then print manually from browser, or use Chrome headless:
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
@@ -140,6 +140,6 @@ Edit `styles/sheet.css`. Key variables:
 Create a zip package for sharing:
 
 ```bash
-./package.sh
-# Creates output/dnd-character-sheet.zip
+./tools/package.sh
+# Creates output/packages/dnd-character-sheet.zip
 ```
