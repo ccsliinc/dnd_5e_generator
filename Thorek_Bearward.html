@@ -98,12 +98,30 @@ body {
 }
 
 @media print {
-    body { background: none !important; }
+    body { background: white !important; }
     .page {
         margin: 0 !important;
         box-shadow: none !important;
         height: 297mm !important;
         width: 210mm !important;
+        background: white !important;
+    }
+    /* Force white backgrounds for all boxes when printing */
+    .box {
+        background: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    /* Keep label backgrounds for visual structure */
+    .box__label {
+        background: var(--bg-label) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    /* Keep coin colors for visual appeal */
+    .coin-icon {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 }
 
