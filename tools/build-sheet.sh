@@ -1,6 +1,6 @@
 #!/bin/bash
 # Complete character sheet pipeline
-# Usage: ./build-sheet.sh [character.json] [dpi]
+# Usage: ./tools/build-sheet.sh [character.json] [dpi]
 #
 # Steps:
 #   1. Generate HTML from JSON (with timestamp)
@@ -15,20 +15,21 @@
 
 set -e
 
-# Configuration
+# Configuration - tools/ is one level down from project root
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-OUTPUT_DIR="$SCRIPT_DIR/output"
+OUTPUT_DIR="$PROJECT_DIR/output"
 DPI="${2:-150}"
 
 # Input file (default to first JSON in characters/)
 if [ -n "$1" ]; then
     INPUT="$1"
 else
-    INPUT=$(ls "$SCRIPT_DIR/characters/"*.json 2>/dev/null | head -1)
+    INPUT=$(ls "$PROJECT_DIR/characters/"*.json 2>/dev/null | head -1)
 fi
 
-if [ -z "$INPUT" ] || [ ! -f "$INPUT" ] && [ ! -f "$SCRIPT_DIR/characters/$INPUT" ]; then
+if [ -z "$INPUT" ] || [ ! -f "$INPUT" ] && [ ! -f "$PROJECT_DIR/characters/$INPUT" ]; then
     echo "Usage: $0 [character.json] [dpi]"
     echo "Example: $0 thorek.json 150"
     exit 1
@@ -39,15 +40,9 @@ echo ""
 
 # Step 1: Generate HTML
 echo "[1/3] Generating HTML..."
-cd "$SCRIPT_DIR"
-python3 generate.py "$INPUT"
-
-# Find the most recently created HTML file
-HTML_FILE=$(find "$OUTPUT_DIR" -name "*.html" -type f -newer "$SCRIPT_DIR/generate.py" 2>/dev/null | head -1)
-if [ -z "$HTML_FILE" ]; then
-    # Fallback: find newest HTML
-    HTML_FILE=$(find "$OUTPUT_DIR" -name "*.html" -type f -print0 | xargs -0 ls -t | head -1)
-fi
+cd "$PROJECT_DIR"
+# Capture the generated file path from generate.py output
+HTML_FILE=$(python3 generate.py "$INPUT" | grep "Generated:" | sed 's/Generated: //')
 
 if [ -z "$HTML_FILE" ]; then
     echo "Error: No HTML file generated"
