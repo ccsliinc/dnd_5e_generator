@@ -1,7 +1,10 @@
 #!/bin/bash
 # Package the D&D Character Sheet Generator for distribution
 
-OUTPUT="dnd-character-sheet.zip"
+OUTPUT="output/dnd-character-sheet.zip"
+
+# Ensure output directory exists
+mkdir -p output
 
 # Remove old package if exists
 rm -f "$OUTPUT"
@@ -10,7 +13,7 @@ rm -f "$OUTPUT"
 zip -r "$OUTPUT" \
     generate.py \
     styles/sheet.css \
-    thorek.json \
+    characters/*.json \
     images/*.png \
     README.md \
     CREATE_CHARACTER.md \
