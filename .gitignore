@@ -36,4 +36,5 @@ tmp/
 *.backup
 
 # Generated output (can be regenerated)
-output/
+output/*
+!output/example/
