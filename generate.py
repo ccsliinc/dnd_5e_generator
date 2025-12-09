@@ -1058,10 +1058,16 @@ def main():
     # Generate HTML
     html = build_html(template_data)
 
-    # Output to output/ folder
+    # Output to output/<CharacterName>/ folder with timestamp
     char_name = char_data.get("header", {}).get("character_name", "character")
     safe_name = char_name.replace(" ", "_")
-    output_path = output_dir / f"{safe_name}.html"
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
+
+    # Create character-specific output folder
+    char_output_dir = output_dir / safe_name
+    char_output_dir.mkdir(parents=True, exist_ok=True)
+
+    output_path = char_output_dir / f"{safe_name}_{timestamp}.html"
 
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html)
