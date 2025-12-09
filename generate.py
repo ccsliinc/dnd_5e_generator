@@ -9,6 +9,198 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime
+from typing import Any
+
+# =============================================================================
+# HTML TEMPLATES - Module-level constants for reusability
+# =============================================================================
+
+TPL_ABILITY = '''
+                    <div class="box ability-score">
+                        <div class="box__label">{name}</div>
+                        <div class="value--large">{score}</div>
+                        <div class="ability-modifier">{modifier}</div>
+                    </div>'''
+
+TPL_SAVE_ROW = '''
+                    <div class="save-row">
+                        <div class="prof-circle {filled}"></div>
+                        <div class="save-mod">{modifier}</div>
+                        <div class="save-name">{name}</div>
+                    </div>'''
+
+TPL_SKILL_ROW = '''
+                    <div class="skill-row">
+                        <div class="prof-circle {filled}"></div>
+                        <div class="skill-mod">{modifier}</div>
+                        <div class="skill-name">{name} <span class="skill-ability">({ability})</span></div>
+                    </div>'''
+
+TPL_ATTACK_ROW = '''
+                    <div class="attack-row">
+                        <div class="attack-name">{name}</div>
+                        <div class="attack-bonus">{atk_bonus}</div>
+                        <div class="attack-damage">{damage_type}</div>
+                    </div>'''
+
+TPL_ATTACK_ROW_EMPTY = '''
+                    <div class="attack-row">
+                        <div class="attack-name"></div>
+                        <div class="attack-bonus"></div>
+                        <div class="attack-damage"></div>
+                    </div>'''
+
+TPL_SPELL_ITEM = '''
+                    <div class="spell-item">
+                        <div class="spell-prepared {filled}"></div>
+                        <span>{name}</span>
+                    </div>'''
+
+TPL_SPELL_ITEM_EMPTY = '''
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>'''
+
+TPL_GALLERY_ITEM = '''
+                        <div class="gallery-item">
+                            <img src="{src}" alt="Character Art" class="gallery-img">
+                        </div>'''
+
+TPL_WEAPON_CARD = '''
+                    <div class="weapon-card ref-card">
+                        <div class="weapon-name">{name}</div>
+                        <div class="weapon-type">{type}</div>
+                        <div class="weapon-stats">
+                            <span class="weapon-damage">{damage}</span>
+                        </div>
+                        <div class="weapon-properties">{properties}</div>
+                        <div class="weapon-notes">{notes}</div>
+                    </div>'''
+
+TPL_SPELL_CARD = '''
+                    <div class="spell-card ref-card">
+                        <div class="spell-name">{name} <span class="spell-level-tag">({level})</span></div>
+                        <div class="spell-meta">
+                            <span><span class="spell-meta-label">Cast:</span> {casting_time}</span>
+                            <span><span class="spell-meta-label">Range:</span> {range}</span>
+                            <span><span class="spell-meta-label">Duration:</span> {duration}</span>
+                        </div>
+                        <div class="spell-desc">{description}</div>
+                    </div>'''
+
+TPL_FEATURE_CARD = '''
+                    <div class="feature-card ref-card">
+                        <div class="feature-name">{name}</div>
+                        <div class="feature-desc">{description}</div>
+                    </div>'''
+
+TPL_TURN_PHASE = '''
+                        <div class="turn-phase">
+                            <span class="turn-phase-name">{name}</span>
+                            <span class="turn-phase-desc">{desc}</span>
+                        </div>'''
+
+TPL_COMBAT_ACTION = '''
+                        <div class="combat-action">
+                            <span class="combat-action-name">{name}</span>
+                            <span class="combat-action-desc">{desc}</span>
+                        </div>'''
+
+TPL_COMBAT_CONDITION = '''
+                        <div class="combat-condition">
+                            <span class="combat-condition-name">{name}</span>
+                            <span class="combat-condition-desc">{desc}</span>
+                        </div>'''
+
+TPL_COMBAT_COVER = '''
+                        <div class="combat-cover">
+                            <span class="combat-cover-type">{type}</span>
+                            <span class="combat-cover-bonus">{bonus}</span>
+                        </div>'''
+
+TPL_COMPANION_ABILITY = '''
+                        <div class="companion-ability">
+                            <div class="companion-ability-name">{name}</div>
+                            <div class="companion-ability-score">{score}</div>
+                            <div class="companion-ability-mod">({mod})</div>
+                        </div>'''
+
+TPL_COMPANION_TRAIT = '''
+                        <div class="companion-trait">
+                            <span class="companion-trait-name">{name}.</span>
+                            <span class="companion-trait-desc">{description}</span>
+                        </div>'''
+
+TPL_COMPANION_ACTION = '''
+                        <div class="companion-action">
+                            <span class="companion-action-name">{name}.</span>
+                            <span class="companion-action-desc">{description}</span>
+                        </div>'''
+
+
+# =============================================================================
+# HELPER FUNCTIONS
+# =============================================================================
+
+def render_items(items: list[dict], template: str, empty_template: str = "",
+                 min_rows: int = 0, **field_defaults) -> str:
+    """
+    Generic HTML list renderer with optional empty row padding.
+
+    Args:
+        items: List of dicts to render
+        template: Template string with {field} placeholders
+        empty_template: Template for empty rows (if different from template)
+        min_rows: Minimum number of rows to render (pads with empty rows)
+        **field_defaults: Default values for missing fields
+    """
+    html = ""
+    for item in items:
+        # Merge defaults with item data
+        data = {**field_defaults, **item}
+        html += template.format(**data)
+
+    # Add empty rows if needed
+    empty_count = max(0, min_rows - len(items))
+    if empty_count > 0:
+        tpl = empty_template or template
+        for _ in range(empty_count):
+            html += tpl.format(**field_defaults)
+
+    return html
+
+
+def render_list(items: list[str], css_class: str = "styled-list") -> str:
+    """Convert list of strings to HTML unordered list."""
+    if not items:
+        return f'<ul class="{css_class}"></ul>'
+    list_items = "".join([f"<li>{item}</li>" for item in items])
+    return f'<ul class="{css_class}">{list_items}</ul>'
+
+
+def text_to_paragraphs(text: str) -> str:
+    """Convert text with newlines into HTML paragraphs."""
+    if not text:
+        return ""
+
+    # Try double newlines first
+    paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
+
+    # Fall back to single newlines
+    if not paragraphs:
+        paragraphs = [p.strip() for p in text.split('\n') if p.strip()]
+
+    # Fall back to entire text as single paragraph
+    if not paragraphs:
+        paragraphs = [text.strip()]
+
+    return "".join([f"<p>{p}</p>" for p in paragraphs])
+
+
+def format_modifier(value: int) -> str:
+    """Format a modifier value with +/- sign."""
+    return f"+{value}" if value >= 0 else str(value)
 
 
 def load_css() -> str:
@@ -234,138 +426,65 @@ def build_html(data: dict) -> str:
     css = load_css()
 
     # =========================================================================
-    # BUILD COMPONENT HTML
+    # BUILD COMPONENT HTML - Using helper functions and templates
     # =========================================================================
 
-    # Abilities
-    abilities_html = ""
-    for ability in data["abilities"]:
-        abilities_html += f'''
-                    <div class="box ability-score">
-                        <div class="box__label">{ability["name"]}</div>
-                        <div class="value--large">{ability["score"]}</div>
-                        <div class="ability-modifier">{ability["modifier"]}</div>
-                    </div>'''
+    # Abilities - using template
+    abilities_html = render_items(data["abilities"], TPL_ABILITY)
 
-    # Saving throws
-    saves_html = ""
-    for save in data["saving_throws"]:
-        filled = "filled" if save["proficient"] else ""
-        saves_html += f'''
-                    <div class="save-row">
-                        <div class="prof-circle {filled}"></div>
-                        <div class="save-mod">{save["modifier"]}</div>
-                        <div class="save-name">{save["name"]}</div>
-                    </div>'''
+    # Saving throws - add 'filled' field
+    saves_with_filled = [
+        {**s, "filled": "filled" if s["proficient"] else ""}
+        for s in data["saving_throws"]
+    ]
+    saves_html = render_items(saves_with_filled, TPL_SAVE_ROW)
 
-    # Skills
-    skills_html = ""
-    for skill in data["skills"]:
-        filled = "filled" if skill["proficient"] else ""
-        skills_html += f'''
-                    <div class="skill-row">
-                        <div class="prof-circle {filled}"></div>
-                        <div class="skill-mod">{skill["modifier"]}</div>
-                        <div class="skill-name">{skill["name"]} <span class="skill-ability">({skill["ability"]})</span></div>
-                    </div>'''
+    # Skills - add 'filled' field
+    skills_with_filled = [
+        {**s, "filled": "filled" if s["proficient"] else ""}
+        for s in data["skills"]
+    ]
+    skills_html = render_items(skills_with_filled, TPL_SKILL_ROW)
 
-    # Attacks
-    attacks_html = ""
-    for attack in data["attacks"]:
-        attacks_html += f'''
-                    <div class="attack-row">
-                        <div class="attack-name">{attack["name"]}</div>
-                        <div class="attack-bonus">{attack["atk_bonus"]}</div>
-                        <div class="attack-damage">{attack["damage_type"]}</div>
-                    </div>'''
-    for _ in range(max(0, 5 - len(data["attacks"]))):
-        attacks_html += '''
-                    <div class="attack-row">
-                        <div class="attack-name"></div>
-                        <div class="attack-bonus"></div>
-                        <div class="attack-damage"></div>
-                    </div>'''
+    # Attacks - with empty row padding
+    attacks_html = render_items(
+        data["attacks"], TPL_ATTACK_ROW,
+        empty_template=TPL_ATTACK_ROW_EMPTY,
+        min_rows=5,
+        name="", atk_bonus="", damage_type=""
+    )
 
-    # Proficiencies (as list)
-    prof_items = "".join([f"<li>{item}</li>" for item in data["proficiencies_languages"]])
-    prof_lang_html = f'<ul class="prof-list">{prof_items}</ul>'
+    # Lists using render_list helper
+    prof_lang_html = render_list(data["proficiencies_languages"], "styled-list prof-list")
+    equipment_html = render_list(data["equipment"], "styled-list")
+    features_html = render_list(data["features_traits"], "styled-list")
+    additional_features_html = render_list(data["additional_features_traits"], "styled-list")
+    treasure_html = render_list(data["treasure"], "styled-list")
 
-    # Equipment (as list)
-    equip_items = "".join([f"<li>{item}</li>" for item in data["equipment"]])
-    equipment_html = f'<ul class="item-list">{equip_items}</ul>'
+    # Text content using text_to_paragraphs helper
+    backstory_html = text_to_paragraphs(data["backstory"])
+    appearance_html = text_to_paragraphs(data["character_appearance_description"])
+    allies_html = text_to_paragraphs(data["allies_organizations"].get("description", ""))
 
-    # Features & Traits (as list)
-    feature_items = "".join([f"<li>{item}</li>" for item in data["features_traits"]])
-    features_html = f'<ul class="item-list">{feature_items}</ul>'
+    # Cantrips - simple list without prepared checkbox
+    cantrips_html = "".join([
+        f'<div class="spell-item"><span>{c}</span></div>'
+        for c in data["spellcasting"]["cantrips"]
+    ])
 
-    # Additional Features & Traits (as list)
-    add_feature_items = "".join([f"<li>{item}</li>" for item in data["additional_features_traits"]])
-    additional_features_html = f'<ul class="item-list">{add_feature_items}</ul>'
-
-    # Treasure (as list)
-    treasure_items = "".join([f"<li>{item}</li>" for item in data["treasure"]])
-    treasure_html = f'<ul class="item-list">{treasure_items}</ul>'
-
-    # Convert backstory to paragraphs (split on \n\n or double newlines)
-    backstory_text = data["backstory"]
-    if backstory_text:
-        paragraphs = [p.strip() for p in backstory_text.split('\n\n') if p.strip()]
-        if not paragraphs:  # If no double newlines, try single
-            paragraphs = [p.strip() for p in backstory_text.split('\n') if p.strip()]
-        backstory_html = "".join([f"<p>{p}</p>" for p in paragraphs])
-    else:
-        backstory_html = ""
-
-    # Character appearance as paragraphs
-    appearance_text = data["character_appearance_description"]
-    if appearance_text:
-        app_paragraphs = [p.strip() for p in appearance_text.split('\n\n') if p.strip()]
-        if not app_paragraphs:
-            app_paragraphs = [p.strip() for p in appearance_text.split('\n') if p.strip()]
-        if not app_paragraphs:
-            app_paragraphs = [appearance_text]
-        appearance_html = "".join([f"<p>{p}</p>" for p in app_paragraphs])
-    else:
-        appearance_html = ""
-
-    # Allies description as paragraphs
-    allies_desc = data["allies_organizations"].get("description", "")
-    if allies_desc:
-        allies_paragraphs = [p.strip() for p in allies_desc.split('\n\n') if p.strip()]
-        if not allies_paragraphs:
-            allies_paragraphs = [p.strip() for p in allies_desc.split('\n') if p.strip()]
-        if not allies_paragraphs:
-            allies_paragraphs = [allies_desc]
-        allies_html = "".join([f"<p>{p}</p>" for p in allies_paragraphs])
-    else:
-        allies_html = ""
-
-    # Cantrips
-    cantrips_html = ""
-    for cantrip in data["spellcasting"]["cantrips"]:
-        cantrips_html += f'''
-                    <div class="spell-item">
-                        <span>{cantrip}</span>
-                    </div>'''
-
-    # Spell levels
+    # Spell levels - using templates
     spell_levels_html = ""
     for level_data in data["spellcasting"]["spell_levels"]:
-        spells_in_level = ""
-        for spell in level_data["spells"]:
-            filled = "filled" if spell.get("prepared", False) else ""
-            spells_in_level += f'''
-                    <div class="spell-item">
-                        <div class="spell-prepared {filled}"></div>
-                        <span>{spell["name"]}</span>
-                    </div>'''
-        for _ in range(max(0, 8 - len(level_data["spells"]))):
-            spells_in_level += '''
-                    <div class="spell-item">
-                        <div class="spell-prepared"></div>
-                        <span></span>
-                    </div>'''
-
+        spells_with_filled = [
+            {"name": s["name"], "filled": "filled" if s.get("prepared") else ""}
+            for s in level_data["spells"]
+        ]
+        spells_in_level = render_items(
+            spells_with_filled, TPL_SPELL_ITEM,
+            empty_template=TPL_SPELL_ITEM_EMPTY,
+            min_rows=8,
+            name="", filled=""
+        )
         spell_levels_html += f'''
             <div class="box spell-level-box">
                 <div class="spell-level-header">
@@ -389,100 +508,72 @@ def build_html(data: dict) -> str:
     # PAGE 1: GALLERY ROW
     # =========================================================================
 
-    gallery_html = ""
     gallery_images = data.get("gallery", [])
     if gallery_images:
-        gallery_items = ""
-        for img_path in gallery_images:
-            gallery_items += f'''
-                        <div class="gallery-item">
-                            <img src="{img_path}" alt="Character Art" class="gallery-img">
-                        </div>'''
+        gallery_items = render_items(
+            [{"src": img} for img in gallery_images],
+            TPL_GALLERY_ITEM
+        )
         gallery_html = f'''
                 <div class="gallery-row">{gallery_items}
                 </div>'''
+    else:
+        gallery_html = ""
 
     # =========================================================================
-    # PAGE 4: REFERENCE / CHEAT SHEET
+    # PAGE 4: REFERENCE / CHEAT SHEET - Using templates
     # =========================================================================
+
+    reference = data.get("reference", {})
 
     # Weapons reference
-    weapons_html = ""
-    for weapon in data.get("reference", {}).get("weapons", []):
-        weapons_html += f'''
-                    <div class="weapon-card">
-                        <div class="weapon-name">{weapon["name"]}</div>
-                        <div class="weapon-type">{weapon.get("type", "")}</div>
-                        <div class="weapon-stats">
-                            <span class="weapon-damage">{weapon.get("damage", "")}</span>
-                        </div>
-                        <div class="weapon-properties">{weapon.get("properties", "")}</div>
-                        <div class="weapon-notes">{weapon.get("notes", "")}</div>
-                    </div>'''
+    weapons_html = render_items(
+        reference.get("weapons", []),
+        TPL_WEAPON_CARD,
+        type="", damage="", properties="", notes=""
+    )
 
     # Spells reference
-    spells_ref_html = ""
-    for spell in data.get("reference", {}).get("spells", []):
-        spells_ref_html += f'''
-                    <div class="spell-card">
-                        <div class="spell-name">{spell["name"]} <span class="spell-level-tag">({spell.get("level", "")})</span></div>
-                        <div class="spell-meta">
-                            <span><span class="spell-meta-label">Cast:</span> {spell.get("casting_time", "")}</span>
-                            <span><span class="spell-meta-label">Range:</span> {spell.get("range", "")}</span>
-                            <span><span class="spell-meta-label">Duration:</span> {spell.get("duration", "")}</span>
-                        </div>
-                        <div class="spell-desc">{spell.get("description", "")}</div>
-                    </div>'''
+    spells_ref_html = render_items(
+        reference.get("spells", []),
+        TPL_SPELL_CARD,
+        level="", casting_time="", range="", duration="", description=""
+    )
 
     # Features reference
-    features_ref_html = ""
-    for feature in data.get("reference", {}).get("features", []):
-        features_ref_html += f'''
-                    <div class="feature-card">
-                        <div class="feature-name">{feature["name"]}</div>
-                        <div class="feature-desc">{feature.get("description", "")}</div>
-                    </div>'''
+    features_ref_html = render_items(
+        reference.get("features", []),
+        TPL_FEATURE_CARD,
+        description=""
+    )
 
-    # Companion stat block
+    # Companion stat block - using templates
     companion = data.get("companion", {})
     companion_html = ""
     if companion:
         # Companion abilities
         comp_abilities = companion.get("abilities", {})
-        comp_abilities_html = ""
+        ability_items = []
         for ability in ["str", "dex", "con", "int", "wis", "cha"]:
             score = comp_abilities.get(ability, 10)
             mod = (score - 10) // 2
-            mod_str = f"+{mod}" if mod >= 0 else str(mod)
-            comp_abilities_html += f'''
-                        <div class="companion-ability">
-                            <div class="companion-ability-name">{ability.upper()}</div>
-                            <div class="companion-ability-score">{score}</div>
-                            <div class="companion-ability-mod">({mod_str})</div>
-                        </div>'''
+            ability_items.append({
+                "name": ability.upper(),
+                "score": score,
+                "mod": format_modifier(mod)
+            })
+        comp_abilities_html = render_items(ability_items, TPL_COMPANION_ABILITY)
 
-        # Companion traits
-        comp_traits_html = ""
-        for trait in companion.get("traits", []):
-            comp_traits_html += f'''
-                        <div class="companion-trait">
-                            <span class="companion-trait-name">{trait["name"]}.</span>
-                            <span class="companion-trait-desc">{trait.get("description", "")}</span>
-                        </div>'''
+        # Companion traits and actions - using templates
+        comp_traits_html = render_items(
+            companion.get("traits", []), TPL_COMPANION_TRAIT, description=""
+        )
+        comp_actions_html = render_items(
+            companion.get("actions", []), TPL_COMPANION_ACTION, description=""
+        )
 
-        # Companion actions
-        comp_actions_html = ""
-        for action in companion.get("actions", []):
-            comp_actions_html += f'''
-                        <div class="companion-action">
-                            <span class="companion-action-name">{action["name"]}.</span>
-                            <span class="companion-action-desc">{action.get("description", "")}</span>
-                        </div>'''
-
-        # Companion commands
-        comp_commands_html = ""
-        for cmd in companion.get("commands", []):
-            comp_commands_html += f"<li>{cmd}</li>"
+        # Companion commands - simple list
+        comp_commands_html = "".join([f"<li>{cmd}</li>" for cmd in companion.get("commands", [])])
 
         # Companion image
         companion_image = companion.get("image", "")
@@ -525,20 +616,14 @@ def build_html(data: dict) -> str:
                 </div>'''
 
     # =========================================================================
-    # TURN STRUCTURE & COMBAT REFERENCE
+    # TURN STRUCTURE & COMBAT REFERENCE - Using templates
     # =========================================================================
 
     # Turn structure
-    turn_structure = data.get("reference", {}).get("turn_structure", {})
+    turn_structure = reference.get("turn_structure", {})
     turn_html = ""
     if turn_structure:
-        phases_html = ""
-        for phase in turn_structure.get("phases", []):
-            phases_html += f'''
-                        <div class="turn-phase">
-                            <span class="turn-phase-name">{phase["name"]}</span>
-                            <span class="turn-phase-desc">{phase["desc"]}</span>
-                        </div>'''
+        phases_html = render_items(turn_structure.get("phases", []), TPL_TURN_PHASE)
         turn_html = f'''
                 <div class="box ref-box turn-box">
                     <div class="ref-section-title">{turn_structure.get("title", "Your Turn")}</div>{phases_html}
@@ -549,35 +634,12 @@ def build_html(data: dict) -> str:
                 </div>'''
 
     # Combat reference (actions, conditions, cover)
-    combat_ref = data.get("reference", {}).get("combat_reference", {})
+    combat_ref = reference.get("combat_reference", {})
     combat_html = ""
     if combat_ref:
-        # Actions
-        actions_html = ""
-        for action in combat_ref.get("actions", []):
-            actions_html += f'''
-                        <div class="combat-action">
-                            <span class="combat-action-name">{action["name"]}</span>
-                            <span class="combat-action-desc">{action["desc"]}</span>
-                        </div>'''
-
-        # Conditions
-        conditions_html = ""
-        for cond in combat_ref.get("conditions_quick", []):
-            conditions_html += f'''
-                        <div class="combat-condition">
-                            <span class="combat-condition-name">{cond["name"]}</span>
-                            <span class="combat-condition-desc">{cond["desc"]}</span>
-                        </div>'''
-
-        # Cover
-        cover_html = ""
-        for cover in combat_ref.get("cover", []):
-            cover_html += f'''
-                        <div class="combat-cover">
-                            <span class="combat-cover-type">{cover["type"]}</span>
-                            <span class="combat-cover-bonus">{cover["bonus"]}</span>
-                        </div>'''
+        actions_html = render_items(combat_ref.get("actions", []), TPL_COMBAT_ACTION)
+        conditions_html = render_items(combat_ref.get("conditions_quick", []), TPL_COMBAT_CONDITION)
+        cover_html = render_items(combat_ref.get("cover", []), TPL_COMBAT_COVER)
 
         combat_html = f'''
                 <div class="box ref-box combat-ref-box">
