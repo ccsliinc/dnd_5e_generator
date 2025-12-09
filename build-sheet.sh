@@ -3,9 +3,15 @@
 # Usage: ./build-sheet.sh [character.json] [dpi]
 #
 # Steps:
-#   1. Generate HTML from JSON
+#   1. Generate HTML from JSON (with timestamp)
 #   2. Print to PDF via Chrome headless
 #   3. Flatten/compress PDF for smaller size
+#
+# Output structure:
+#   output/<CharacterName>/
+#     ├── CharacterName_YYYY-MM-DD_HHMM.html
+#     ├── CharacterName_YYYY-MM-DD_HHMM.pdf
+#     └── CharacterName_YYYY-MM-DD_HHMM_print.pdf
 
 set -e
 
@@ -13,7 +19,6 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 OUTPUT_DIR="$SCRIPT_DIR/output"
-COMPRESSED_DIR="$OUTPUT_DIR/compressed"
 DPI="${2:-150}"
 
 # Input file (default to first JSON in characters/)
@@ -29,9 +34,6 @@ if [ -z "$INPUT" ] || [ ! -f "$INPUT" ] && [ ! -f "$SCRIPT_DIR/characters/$INPUT
     exit 1
 fi
 
-# Ensure directories exist
-mkdir -p "$OUTPUT_DIR" "$COMPRESSED_DIR"
-
 echo "=== D&D Character Sheet Builder ==="
 echo ""
 
@@ -40,16 +42,23 @@ echo "[1/3] Generating HTML..."
 cd "$SCRIPT_DIR"
 python3 generate.py "$INPUT"
 
-# Get character name from the generated file
-HTML_FILE=$(ls -t "$OUTPUT_DIR"/*.html 2>/dev/null | head -1)
+# Find the most recently created HTML file
+HTML_FILE=$(find "$OUTPUT_DIR" -name "*.html" -type f -newer "$SCRIPT_DIR/generate.py" 2>/dev/null | head -1)
+if [ -z "$HTML_FILE" ]; then
+    # Fallback: find newest HTML
+    HTML_FILE=$(find "$OUTPUT_DIR" -name "*.html" -type f -print0 | xargs -0 ls -t | head -1)
+fi
+
 if [ -z "$HTML_FILE" ]; then
     echo "Error: No HTML file generated"
     exit 1
 fi
 
+# Extract paths from the HTML file
+CHAR_DIR=$(dirname "$HTML_FILE")
 BASENAME=$(basename "$HTML_FILE" .html)
-PDF_FILE="$OUTPUT_DIR/${BASENAME}.pdf"
-COMPRESSED_FILE="$COMPRESSED_DIR/${BASENAME}_print.pdf"
+PDF_FILE="$CHAR_DIR/${BASENAME}.pdf"
+COMPRESSED_FILE="$CHAR_DIR/${BASENAME}_print.pdf"
 
 echo "   Generated: $HTML_FILE"
 
@@ -90,9 +99,10 @@ echo "   Generated: $COMPRESSED_FILE ($COMPRESSED_SIZE)"
 
 echo ""
 echo "=== Done! ==="
-echo "   HTML:         $HTML_FILE"
-echo "   Full quality: $PDF_FILE ($PDF_SIZE)"
-echo "   Print-ready:  $COMPRESSED_FILE ($COMPRESSED_SIZE)"
+echo "   Folder:       $CHAR_DIR"
+echo "   HTML:         $(basename "$HTML_FILE")"
+echo "   Full quality: $(basename "$PDF_FILE") ($PDF_SIZE)"
+echo "   Print-ready:  $(basename "$COMPRESSED_FILE") ($COMPRESSED_SIZE)"
 echo ""
 
 # Open both HTML and compressed PDF
