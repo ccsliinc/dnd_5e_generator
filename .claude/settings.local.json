@@ -27,7 +27,13 @@
       "mcp__playwright__browser_navigate",
       "mcp__playwright__browser_take_screenshot",
       "mcp__playwright__browser_evaluate",
-      "mcp__playwright__browser_run_code"
+      "mcp__playwright__browser_run_code",
+      "mcp__playwright__browser_close",
+      "Bash(for:*)",
+      "Bash(do sips -Z 400 \"$f\" --out \"preview/$f%.png_preview.png\")",
+      "Bash(done)",
+      "Bash(git branch:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []
