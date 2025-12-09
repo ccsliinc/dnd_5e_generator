@@ -2,6 +2,8 @@
 
 Generate printable HTML character sheets from JSON data files.
 
+![Character Sheet Preview](images/example/preview_page1.png)
+
 ## Quick Start
 
 ```bash
