@@ -2,70 +2,128 @@
 
 Generate printable HTML character sheets from JSON data files.
 
+## Quick Start
+
+```bash
+# One command does everything
+./build-sheet.sh
+
+# Or specify character and DPI
+./build-sheet.sh thorek.json 150
+```
+
+This generates HTML, prints to PDF, compresses it, and opens both for review.
+
+## How It Works
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    build-sheet.sh                               │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  STEP 1: Generate HTML                                          │
+│                                                                 │
+│  characters/thorek.json  ──▶  generate.py  ──▶  output/*.html   │
+│                                    │                            │
+│                            styles/sheet.css                     │
+│                            images/web/*.jpg                     │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  STEP 2: Print to PDF (Chrome Headless)                         │
+│                                                                 │
+│  output/*.html  ──▶  Chrome --headless  ──▶  output/*.pdf       │
+│                      --print-to-pdf           (13MB vector)     │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  STEP 3: Flatten/Compress                                       │
+│                                                                 │
+│  output/*.pdf  ──▶  pdftoppm  ──▶  temp/*.png  ──▶  img2pdf     │
+│   (13MB)           (rasterize)     (150 DPI)         │          │
+│                                                      ▼          │
+│                                   output/compressed/*_print.pdf │
+│                                             (1.8MB raster)      │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  STEP 4: Open for Review                                        │
+│                                                                 │
+│  open output/*.html           (browser)                         │
+│  open output/compressed/*.pdf (Preview)                         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ## Project Structure
 
 ```
 d_and_d/
-├── characters/          # Character JSON files go here
-│   └── thorek.json
-├── images/              # Character artwork
-├── output/              # Generated HTML (gitignored)
+├── characters/
+│   └── thorek.json         # Character data (input)
+├── images/
+│   ├── *.png               # Original hi-res images
+│   └── web/*.jpg           # Optimized for web/print
 ├── styles/
-│   └── sheet.css        # Stylesheet
-├── generate.py          # Main generator
-└── package.sh           # Packaging script
+│   └── sheet.css           # Stylesheet
+├── output/                  # Generated files (gitignored)
+│   ├── *.html
+│   ├── *.pdf               # Full quality vector
+│   └── compressed/
+│       └── *_print.pdf     # Compressed for printing
+├── generate.py             # HTML generator
+├── build-sheet.sh          # Full pipeline script
+└── package.sh              # Create distribution zip
 ```
 
-## Quick Start
+## Requirements
 
-1. Add your character JSON to `characters/`
-2. Run: `python3 generate.py`
-3. Open `output/<Character_Name>.html` in your browser
-4. Print!
+- Python 3
+- Google Chrome (for headless PDF generation)
+- poppler (`brew install poppler`) - for pdftoppm
+- img2pdf (`brew install img2pdf`) - for PDF compression
 
-No dependencies required - uses only Python standard library.
+## Manual Usage
 
-## Usage
+If you prefer to run steps individually:
 
 ```bash
-# Generate first character in characters/ folder
-python3 generate.py
-
-# Generate specific character
+# Generate HTML only
 python3 generate.py thorek.json
 
-# Or use full path
-python3 generate.py characters/thorek.json
+# Then print manually from browser, or use Chrome headless:
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+    --headless --print-to-pdf=output.pdf --print-background file.html
 ```
-
-Output is saved to `output/<Character_Name>.html`
 
 ## Print Settings
 
-1. Open the HTML file in your browser
-2. File → Print (Ctrl/Cmd + P)
-3. Enable **Background graphics**
-4. Set margins to **Minimum**
-5. Print all 4 pages
+When printing manually from browser:
+1. File → Print (Cmd + P)
+2. Enable **Background graphics**
+3. Set margins to **Minimum**
+4. Print all 4 pages
 
-## JSON Structure
+## Creating a New Character
 
-See `characters/thorek.json` for a complete example. Key sections:
+See `CREATE_CHARACTER.md` for the full JSON template and guide.
 
-- `meta.portrait` - Path to character image
-- `meta.gallery` - Array of additional images for page 1
+Key sections in the JSON:
+- `meta.portrait` - Character portrait image
+- `meta.gallery` - Additional images for page 1
 - `header` - Name, class, race, etc.
 - `abilities` - Ability scores
-- `skills` - Skill proficiencies
-- `attacks` - Weapon attacks
 - `spellcasting` - Spells and slots
-- `backstory` - Character background (use `\n\n` for paragraphs)
-- `companion` - Beast companion stats (optional)
-- `reference` - Quick reference data for page 4
+- `companion` - Beast companion (optional)
+- `reference` - Quick reference for page 4
 
 ## Customizing Styles
 
-Edit `styles/sheet.css`. Key variables at the top:
+Edit `styles/sheet.css`. Key variables:
 
 ```css
 :root {
@@ -75,4 +133,13 @@ Edit `styles/sheet.css`. Key variables at the top:
     --font-display: 'Cinzel', serif;
     --font-body: 'Scada', sans-serif;
 }
+```
+
+## Distribution
+
+Create a zip package for sharing:
+
+```bash
+./package.sh
+# Creates output/dnd-character-sheet.zip
 ```
