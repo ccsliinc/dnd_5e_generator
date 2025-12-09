@@ -21,39 +21,19 @@ env/
 ._*
 .Spotlight-V100
 .Trashes
-ehthumbs.db
 Thumbs.db
+
+# Testing/Screenshots
+.playwright-mcp/
 
 # Temporary files
 *.tmp
 *.temp
 temp/
 tmp/
-
-# Session files (can be regenerated)
-session_*_summary.txt
-*_data.json
-
-# Backup files
+*.log
 *.bak
 *.backup
-*~
 
-# Log files
-*.log
-
-# Character sheet outputs (can be regenerated)
-sheets/*.html
-sheets/*.pdf
-
-# Keep example sheets
-!sheets/example_*
-
-# Data directory (but keep structure)
-data/*.json
-!data/README.md
-
-# Backups (but keep structure)  
-backups/*.json
-backups/*.txt
-!backups/README.md
+# Generated files (can be regenerated)
+*.html
