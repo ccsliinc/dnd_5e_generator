@@ -862,6 +862,7 @@ body {
     display: flex;
     flex-direction: column;
 }
+.notes-box.box--flex { flex: 1; }
 
 .notes-box > .box__label {
     flex-shrink: 0;
@@ -1165,7 +1166,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 2mm;
+    margin-bottom: 1.5mm;
     padding-bottom: 1mm;
     border-bottom: 2px solid var(--accent-primary);
 }
@@ -1177,8 +1178,8 @@ body {
 }
 
 .companion-portrait {
-    width: 22mm;
-    height: 22mm;
+    width: 18mm;
+    height: 18mm;
     overflow: hidden;
     border: 1px solid var(--border-medium);
     flex-shrink: 0;
@@ -1192,22 +1193,22 @@ body {
 
 .companion-name {
     font-family: var(--font-display);
-    font-size: 12pt;
+    font-size: 10pt;
     font-weight: 700;
     color: var(--accent-primary);
 }
 
 .companion-type {
-    font-size: 7pt;
+    font-size: 6.5pt;
     font-style: italic;
     color: var(--text-secondary);
 }
 
 .companion-stats-row {
     display: flex;
-    gap: 3mm;
-    margin: 1.5mm 0;
-    font-size: 7pt;
+    gap: 2mm;
+    margin: 1mm 0;
+    font-size: 6.5pt;
 }
 
 .companion-stat {
@@ -1223,8 +1224,8 @@ body {
 .companion-abilities {
     display: flex;
     justify-content: space-between;
-    margin: 2mm 0;
-    padding: 1.5mm 2mm;
+    margin: 1mm 0;
+    padding: 1mm 1.5mm;
     background: var(--bg-label);
     border-radius: var(--box-radius);
 }
@@ -1234,77 +1235,77 @@ body {
 }
 
 .companion-ability-name {
-    font-size: 6pt;
+    font-size: 5.5pt;
     font-weight: 700;
     color: var(--text-label);
 }
 
 .companion-ability-score {
-    font-size: 9pt;
+    font-size: 8pt;
     font-weight: 700;
 }
 
 .companion-ability-mod {
-    font-size: 7pt;
+    font-size: 6pt;
     color: var(--text-secondary);
 }
 
 .companion-section {
-    margin-top: 2mm;
+    margin-top: 1.5mm;
 }
 
 .companion-section-title {
     font-weight: 700;
-    font-size: 7pt;
+    font-size: 6.5pt;
     color: var(--accent-primary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 1mm;
+    margin-bottom: 0.5mm;
     padding-bottom: 0.5mm;
     border-bottom: 1px solid var(--border-light);
 }
 
 .companion-trait {
-    margin-bottom: 1.5mm;
+    margin-bottom: 1mm;
 }
 
 .companion-trait-name {
     font-weight: 700;
-    font-size: 7pt;
+    font-size: 6.5pt;
     font-style: italic;
 }
 
 .companion-trait-desc {
-    font-size: 6.5pt;
-    line-height: 1.3;
+    font-size: 6pt;
+    line-height: 1.25;
 }
 
 .companion-action {
-    margin-bottom: 1.5mm;
+    margin-bottom: 1mm;
 }
 
 .companion-action-name {
     font-weight: 700;
-    font-size: 7pt;
+    font-size: 6.5pt;
     font-style: italic;
 }
 
 .companion-action-desc {
-    font-size: 6.5pt;
-    line-height: 1.3;
+    font-size: 6pt;
+    line-height: 1.25;
 }
 
 .companion-commands {
-    font-size: 6.5pt;
-    line-height: 1.4;
+    font-size: 6pt;
+    line-height: 1.3;
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
 .companion-commands li {
-    margin-bottom: 0.5mm;
-    padding-left: 3mm;
+    margin-bottom: 0.3mm;
+    padding-left: 2.5mm;
     position: relative;
 }
 
@@ -1408,12 +1409,7 @@ body {
     display: flex;
     align-items: flex-start;
     gap: 2mm;
-    margin-top: 1.5mm;
-    padding-top: 1.5mm;
-    border-top: 1px solid var(--border-medium);
-    background: var(--bg-label);
-    margin: 0 -2mm -2mm;
-    padding: 1.5mm 2mm;
+    margin-top: 1mm;
 }
 
 /* Combat Reference Box */
@@ -2414,11 +2410,11 @@ body {
                 </div>
             </div>
             <div class="box spell-level-box notes-box">
-                <div class="box__label" style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: var(--accent-primary);">Spell Notes</div>
+                <div class="box__label" style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: var(--accent-primary);">Notes</div>
                 <div class="notes-lines"></div>
             </div>
             <div class="box spell-level-box notes-box">
-                <div class="box__label" style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: var(--accent-primary);">Spell Notes</div>
+                <div class="box__label" style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: var(--accent-primary);">Notes</div>
                 <div class="notes-lines"></div>
             </div>
         </div>
@@ -2477,68 +2473,6 @@ body {
                         <span class="turn-phase-desc">Once per round, even on others' turns (opportunity attacks, some spells)</span>
                     </div>
                 </div>
-                <div class="box ref-box">
-                    <div class="ref-section-title">Weapons</div>
-                    <div class="weapon-card">
-                        <div class="weapon-name">Longbow</div>
-                        <div class="weapon-type">Martial Ranged</div>
-                        <div class="weapon-stats">
-                            <span class="weapon-damage">1d8 piercing</span>
-                        </div>
-                        <div class="weapon-properties">Ammunition (range 150/600), heavy, two-handed</div>
-                        <div class="weapon-notes">+2 from Archery fighting style included in attack bonus</div>
-                    </div>
-                    <div class="weapon-card">
-                        <div class="weapon-name">Warhammer</div>
-                        <div class="weapon-type">Martial Melee</div>
-                        <div class="weapon-stats">
-                            <span class="weapon-damage">1d8 bludgeoning (1d10 versatile)</span>
-                        </div>
-                        <div class="weapon-properties">Versatile</div>
-                        <div class="weapon-notes">Can be used one or two-handed</div>
-                    </div>
-                    <div class="weapon-card">
-                        <div class="weapon-name">Handaxe</div>
-                        <div class="weapon-type">Simple Melee</div>
-                        <div class="weapon-stats">
-                            <span class="weapon-damage">1d6 slashing</span>
-                        </div>
-                        <div class="weapon-properties">Light, thrown (range 20/60)</div>
-                        <div class="weapon-notes">Can throw or use in melee</div>
-                    </div>
-                </div>
-                <div class="box ref-box box--flex">
-                    <div class="ref-section-title">Spells</div>
-                    <div class="spell-card">
-                        <div class="spell-name">Hunter's Mark <span class="spell-level-tag">(1st)</span></div>
-                        <div class="spell-meta">
-                            <span><span class="spell-meta-label">Cast:</span> 1 bonus action</span>
-                            <span><span class="spell-meta-label">Range:</span> 90 feet</span>
-                            <span><span class="spell-meta-label">Duration:</span> Concentration, up to 1 hour</span>
-                        </div>
-                        <div class="spell-desc">Mark a creature you can see. Deal extra 1d6 damage to it whenever you hit with a weapon attack. Advantage on Perception/Survival checks to find it. If target drops to 0 HP, use bonus action to mark new creature.</div>
-                    </div>
-                    <div class="spell-card">
-                        <div class="spell-name">Cure Wounds <span class="spell-level-tag">(1st)</span></div>
-                        <div class="spell-meta">
-                            <span><span class="spell-meta-label">Cast:</span> 1 action</span>
-                            <span><span class="spell-meta-label">Range:</span> Touch</span>
-                            <span><span class="spell-meta-label">Duration:</span> Instantaneous</span>
-                        </div>
-                        <div class="spell-desc">Creature you touch regains 1d8 + spellcasting modifier (WIS +2) hit points. No effect on undead or constructs.</div>
-                    </div>
-                    <div class="spell-card">
-                        <div class="spell-name">Goodberry <span class="spell-level-tag">(1st)</span></div>
-                        <div class="spell-meta">
-                            <span><span class="spell-meta-label">Cast:</span> 1 action</span>
-                            <span><span class="spell-meta-label">Range:</span> Touch</span>
-                            <span><span class="spell-meta-label">Duration:</span> Instantaneous</span>
-                        </div>
-                        <div class="spell-desc">Create 10 magical berries. Eating a berry (1 action) restores 1 HP and provides nourishment for one day. Berries lose potency after 24 hours.</div>
-                    </div>
-                </div>
-            </div>
-            <div class="column">
                 <div class="box ref-box combat-ref-box">
                     <div class="ref-section-title">Actions</div>
                         <div class="combat-action">
@@ -2608,35 +2542,66 @@ body {
                             <span class="combat-cover-bonus">Can't be targeted directly</span>
                         </div>
                 </div>
+                <div class="box ref-box box--flex">
+                    <div class="ref-section-title">Weapons</div>
+                    <div class="weapon-card">
+                        <div class="weapon-name">Longbow</div>
+                        <div class="weapon-type">Martial Ranged</div>
+                        <div class="weapon-stats">
+                            <span class="weapon-damage">1d8 piercing</span>
+                        </div>
+                        <div class="weapon-properties">Ammunition (range 150/600), heavy, two-handed</div>
+                        <div class="weapon-notes">+2 from Archery fighting style included in attack bonus</div>
+                    </div>
+                    <div class="weapon-card">
+                        <div class="weapon-name">Warhammer</div>
+                        <div class="weapon-type">Martial Melee</div>
+                        <div class="weapon-stats">
+                            <span class="weapon-damage">1d8 bludgeoning (1d10 versatile)</span>
+                        </div>
+                        <div class="weapon-properties">Versatile</div>
+                        <div class="weapon-notes">Can be used one or two-handed</div>
+                    </div>
+                    <div class="weapon-card">
+                        <div class="weapon-name">Handaxe</div>
+                        <div class="weapon-type">Simple Melee</div>
+                        <div class="weapon-stats">
+                            <span class="weapon-damage">1d6 slashing</span>
+                        </div>
+                        <div class="weapon-properties">Light, thrown (range 20/60)</div>
+                        <div class="weapon-notes">Can throw or use in melee</div>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
                 <div class="box ref-box">
-                    <div class="ref-section-title">Features & Abilities</div>
-                    <div class="feature-card">
-                        <div class="feature-name">Favored Enemy: Orcs & Goblins</div>
-                        <div class="feature-desc">Advantage on Survival checks to track and Intelligence checks to recall info about orcs and goblins. Learn one language spoken by them (Orc).</div>
+                    <div class="ref-section-title">Spells</div>
+                    <div class="spell-card">
+                        <div class="spell-name">Hunter's Mark <span class="spell-level-tag">(1st)</span></div>
+                        <div class="spell-meta">
+                            <span><span class="spell-meta-label">Cast:</span> 1 bonus action</span>
+                            <span><span class="spell-meta-label">Range:</span> 90 feet</span>
+                            <span><span class="spell-meta-label">Duration:</span> Concentration, up to 1 hour</span>
+                        </div>
+                        <div class="spell-desc">Mark a creature you can see. Deal extra 1d6 damage to it whenever you hit with a weapon attack. Advantage on Perception/Survival checks to find it. If target drops to 0 HP, use bonus action to mark new creature.</div>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-name">Natural Explorer: Forest</div>
-                        <div class="feature-desc">In forest terrain: difficult terrain doesn't slow group, can't get lost (except magic), alert to danger while doing other activities, move stealthily alone at normal pace, find twice as much food foraging, learn exact number/size of creatures tracked.</div>
+                    <div class="spell-card">
+                        <div class="spell-name">Cure Wounds <span class="spell-level-tag">(1st)</span></div>
+                        <div class="spell-meta">
+                            <span><span class="spell-meta-label">Cast:</span> 1 action</span>
+                            <span><span class="spell-meta-label">Range:</span> Touch</span>
+                            <span><span class="spell-meta-label">Duration:</span> Instantaneous</span>
+                        </div>
+                        <div class="spell-desc">Creature you touch regains 1d8 + spellcasting modifier (WIS +2) hit points. No effect on undead or constructs.</div>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-name">Fighting Style: Archery</div>
-                        <div class="feature-desc">+2 bonus to attack rolls with ranged weapons.</div>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-name">Primeval Awareness</div>
-                        <div class="feature-desc">Spend 1 spell slot. For 1 minute per spell level, sense whether aberrations, celestials, dragons, elementals, fey, fiends, or undead are within 1 mile (6 miles in favored terrain). Doesn't reveal location or number.</div>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-name">Dwarven Resilience</div>
-                        <div class="feature-desc">Advantage on saving throws against poison. Resistance to poison damage.</div>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-name">Stonecunning</div>
-                        <div class="feature-desc">When making Intelligence (History) check related to origin of stonework, add double proficiency bonus (+4 instead of +2).</div>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-name">Rustic Hospitality</div>
-                        <div class="feature-desc">You can find a place to hide, rest, or recuperate among commoners, unless you've shown yourself a danger. They will shield you from the law or anyone searching for you, though not at risk of their lives.</div>
+                    <div class="spell-card">
+                        <div class="spell-name">Goodberry <span class="spell-level-tag">(1st)</span></div>
+                        <div class="spell-meta">
+                            <span><span class="spell-meta-label">Cast:</span> 1 action</span>
+                            <span><span class="spell-meta-label">Range:</span> Touch</span>
+                            <span><span class="spell-meta-label">Duration:</span> Instantaneous</span>
+                        </div>
+                        <div class="spell-desc">Create 10 magical berries. Eating a berry (1 action) restores 1 HP and provides nourishment for one day. Berries lose potency after 24 hours.</div>
                     </div>
                 </div>
                 <div class="box companion-block box--flex">

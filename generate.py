@@ -902,11 +902,11 @@ def build_html(data: dict) -> str:
             </div>
             {spell_levels_html}
             <div class="box spell-level-box notes-box">
-                <div class="box__label" style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: var(--accent-primary);">Spell Notes</div>
+                <div class="box__label" style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: var(--accent-primary);">Notes</div>
                 <div class="notes-lines"></div>
             </div>
             <div class="box spell-level-box notes-box">
-                <div class="box__label" style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: var(--accent-primary);">Spell Notes</div>
+                <div class="box__label" style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: var(--accent-primary);">Notes</div>
                 <div class="notes-lines"></div>
             </div>
         </div>
@@ -941,17 +941,14 @@ def build_html(data: dict) -> str:
         </div>
 
         <div class="page4-grid">
-            <div class="column">{turn_html}
-                <div class="box ref-box">
+            <div class="column">{turn_html}{combat_html}
+                <div class="box ref-box box--flex">
                     <div class="ref-section-title">Weapons</div>{weapons_html}
                 </div>
-                <div class="box ref-box box--flex">
-                    <div class="ref-section-title">Spells</div>{spells_ref_html}
-                </div>
             </div>
-            <div class="column">{combat_html}
+            <div class="column">
                 <div class="box ref-box">
-                    <div class="ref-section-title">Features & Abilities</div>{features_ref_html}
+                    <div class="ref-section-title">Spells</div>{spells_ref_html}
                 </div>{companion_html}
             </div>
         </div>
