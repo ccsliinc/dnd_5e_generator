@@ -4,6 +4,8 @@ Generate printable HTML character sheets from JSON data files.
 
 ![Character Sheet Preview](images/example/preview_page1.png)
 
+**[View Example PDF](output/example/Aldric_the_Brave.pdf)**
+
 ## Quick Start
 
 ```bash
