@@ -2,7 +2,13 @@
   "meta": {
     "version": "1.0",
     "generated": null,
-    "portrait": "images/Gemini_Generated_Image_f9muy7f9muy7f9mu.png"
+    "portrait": "images/thorek_ironjaw_autumn.png",
+    "gallery": [
+      "images/ring_nature_moss.png",
+      "images/thorek_face_closeup.png",
+      "images/thorek_ranger_forest.png",
+      "images/ironjaw_fullbody_armored.png"
+    ]
   },
 
   "header": {
@@ -223,5 +229,137 @@
       "8": { "slots_total": 0, "slots_expended": 0, "known": [] },
       "9": { "slots_total": 0, "slots_expended": 0, "known": [] }
     }
+  },
+
+  "reference": {
+    "weapons": [
+      {
+        "name": "Longbow",
+        "type": "Martial Ranged",
+        "damage": "1d8 piercing",
+        "properties": "Ammunition (range 150/600), heavy, two-handed",
+        "notes": "+2 from Archery fighting style included in attack bonus"
+      },
+      {
+        "name": "Warhammer",
+        "type": "Martial Melee",
+        "damage": "1d8 bludgeoning (1d10 versatile)",
+        "properties": "Versatile",
+        "notes": "Can be used one or two-handed"
+      },
+      {
+        "name": "Handaxe",
+        "type": "Simple Melee",
+        "damage": "1d6 slashing",
+        "properties": "Light, thrown (range 20/60)",
+        "notes": "Can throw or use in melee"
+      }
+    ],
+    "spells": [
+      {
+        "name": "Hunter's Mark",
+        "level": "1st",
+        "casting_time": "1 bonus action",
+        "range": "90 feet",
+        "duration": "Concentration, up to 1 hour",
+        "description": "Mark a creature you can see. Deal extra 1d6 damage to it whenever you hit with a weapon attack. Advantage on Perception/Survival checks to find it. If target drops to 0 HP, use bonus action to mark new creature."
+      },
+      {
+        "name": "Cure Wounds",
+        "level": "1st",
+        "casting_time": "1 action",
+        "range": "Touch",
+        "duration": "Instantaneous",
+        "description": "Creature you touch regains 1d8 + spellcasting modifier (WIS +2) hit points. No effect on undead or constructs."
+      },
+      {
+        "name": "Goodberry",
+        "level": "1st",
+        "casting_time": "1 action",
+        "range": "Touch",
+        "duration": "Instantaneous",
+        "description": "Create 10 magical berries. Eating a berry (1 action) restores 1 HP and provides nourishment for one day. Berries lose potency after 24 hours."
+      }
+    ],
+    "features": [
+      {
+        "name": "Favored Enemy: Orcs & Goblins",
+        "description": "Advantage on Survival checks to track and Intelligence checks to recall info about orcs and goblins. Learn one language spoken by them (Orc)."
+      },
+      {
+        "name": "Natural Explorer: Forest",
+        "description": "In forest terrain: difficult terrain doesn't slow group, can't get lost (except magic), alert to danger while doing other activities, move stealthily alone at normal pace, find twice as much food foraging, learn exact number/size of creatures tracked."
+      },
+      {
+        "name": "Fighting Style: Archery",
+        "description": "+2 bonus to attack rolls with ranged weapons."
+      },
+      {
+        "name": "Primeval Awareness",
+        "description": "Spend 1 spell slot. For 1 minute per spell level, sense whether aberrations, celestials, dragons, elementals, fey, fiends, or undead are within 1 mile (6 miles in favored terrain). Doesn't reveal location or number."
+      },
+      {
+        "name": "Dwarven Resilience",
+        "description": "Advantage on saving throws against poison. Resistance to poison damage."
+      },
+      {
+        "name": "Stonecunning",
+        "description": "When making Intelligence (History) check related to origin of stonework, add double proficiency bonus (+4 instead of +2)."
+      },
+      {
+        "name": "Rustic Hospitality",
+        "description": "You can find a place to hide, rest, or recuperate among commoners, unless you've shown yourself a danger. They will shield you from the law or anyone searching for you, though not at risk of their lives."
+      }
+    ]
+  },
+
+  "companion": {
+    "name": "Ironjaw",
+    "image": "images/ironjaw_portrait_armored.png",
+    "type": "Black Bear",
+    "size": "Medium beast",
+    "armor_class": 13,
+    "hit_points": 25,
+    "hp_notes": "19 base + 6 from Ring of the Wild Hunt",
+    "speed": "40 ft., climb 30 ft.",
+    "abilities": {
+      "str": 15,
+      "dex": 10,
+      "con": 14,
+      "int": 2,
+      "wis": 12,
+      "cha": 7
+    },
+    "skills": "Perception +3",
+    "senses": "Passive Perception 13",
+    "traits": [
+      {
+        "name": "Keen Smell",
+        "description": "Advantage on Perception checks that rely on smell."
+      },
+      {
+        "name": "Ring of the Wild Hunt",
+        "description": "+2 damage on attacks, +6 HP, attacks count as magical, advantage on saves vs charm and frighten effects."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "description": "Ironjaw makes two attacks: one bite and one claw."
+      },
+      {
+        "name": "Bite",
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 1d6+4 piercing damage (includes +2 from ring)."
+      },
+      {
+        "name": "Claws",
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 2d4+4 slashing damage (includes +2 from ring)."
+      }
+    ],
+    "commands": [
+      "Use action to command Ironjaw to take Attack, Dash, Disengage, Dodge, or Help action",
+      "If no command given, Ironjaw takes Dodge action",
+      "Can also use reaction to command Ironjaw when hit by attack"
+    ]
   }
 }
