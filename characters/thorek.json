@@ -2,12 +2,12 @@
   "meta": {
     "version": "1.0",
     "generated": null,
-    "portrait": "../../images/web/thorek_ironjaw_autumn.jpg",
+    "portrait": "../../images/thorek/thorek_ironjaw_autumn.jpg",
     "gallery": [
-      "../../images/web/ring_nature_moss.jpg",
-      "../../images/web/thorek_face_closeup.jpg",
-      "../../images/web/thorek_ranger_forest.jpg",
-      "../../images/web/ironjaw_fullbody_armored.jpg"
+      "../../images/thorek/ring_nature_moss.jpg",
+      "../../images/thorek/thorek_face_closeup.jpg",
+      "../../images/thorek/thorek_ranger_forest.jpg",
+      "../../images/thorek/ironjaw_fullbody_armored.jpg"
     ]
   },
 
