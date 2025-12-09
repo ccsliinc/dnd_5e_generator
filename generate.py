@@ -152,6 +152,7 @@ def prepare_template_data(char_data: dict) -> dict:
     return {
         # Meta
         "portrait": meta.get("portrait", ""),
+        "gallery": meta.get("gallery", []),
 
         # Header info
         "character_name": header.get("character_name", ""),
@@ -216,6 +217,10 @@ def prepare_template_data(char_data: dict) -> dict:
             "cantrips": spellcasting.get("cantrips", []),
             "spell_levels": spell_levels
         },
+
+        # Page 4 - Reference / Cheat Sheet
+        "reference": char_data.get("reference", {}),
+        "companion": char_data.get("companion", {}),
 
         # Meta
         "generated_date": datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -381,6 +386,145 @@ def build_html(data: dict) -> str:
             </div>'''
 
     # =========================================================================
+    # PAGE 1: GALLERY ROW
+    # =========================================================================
+
+    gallery_html = ""
+    gallery_images = data.get("gallery", [])
+    if gallery_images:
+        gallery_items = ""
+        for img_path in gallery_images:
+            gallery_items += f'''
+                        <div class="gallery-item">
+                            <img src="{img_path}" alt="Character Art" class="gallery-img">
+                        </div>'''
+        gallery_html = f'''
+                <div class="gallery-row">{gallery_items}
+                </div>'''
+
+    # =========================================================================
+    # PAGE 4: REFERENCE / CHEAT SHEET
+    # =========================================================================
+
+    # Weapons reference
+    weapons_html = ""
+    for weapon in data.get("reference", {}).get("weapons", []):
+        weapons_html += f'''
+                    <div class="weapon-card">
+                        <div class="weapon-name">{weapon["name"]}</div>
+                        <div class="weapon-type">{weapon.get("type", "")}</div>
+                        <div class="weapon-stats">
+                            <span class="weapon-damage">{weapon.get("damage", "")}</span>
+                        </div>
+                        <div class="weapon-properties">{weapon.get("properties", "")}</div>
+                        <div class="weapon-notes">{weapon.get("notes", "")}</div>
+                    </div>'''
+
+    # Spells reference
+    spells_ref_html = ""
+    for spell in data.get("reference", {}).get("spells", []):
+        spells_ref_html += f'''
+                    <div class="spell-card">
+                        <div class="spell-name">{spell["name"]} <span class="spell-level-tag">({spell.get("level", "")})</span></div>
+                        <div class="spell-meta">
+                            <span><span class="spell-meta-label">Cast:</span> {spell.get("casting_time", "")}</span>
+                            <span><span class="spell-meta-label">Range:</span> {spell.get("range", "")}</span>
+                            <span><span class="spell-meta-label">Duration:</span> {spell.get("duration", "")}</span>
+                        </div>
+                        <div class="spell-desc">{spell.get("description", "")}</div>
+                    </div>'''
+
+    # Features reference
+    features_ref_html = ""
+    for feature in data.get("reference", {}).get("features", []):
+        features_ref_html += f'''
+                    <div class="feature-card">
+                        <div class="feature-name">{feature["name"]}</div>
+                        <div class="feature-desc">{feature.get("description", "")}</div>
+                    </div>'''
+
+    # Companion stat block
+    companion = data.get("companion", {})
+    companion_html = ""
+    if companion:
+        # Companion abilities
+        comp_abilities = companion.get("abilities", {})
+        comp_abilities_html = ""
+        for ability in ["str", "dex", "con", "int", "wis", "cha"]:
+            score = comp_abilities.get(ability, 10)
+            mod = (score - 10) // 2
+            mod_str = f"+{mod}" if mod >= 0 else str(mod)
+            comp_abilities_html += f'''
+                        <div class="companion-ability">
+                            <div class="companion-ability-name">{ability.upper()}</div>
+                            <div class="companion-ability-score">{score}</div>
+                            <div class="companion-ability-mod">({mod_str})</div>
+                        </div>'''
+
+        # Companion traits
+        comp_traits_html = ""
+        for trait in companion.get("traits", []):
+            comp_traits_html += f'''
+                        <div class="companion-trait">
+                            <span class="companion-trait-name">{trait["name"]}.</span>
+                            <span class="companion-trait-desc">{trait.get("description", "")}</span>
+                        </div>'''
+
+        # Companion actions
+        comp_actions_html = ""
+        for action in companion.get("actions", []):
+            comp_actions_html += f'''
+                        <div class="companion-action">
+                            <span class="companion-action-name">{action["name"]}.</span>
+                            <span class="companion-action-desc">{action.get("description", "")}</span>
+                        </div>'''
+
+        # Companion commands
+        comp_commands_html = ""
+        for cmd in companion.get("commands", []):
+            comp_commands_html += f"<li>{cmd}</li>"
+
+        # Companion image
+        companion_image = companion.get("image", "")
+        companion_image_html = ""
+        if companion_image:
+            companion_image_html = f'''
+                        <div class="companion-portrait">
+                            <img src="{companion_image}" alt="{companion.get("name", "Companion")}" class="companion-img">
+                        </div>'''
+
+        companion_html = f'''
+                <div class="box companion-block box--flex">
+                    <div class="companion-header-row">
+                        <div class="companion-header">
+                            <div class="companion-name">{companion.get("name", "")}</div>
+                            <div class="companion-type">{companion.get("size", "")} {companion.get("type", "")}</div>
+                        </div>{companion_image_html}
+                    </div>
+                    <div class="companion-stats-row">
+                        <div class="companion-stat"><span class="companion-stat-label">AC</span> {companion.get("armor_class", "")}</div>
+                        <div class="companion-stat"><span class="companion-stat-label">HP</span> {companion.get("hit_points", "")} <span style="font-size: 6pt; color: #666;">({companion.get("hp_notes", "")})</span></div>
+                        <div class="companion-stat"><span class="companion-stat-label">Speed</span> {companion.get("speed", "")}</div>
+                    </div>
+                    <div class="companion-abilities">{comp_abilities_html}
+                    </div>
+                    <div class="companion-stats-row">
+                        <div class="companion-stat"><span class="companion-stat-label">Skills</span> {companion.get("skills", "")}</div>
+                        <div class="companion-stat"><span class="companion-stat-label">Senses</span> {companion.get("senses", "")}</div>
+                    </div>
+                    <div class="companion-section">
+                        <div class="companion-section-title">Traits</div>{comp_traits_html}
+                    </div>
+                    <div class="companion-section">
+                        <div class="companion-section-title">Actions</div>{comp_actions_html}
+                    </div>
+                    <div class="companion-section">
+                        <div class="companion-section-title">Beast Master Commands</div>
+                        <ul class="companion-commands">{comp_commands_html}</ul>
+                    </div>
+                </div>'''
+
+    # =========================================================================
     # COMPLETE HTML DOCUMENT
     # =========================================================================
     return f'''<!DOCTYPE html>
@@ -539,11 +683,11 @@ def build_html(data: dict) -> str:
                 </div>
                 <div class="box box--label-bottom equipment-box">
                     <div class="coin-row">
-                        <div class="coin"><div class="coin-value">{data["currency"]["cp"]}</div><div class="coin-label">CP</div></div>
-                        <div class="coin"><div class="coin-value">{data["currency"]["sp"]}</div><div class="coin-label">SP</div></div>
-                        <div class="coin"><div class="coin-value">{data["currency"]["ep"]}</div><div class="coin-label">EP</div></div>
-                        <div class="coin"><div class="coin-value">{data["currency"]["gp"]}</div><div class="coin-label">GP</div></div>
-                        <div class="coin"><div class="coin-value">{data["currency"]["pp"]}</div><div class="coin-label">PP</div></div>
+                        <div class="coin coin--cp"><div class="coin-icon">{data["currency"]["cp"]}</div><div class="coin-label">Copper</div></div>
+                        <div class="coin coin--sp"><div class="coin-icon">{data["currency"]["sp"]}</div><div class="coin-label">Silver</div></div>
+                        <div class="coin coin--ep"><div class="coin-icon">{data["currency"]["ep"]}</div><div class="coin-label">Electrum</div></div>
+                        <div class="coin coin--gp"><div class="coin-icon">{data["currency"]["gp"]}</div><div class="coin-label">Gold</div></div>
+                        <div class="coin coin--pp"><div class="coin-icon">{data["currency"]["pp"]}</div><div class="coin-label">Platinum</div></div>
                     </div>
                     <div class="box-content">{equipment_html}</div>
                     <div class="box__label">Equipment</div>
@@ -573,7 +717,7 @@ def build_html(data: dict) -> str:
                     <div class="box__label">Features & Traits</div>
                 </div>
             </div>
-        </div>
+        </div>{gallery_html}
     </div>
 
     <!-- ================================================================
@@ -616,30 +760,38 @@ def build_html(data: dict) -> str:
             </div>
         </div>
 
-        <div class="page2-grid">
-            <div class="column">
-                <div class="box box--label-top large-box" style="min-height: 45mm;">
-                    <div class="box__label">Character Appearance</div>
-                    <div class="large-box-content text-content">{appearance_html}</div>
+        <div class="page2-content">
+            <div class="page2-columns">
+                <div class="column">
+                    <div class="box box--label-top large-box" style="min-height: 45mm;">
+                        <div class="box__label">Character Appearance</div>
+                        <div class="large-box-content text-content">{appearance_html}</div>
+                    </div>
+                    <div class="box box--label-top large-box box--flex">
+                        <div class="box__label">Character Backstory</div>
+                        <div class="large-box-content text-content">{backstory_html}</div>
+                    </div>
                 </div>
-                <div class="box box--label-top large-box box--flex">
-                    <div class="box__label">Character Backstory</div>
-                    <div class="large-box-content text-content">{backstory_html}</div>
+                <div class="column">
+                    <div class="box box--label-top large-box" style="min-height: 60mm;">
+                        <div class="box__label">Allies & Organizations</div>
+                        <div style="font-weight: 600; margin-bottom: 2mm;">{data["allies_organizations"]["name"]}</div>
+                        <div class="large-box-content text-content">{allies_html}</div>
+                    </div>
+                    <div class="box box--label-top large-box">
+                        <div class="box__label">Additional Features & Traits</div>
+                        <div class="large-box-content">{additional_features_html}</div>
+                    </div>
+                    <div class="box box--label-top large-box box--flex">
+                        <div class="box__label">Treasure</div>
+                        <div class="large-box-content">{treasure_html}</div>
+                    </div>
                 </div>
             </div>
-            <div class="column">
-                <div class="box box--label-top large-box" style="min-height: 60mm;">
-                    <div class="box__label">Allies & Organizations</div>
-                    <div style="font-weight: 600; margin-bottom: 2mm;">{data["allies_organizations"]["name"]}</div>
-                    <div class="large-box-content text-content">{allies_html}</div>
-                </div>
-                <div class="box box--label-top large-box">
-                    <div class="box__label">Additional Features & Traits</div>
-                    <div class="large-box-content">{additional_features_html}</div>
-                </div>
-                <div class="box box--label-top large-box box--flex">
-                    <div class="box__label">Treasure</div>
-                    <div class="large-box-content">{treasure_html}</div>
+            <div class="page2-notes-row">
+                <div class="box box--label-top large-box notes-box" style="min-height: 110mm;">
+                    <div class="box__label">Notes</div>
+                    <div class="notes-lines"></div>
                 </div>
             </div>
         </div>
@@ -683,6 +835,51 @@ def build_html(data: dict) -> str:
                 </div>
             </div>
             {spell_levels_html}
+        </div>
+    </div>
+
+    <!-- ================================================================
+         PAGE 4: Reference / Cheat Sheet
+         ================================================================ -->
+    <div class="page">
+        <div class="page-header">
+            <div class="header-left">
+                <div class="header-brand">Dungeons & Dragons</div>
+                <div class="box box--label-bottom header-name">
+                    <div class="value--large">Quick Reference</div>
+                    <div class="box__label">{data["character_name"]}</div>
+                </div>
+            </div>
+            <div class="header-right" style="grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr;">
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">{data["class_level"]}</div>
+                    <div class="box__label">Class & Level</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">{data["proficiency_bonus"]}</div>
+                    <div class="box__label">Proficiency Bonus</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">{data["spellcasting"]["spell_save_dc"]}</div>
+                    <div class="box__label">Spell Save DC</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page4-grid">
+            <div class="column">
+                <div class="box ref-box">
+                    <div class="ref-section-title">Weapons</div>{weapons_html}
+                </div>
+                <div class="box ref-box box--flex">
+                    <div class="ref-section-title">Spells</div>{spells_ref_html}
+                </div>
+            </div>
+            <div class="column">
+                <div class="box ref-box">
+                    <div class="ref-section-title">Features & Abilities</div>{features_ref_html}
+                </div>{companion_html}
+            </div>
         </div>
     </div>
 </body>

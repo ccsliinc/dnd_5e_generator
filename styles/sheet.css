@@ -724,30 +724,89 @@ body {
 .coin-row {
     display: flex;
     justify-content: space-around;
-    padding: 1mm 0;
+    padding: 2mm 1mm;
     border-bottom: 1px solid var(--border-light);
     margin-bottom: 1mm;
 }
 
-.coin { text-align: center; }
+.coin {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5mm;
+}
 
-.coin-value {
-    width: 7mm;
-    height: 5mm;
-    border: 1px solid var(--border-dark);
-    border-radius: 2px;
+.coin-icon {
+    width: 8mm;
+    height: 8mm;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 8pt;
+    font-weight: 700;
+    position: relative;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), inset 0 -1px 2px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.15);
+}
+
+/* Coin inner ring detail */
+.coin-icon::before {
+    content: '';
+    position: absolute;
+    width: 6mm;
+    height: 6mm;
+    border-radius: 50%;
+    border: 0.3mm solid rgba(0,0,0,0.15);
+}
+
+/* Copper - brown/orange tones */
+.coin--cp .coin-icon {
+    background: linear-gradient(145deg, #cd7f32, #b87333);
+    border: 0.5mm solid #8b4513;
+    color: #4a2800;
+}
+
+/* Silver - gray/white tones */
+.coin--sp .coin-icon {
+    background: linear-gradient(145deg, #e8e8e8, #c0c0c0);
+    border: 0.5mm solid #808080;
+    color: #404040;
+}
+
+/* Electrum - pale gold/silver mix */
+.coin--ep .coin-icon {
+    background: linear-gradient(145deg, #e6d5a8, #c9b896);
+    border: 0.5mm solid #9a8b6e;
+    color: #5a4f3a;
+}
+
+/* Gold - rich gold tones */
+.coin--gp .coin-icon {
+    background: linear-gradient(145deg, #ffd700, #daa520);
+    border: 0.5mm solid #b8860b;
+    color: #654321;
+}
+
+/* Platinum - bright silver/white */
+.coin--pp .coin-icon {
+    background: linear-gradient(145deg, #f5f5f5, #e5e4e2);
+    border: 0.5mm solid #a9a9a9;
+    color: #505050;
+}
+
+.coin-value {
     font-size: 7pt;
     font-weight: 700;
-    margin-bottom: 0.5mm;
+    color: var(--text-primary);
 }
 
 .coin-label {
     font-size: 5pt;
     font-weight: 700;
     color: var(--text-label);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
 /* -----------------------------------------------------------------
@@ -787,6 +846,55 @@ body {
 .large-box-content {
     font-size: 7.5pt;
     line-height: 1.4;
+}
+
+/* Notes box with lined paper effect */
+.notes-box {
+    min-height: 25mm;
+    display: flex;
+    flex-direction: column;
+}
+
+.notes-box > .box__label {
+    flex-shrink: 0;
+}
+
+.notes-lines {
+    flex: 1;
+    min-height: 20mm;
+    background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 5.5mm,
+        #c4beb3 5.5mm,
+        #c4beb3 6mm
+    );
+    background-position: 0 2mm;
+}
+
+/* Page 2 alternate layout with full-width notes row */
+.page2-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 3mm;
+}
+
+.page2-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm;
+    flex: 1;
+}
+
+.page2-columns .column {
+    display: flex;
+    flex-direction: column;
+    gap: 2mm;
+}
+
+.page2-notes-row {
+    width: 100%;
 }
 
 /* -----------------------------------------------------------------
@@ -885,4 +993,369 @@ body {
     background: var(--accent-highlight);
     border-color: var(--accent-primary);
     color: var(--accent-primary);
+}
+
+/* -----------------------------------------------------------------
+   22. PAGE 4 - REFERENCE / CHEAT SHEET
+   ----------------------------------------------------------------- */
+.page4-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm;
+    flex: 1;
+}
+
+.page4-grid .column {
+    display: flex;
+    flex-direction: column;
+    gap: 2mm;
+}
+
+/* Reference section boxes */
+.ref-box {
+    padding: var(--box-padding);
+}
+.ref-box.box--flex { flex: 1; }
+
+.ref-section-title {
+    font-family: var(--font-display);
+    font-size: 9pt;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 2mm;
+    padding-bottom: 1mm;
+    border-bottom: 1px solid var(--border-light);
+}
+
+/* Weapon reference cards */
+.weapon-card {
+    margin-bottom: 2.5mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dashed var(--border-light);
+}
+.weapon-card:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.weapon-name {
+    font-weight: 700;
+    font-size: 8pt;
+    color: var(--text-primary);
+}
+
+.weapon-type {
+    font-size: 6pt;
+    color: var(--text-label);
+    font-style: italic;
+}
+
+.weapon-stats {
+    display: flex;
+    gap: 3mm;
+    margin-top: 0.5mm;
+    font-size: 7pt;
+}
+
+.weapon-damage {
+    font-weight: 600;
+    color: var(--accent-primary);
+}
+
+.weapon-properties {
+    font-size: 6pt;
+    color: var(--text-secondary);
+    margin-top: 0.5mm;
+}
+
+.weapon-notes {
+    font-size: 6pt;
+    color: var(--text-label);
+    font-style: italic;
+    margin-top: 0.5mm;
+}
+
+/* Spell reference cards */
+.spell-card {
+    margin-bottom: 2.5mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dashed var(--border-light);
+}
+.spell-card:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.spell-name {
+    font-weight: 700;
+    font-size: 8pt;
+    color: var(--text-primary);
+}
+
+.spell-level-tag {
+    font-size: 6pt;
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+.spell-meta {
+    display: flex;
+    gap: 2mm;
+    margin-top: 0.5mm;
+    font-size: 6pt;
+    color: var(--text-label);
+}
+
+.spell-meta span {
+    display: flex;
+    gap: 0.5mm;
+}
+
+.spell-meta-label {
+    font-weight: 600;
+}
+
+.spell-desc {
+    font-size: 7pt;
+    line-height: 1.4;
+    margin-top: 1mm;
+    text-align: justify;
+}
+
+/* Feature reference cards */
+.feature-card {
+    margin-bottom: 2mm;
+    padding-bottom: 1.5mm;
+    border-bottom: 1px dashed var(--border-light);
+}
+.feature-card:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.feature-name {
+    font-weight: 700;
+    font-size: 7.5pt;
+    color: var(--accent-primary);
+}
+
+.feature-desc {
+    font-size: 6.5pt;
+    line-height: 1.4;
+    margin-top: 0.5mm;
+}
+
+/* Companion stat block */
+.companion-block {
+    padding: var(--box-padding);
+}
+
+.companion-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2mm;
+    padding-bottom: 1mm;
+    border-bottom: 2px solid var(--accent-primary);
+}
+
+.companion-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.companion-portrait {
+    width: 22mm;
+    height: 22mm;
+    overflow: hidden;
+    border: 1px solid var(--border-medium);
+    flex-shrink: 0;
+}
+
+.companion-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.companion-name {
+    font-family: var(--font-display);
+    font-size: 12pt;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.companion-type {
+    font-size: 7pt;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+.companion-stats-row {
+    display: flex;
+    gap: 3mm;
+    margin: 1.5mm 0;
+    font-size: 7pt;
+}
+
+.companion-stat {
+    display: flex;
+    gap: 1mm;
+}
+
+.companion-stat-label {
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.companion-abilities {
+    display: flex;
+    justify-content: space-between;
+    margin: 2mm 0;
+    padding: 1.5mm 2mm;
+    background: var(--bg-label);
+    border-radius: var(--box-radius);
+}
+
+.companion-ability {
+    text-align: center;
+}
+
+.companion-ability-name {
+    font-size: 6pt;
+    font-weight: 700;
+    color: var(--text-label);
+}
+
+.companion-ability-score {
+    font-size: 9pt;
+    font-weight: 700;
+}
+
+.companion-ability-mod {
+    font-size: 7pt;
+    color: var(--text-secondary);
+}
+
+.companion-section {
+    margin-top: 2mm;
+}
+
+.companion-section-title {
+    font-weight: 700;
+    font-size: 7pt;
+    color: var(--accent-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1mm;
+    padding-bottom: 0.5mm;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.companion-trait {
+    margin-bottom: 1.5mm;
+}
+
+.companion-trait-name {
+    font-weight: 700;
+    font-size: 7pt;
+    font-style: italic;
+}
+
+.companion-trait-desc {
+    font-size: 6.5pt;
+    line-height: 1.3;
+}
+
+.companion-action {
+    margin-bottom: 1.5mm;
+}
+
+.companion-action-name {
+    font-weight: 700;
+    font-size: 7pt;
+    font-style: italic;
+}
+
+.companion-action-desc {
+    font-size: 6.5pt;
+    line-height: 1.3;
+}
+
+.companion-commands {
+    font-size: 6.5pt;
+    line-height: 1.4;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.companion-commands li {
+    margin-bottom: 0.5mm;
+    padding-left: 3mm;
+    position: relative;
+}
+
+.companion-commands li::before {
+    content: '•';
+    color: var(--accent-primary);
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+/* =================================================================
+   GALLERY ROW - Page 1 Bottom
+   ================================================================= */
+
+.gallery-row {
+    display: flex;
+    justify-content: center;
+    gap: 3mm;
+    margin-top: 2mm;
+    padding: 1mm 0;
+}
+
+.gallery-item {
+    width: 28mm;
+    height: 28mm;
+    overflow: hidden;
+    border: 1px solid var(--border-medium);
+    background: var(--bg-box);
+    position: relative;
+}
+
+/* Corner accents for gallery items */
+.gallery-item::before {
+    content: '';
+    position: absolute;
+    top: var(--corner-offset);
+    left: var(--corner-offset);
+    width: var(--corner-size);
+    height: var(--corner-size);
+    border-top: var(--corner-width) solid var(--corner-color);
+    border-left: var(--corner-width) solid var(--corner-color);
+    z-index: 1;
+}
+
+.gallery-item::after {
+    content: '';
+    position: absolute;
+    bottom: var(--corner-offset);
+    right: var(--corner-offset);
+    width: var(--corner-size);
+    height: var(--corner-size);
+    border-bottom: var(--corner-width) solid var(--corner-color);
+    border-right: var(--corner-width) solid var(--corner-color);
+    z-index: 1;
+}
+
+.gallery-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
