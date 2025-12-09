@@ -48,6 +48,21 @@
     --font-display: 'Cinzel', serif;
     --font-body: 'Scada', sans-serif;
 
+    /* Font Sizes */
+    --font-xs: 5.5pt;
+    --font-sm: 6.5pt;
+    --font-base: 7pt;
+    --font-md: 8pt;
+    --font-lg: 10pt;
+    --font-xl: 16pt;
+    --font-xxl: 20pt;
+
+    /* Spacing */
+    --gap-xs: 1mm;
+    --gap-sm: 1.5mm;
+    --gap-md: 2mm;
+    --gap-lg: 3mm;
+
     /* Page Dimensions */
     --page-width: 210mm;
     --page-height: 297mm;
@@ -161,6 +176,65 @@ body {
 }
 
 /* -----------------------------------------------------------------
+   4.5 UTILITY CLASSES
+   ----------------------------------------------------------------- */
+
+/* Flex utilities */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Reference card base - used by weapon, spell, feature cards */
+.ref-card {
+    margin-bottom: 2.5mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dashed var(--border-light);
+}
+.ref-card:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+/* Styled list base - used by item-list and prof-list */
+.styled-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: var(--font-base);
+    line-height: 1.4;
+}
+.styled-list li {
+    padding: 0.3mm 0;
+    padding-left: 3mm;
+    position: relative;
+}
+.styled-list li::before {
+    content: '◆';
+    color: var(--accent-secondary);
+    font-size: 5pt;
+    position: absolute;
+    left: 0;
+    top: 0.5mm;
+}
+
+/* Two-column list variant */
+.styled-list--columns {
+    column-count: 2;
+    column-gap: var(--gap-lg);
+}
+.styled-list--columns li {
+    break-inside: avoid;
+}
+
+/* -----------------------------------------------------------------
    5. LABEL MODIFIERS - Position labels top or bottom
    ----------------------------------------------------------------- */
 
@@ -246,38 +320,14 @@ body {
     margin-bottom: 1mm;
 }
 
-/* Generic item list - used for equipment, features, traits */
+/* Generic item list - extends styled-list */
 .item-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 7pt;
-    line-height: 1.4;
-}
-
-.item-list li {
-    padding: 0.3mm 0;
-    padding-left: 3mm;
-    position: relative;
-}
-
-.item-list li::before {
-    content: '◆';
-    color: var(--accent-secondary);
-    font-size: 5pt;
-    position: absolute;
-    left: 0;
-    top: 0.5mm;
+    /* Inherits from styled-list */
 }
 
 /* Two-column list variant */
 .item-list--columns {
-    column-count: 2;
-    column-gap: 3mm;
-}
-
-.item-list--columns li {
-    break-inside: avoid;
+    /* Inherits from styled-list--columns */
 }
 
 /* -----------------------------------------------------------------
@@ -522,31 +572,14 @@ body {
     flex: 1;
 }
 
-/* Proficiencies uses the item-list base with columns */
+/* Proficiencies - extends styled-list with columns */
 .prof-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 7pt;
-    line-height: 1.4;
     column-count: 2;
-    column-gap: 3mm;
+    column-gap: var(--gap-lg);
 }
-
 .prof-list li {
     padding: 0.2mm 0;
-    padding-left: 3mm;
-    position: relative;
     break-inside: avoid;
-}
-
-.prof-list li::before {
-    content: '◆';
-    color: var(--accent-secondary);
-    font-size: 5pt;
-    position: absolute;
-    left: 0;
-    top: 0.3mm;
 }
 
 /* -----------------------------------------------------------------
@@ -1036,16 +1069,9 @@ body {
     border-bottom: 1px solid var(--border-light);
 }
 
-/* Weapon reference cards */
+/* Weapon reference cards - extends ref-card */
 .weapon-card {
-    margin-bottom: 2.5mm;
-    padding-bottom: 2mm;
-    border-bottom: 1px dashed var(--border-light);
-}
-.weapon-card:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
+    /* Uses ref-card base styles */
 }
 
 .weapon-name {
@@ -1085,16 +1111,9 @@ body {
     margin-top: 0.5mm;
 }
 
-/* Spell reference cards */
+/* Spell reference cards - extends ref-card */
 .spell-card {
-    margin-bottom: 2.5mm;
-    padding-bottom: 2mm;
-    border-bottom: 1px dashed var(--border-light);
-}
-.spell-card:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
+    /* Uses ref-card base styles */
 }
 
 .spell-name {
@@ -1133,16 +1152,10 @@ body {
     text-align: justify;
 }
 
-/* Feature reference cards */
+/* Feature reference cards - extends ref-card with smaller margins */
 .feature-card {
-    margin-bottom: 2mm;
-    padding-bottom: 1.5mm;
-    border-bottom: 1px dashed var(--border-light);
-}
-.feature-card:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
+    margin-bottom: var(--gap-md);
+    padding-bottom: var(--gap-sm);
 }
 
 .feature-name {
@@ -1704,7 +1717,7 @@ body {
                     <div class="passive-label">Passive Wisdom<br>(Perception)</div>
                 </div>
                 <div class="box box--label-bottom proficiencies-box">
-                    <ul class="prof-list"><li>Light armor</li><li>Medium armor</li><li>Shields</li><li>Simple weapons</li><li>Martial weapons</li><li>Battleaxe</li><li>Handaxe</li><li>Light hammer</li><li>Warhammer</li><li>Carpenter's tools</li><li>Herbalism kit</li><li>Common</li><li>Dwarvish</li><li>Orc</li></ul>
+                    <ul class="styled-list prof-list"><li>Light armor</li><li>Medium armor</li><li>Shields</li><li>Simple weapons</li><li>Martial weapons</li><li>Battleaxe</li><li>Handaxe</li><li>Light hammer</li><li>Warhammer</li><li>Carpenter's tools</li><li>Herbalism kit</li><li>Common</li><li>Dwarvish</li><li>Orc</li></ul>
                     <div class="box__label">Other Proficiencies & Languages</div>
                 </div>
             </div>
@@ -1804,7 +1817,7 @@ body {
                         <div class="coin coin--gp"><div class="coin-icon">10</div><div class="coin-label">Gold</div></div>
                         <div class="coin coin--pp"><div class="coin-icon">0</div><div class="coin-label">Platinum</div></div>
                     </div>
-                    <div class="box-content"><ul class="item-list"><li>Scale Mail (AC 14 + Dex)</li><li>Shield (+2 AC)</li><li>Longbow</li><li>Warhammer</li><li>Handaxe (2)</li><li>20 Arrows</li><li>Explorer's Pack</li><li>Carpenter's tools</li><li>Herbalism kit</li><li>Shovel</li><li>Iron pot</li><li>Common clothes</li><li>Belt pouch</li></ul></div>
+                    <div class="box-content"><ul class="styled-list"><li>Scale Mail (AC 14 + Dex)</li><li>Shield (+2 AC)</li><li>Longbow</li><li>Warhammer</li><li>Handaxe (2)</li><li>20 Arrows</li><li>Explorer's Pack</li><li>Carpenter's tools</li><li>Herbalism kit</li><li>Shovel</li><li>Iron pot</li><li>Common clothes</li><li>Belt pouch</li></ul></div>
                     <div class="box__label">Equipment</div>
                 </div>
             </div>
@@ -1828,7 +1841,7 @@ body {
                     <div class="box__label">Flaws</div>
                 </div>
                 <div class="box box--label-bottom trait-box">
-                    <div class="trait-content"><ul class="item-list"><li>Darkvision (60 ft)</li><li>Dwarven Resilience (Adv. vs poison)</li><li>Dwarven Toughness (+1 HP/level)</li><li>Stonecunning</li><li>Favored Enemy: Orcs & Goblins</li><li>Natural Explorer: Forest</li><li>Fighting Style: Archery (+2 ranged)</li><li>Beast Master: Ironjaw (Black Bear)</li><li>Rustic Hospitality</li></ul></div>
+                    <div class="trait-content"><ul class="styled-list"><li>Darkvision (60 ft)</li><li>Dwarven Resilience (Adv. vs poison)</li><li>Dwarven Toughness (+1 HP/level)</li><li>Stonecunning</li><li>Favored Enemy: Orcs & Goblins</li><li>Natural Explorer: Forest</li><li>Fighting Style: Archery (+2 ranged)</li><li>Beast Master: Ironjaw (Black Bear)</li><li>Rustic Hospitality</li></ul></div>
                     <div class="box__label">Features & Traits</div>
                 </div>
                 <div class="box box--label-top notes-box box--flex">
@@ -1913,11 +1926,11 @@ body {
                     </div>
                     <div class="box box--label-top large-box">
                         <div class="box__label">Additional Features & Traits</div>
-                        <div class="large-box-content"><ul class="item-list"><li>IRONJAW (Black Bear Companion):</li><li>AC: 13, HP: 25 (19 base + 6 from ring)</li><li>Speed: 40 ft, climb 30 ft</li><li>STR 15, DEX 10, CON 14, INT 2, WIS 12, CHA 7</li><li>Keen Smell (Adv. on smell Perception)</li><li>Multiattack: Bite +4 (1d6+6) & Claws +4 (2d4+6)</li><li>Ring bonus: +2 dmg, magical attacks, charm/fear adv.</li></ul></div>
+                        <div class="large-box-content"><ul class="styled-list"><li>IRONJAW (Black Bear Companion):</li><li>AC: 13, HP: 25 (19 base + 6 from ring)</li><li>Speed: 40 ft, climb 30 ft</li><li>STR 15, DEX 10, CON 14, INT 2, WIS 12, CHA 7</li><li>Keen Smell (Adv. on smell Perception)</li><li>Multiattack: Bite +4 (1d6+6) & Claws +4 (2d4+6)</li><li>Ring bonus: +2 dmg, magical attacks, charm/fear adv.</li></ul></div>
                     </div>
                     <div class="box box--label-top large-box box--flex">
                         <div class="box__label">Treasure</div>
-                        <div class="large-box-content"><ul class="item-list"><li>Ring of the Wild Hunt (Rare, attuned)</li><li>- Ironjaw: +2 damage, +6 HP, magical attacks</li><li>- Ironjaw: Adv. vs charm/frighten</li></ul></div>
+                        <div class="large-box-content"><ul class="styled-list"><li>Ring of the Wild Hunt (Rare, attuned)</li><li>- Ironjaw: +2 damage, +6 HP, magical attacks</li><li>- Ironjaw: Adv. vs charm/frighten</li></ul></div>
                     </div>
                 </div>
             </div>
@@ -2544,7 +2557,7 @@ body {
                 </div>
                 <div class="box ref-box box--flex">
                     <div class="ref-section-title">Weapons</div>
-                    <div class="weapon-card">
+                    <div class="weapon-card ref-card">
                         <div class="weapon-name">Longbow</div>
                         <div class="weapon-type">Martial Ranged</div>
                         <div class="weapon-stats">
@@ -2553,7 +2566,7 @@ body {
                         <div class="weapon-properties">Ammunition (range 150/600), heavy, two-handed</div>
                         <div class="weapon-notes">+2 from Archery fighting style included in attack bonus</div>
                     </div>
-                    <div class="weapon-card">
+                    <div class="weapon-card ref-card">
                         <div class="weapon-name">Warhammer</div>
                         <div class="weapon-type">Martial Melee</div>
                         <div class="weapon-stats">
@@ -2562,7 +2575,7 @@ body {
                         <div class="weapon-properties">Versatile</div>
                         <div class="weapon-notes">Can be used one or two-handed</div>
                     </div>
-                    <div class="weapon-card">
+                    <div class="weapon-card ref-card">
                         <div class="weapon-name">Handaxe</div>
                         <div class="weapon-type">Simple Melee</div>
                         <div class="weapon-stats">
@@ -2576,7 +2589,7 @@ body {
             <div class="column">
                 <div class="box ref-box">
                     <div class="ref-section-title">Spells</div>
-                    <div class="spell-card">
+                    <div class="spell-card ref-card">
                         <div class="spell-name">Hunter's Mark <span class="spell-level-tag">(1st)</span></div>
                         <div class="spell-meta">
                             <span><span class="spell-meta-label">Cast:</span> 1 bonus action</span>
@@ -2585,7 +2598,7 @@ body {
                         </div>
                         <div class="spell-desc">Mark a creature you can see. Deal extra 1d6 damage to it whenever you hit with a weapon attack. Advantage on Perception/Survival checks to find it. If target drops to 0 HP, use bonus action to mark new creature.</div>
                     </div>
-                    <div class="spell-card">
+                    <div class="spell-card ref-card">
                         <div class="spell-name">Cure Wounds <span class="spell-level-tag">(1st)</span></div>
                         <div class="spell-meta">
                             <span><span class="spell-meta-label">Cast:</span> 1 action</span>
@@ -2594,7 +2607,7 @@ body {
                         </div>
                         <div class="spell-desc">Creature you touch regains 1d8 + spellcasting modifier (WIS +2) hit points. No effect on undead or constructs.</div>
                     </div>
-                    <div class="spell-card">
+                    <div class="spell-card ref-card">
                         <div class="spell-name">Goodberry <span class="spell-level-tag">(1st)</span></div>
                         <div class="spell-meta">
                             <span><span class="spell-meta-label">Cast:</span> 1 action</span>

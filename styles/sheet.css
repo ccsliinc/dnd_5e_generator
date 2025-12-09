@@ -40,6 +40,21 @@
     --font-display: 'Cinzel', serif;
     --font-body: 'Scada', sans-serif;
 
+    /* Font Sizes */
+    --font-xs: 5.5pt;
+    --font-sm: 6.5pt;
+    --font-base: 7pt;
+    --font-md: 8pt;
+    --font-lg: 10pt;
+    --font-xl: 16pt;
+    --font-xxl: 20pt;
+
+    /* Spacing */
+    --gap-xs: 1mm;
+    --gap-sm: 1.5mm;
+    --gap-md: 2mm;
+    --gap-lg: 3mm;
+
     /* Page Dimensions */
     --page-width: 210mm;
     --page-height: 297mm;
@@ -153,6 +168,65 @@ body {
 }
 
 /* -----------------------------------------------------------------
+   4.5 UTILITY CLASSES
+   ----------------------------------------------------------------- */
+
+/* Flex utilities */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Reference card base - used by weapon, spell, feature cards */
+.ref-card {
+    margin-bottom: 2.5mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dashed var(--border-light);
+}
+.ref-card:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+/* Styled list base - used by item-list and prof-list */
+.styled-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: var(--font-base);
+    line-height: 1.4;
+}
+.styled-list li {
+    padding: 0.3mm 0;
+    padding-left: 3mm;
+    position: relative;
+}
+.styled-list li::before {
+    content: '◆';
+    color: var(--accent-secondary);
+    font-size: 5pt;
+    position: absolute;
+    left: 0;
+    top: 0.5mm;
+}
+
+/* Two-column list variant */
+.styled-list--columns {
+    column-count: 2;
+    column-gap: var(--gap-lg);
+}
+.styled-list--columns li {
+    break-inside: avoid;
+}
+
+/* -----------------------------------------------------------------
    5. LABEL MODIFIERS - Position labels top or bottom
    ----------------------------------------------------------------- */
 
@@ -238,38 +312,14 @@ body {
     margin-bottom: 1mm;
 }
 
-/* Generic item list - used for equipment, features, traits */
+/* Generic item list - extends styled-list */
 .item-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 7pt;
-    line-height: 1.4;
-}
-
-.item-list li {
-    padding: 0.3mm 0;
-    padding-left: 3mm;
-    position: relative;
-}
-
-.item-list li::before {
-    content: '◆';
-    color: var(--accent-secondary);
-    font-size: 5pt;
-    position: absolute;
-    left: 0;
-    top: 0.5mm;
+    /* Inherits from styled-list */
 }
 
 /* Two-column list variant */
 .item-list--columns {
-    column-count: 2;
-    column-gap: 3mm;
-}
-
-.item-list--columns li {
-    break-inside: avoid;
+    /* Inherits from styled-list--columns */
 }
 
 /* -----------------------------------------------------------------
@@ -514,31 +564,14 @@ body {
     flex: 1;
 }
 
-/* Proficiencies uses the item-list base with columns */
+/* Proficiencies - extends styled-list with columns */
 .prof-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 7pt;
-    line-height: 1.4;
     column-count: 2;
-    column-gap: 3mm;
+    column-gap: var(--gap-lg);
 }
-
 .prof-list li {
     padding: 0.2mm 0;
-    padding-left: 3mm;
-    position: relative;
     break-inside: avoid;
-}
-
-.prof-list li::before {
-    content: '◆';
-    color: var(--accent-secondary);
-    font-size: 5pt;
-    position: absolute;
-    left: 0;
-    top: 0.3mm;
 }
 
 /* -----------------------------------------------------------------
@@ -1028,16 +1061,9 @@ body {
     border-bottom: 1px solid var(--border-light);
 }
 
-/* Weapon reference cards */
+/* Weapon reference cards - extends ref-card */
 .weapon-card {
-    margin-bottom: 2.5mm;
-    padding-bottom: 2mm;
-    border-bottom: 1px dashed var(--border-light);
-}
-.weapon-card:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
+    /* Uses ref-card base styles */
 }
 
 .weapon-name {
@@ -1077,16 +1103,9 @@ body {
     margin-top: 0.5mm;
 }
 
-/* Spell reference cards */
+/* Spell reference cards - extends ref-card */
 .spell-card {
-    margin-bottom: 2.5mm;
-    padding-bottom: 2mm;
-    border-bottom: 1px dashed var(--border-light);
-}
-.spell-card:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
+    /* Uses ref-card base styles */
 }
 
 .spell-name {
@@ -1125,16 +1144,10 @@ body {
     text-align: justify;
 }
 
-/* Feature reference cards */
+/* Feature reference cards - extends ref-card with smaller margins */
 .feature-card {
-    margin-bottom: 2mm;
-    padding-bottom: 1.5mm;
-    border-bottom: 1px dashed var(--border-light);
-}
-.feature-card:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
+    margin-bottom: var(--gap-md);
+    padding-bottom: var(--gap-sm);
 }
 
 .feature-name {
