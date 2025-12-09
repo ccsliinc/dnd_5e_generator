@@ -239,4 +239,5 @@ After gathering all info, generate this JSON structure:
 - Spells format: `{ "name": "Spell Name", "prepared": true }`
 - Calculate proficiency bonus from level: 1-4=+2, 5-8=+3, 9-12=+4, etc.
 - Initiative is calculated automatically from Dexterity if left null
-- Save the file as `charactername.json` in the project folder
+- Save the file as `characters/charactername.json`
+- Run `python3 generate.py` to generate the sheet in `output/`
