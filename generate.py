@@ -243,8 +243,20 @@ def find_json_file(input_arg: str) -> Optional[Path]:
     if path.exists():
         return path
 
-    # Try in characters folder
+    # Try in characters folder (old format: characters/<name>.json)
     path = characters_dir / input_arg
+    if path.exists():
+        return path
+
+    # Try new format: characters/<name>/<name>.json
+    # e.g., "thorek.json" -> characters/thorek/thorek.json
+    name = input_arg.replace(".json", "")
+    path = characters_dir / name / input_arg
+    if path.exists():
+        return path
+
+    # Try just the name without .json: "thorek" -> characters/thorek/thorek.json
+    path = characters_dir / input_arg / f"{input_arg}.json"
     if path.exists():
         return path
 
@@ -253,7 +265,7 @@ def find_json_file(input_arg: str) -> Optional[Path]:
         if item_path.exists():
             return item_path
 
-    # Try partial match
+    # Try partial match for items
     for item_path in characters_dir.glob(f"*/items/*{input_arg}*"):
         if item_path.exists():
             return item_path
@@ -264,9 +276,9 @@ def find_json_file(input_arg: str) -> Optional[Path]:
 def find_character_items(char_json_path: Path) -> list[Path]:
     """Find all item JSON files for a character."""
     # Look for items folder relative to character JSON
-    # Pattern: characters/<name>.json -> characters/<name>/items/*.json
-    char_name = char_json_path.stem  # e.g., "thorek" from "thorek.json"
-    items_dir = char_json_path.parent / char_name / "items"
+    # New pattern: characters/<name>/<name>.json -> characters/<name>/items/*.json
+    # The items folder is now a sibling of the character JSON file
+    items_dir = char_json_path.parent / "items"
 
     if items_dir.exists():
         return sorted(items_dir.glob("*.json"))
@@ -420,9 +432,12 @@ Examples:
             print(f"Error: Could not find {args.input}")
             sys.exit(1)
     else:
-        # Default to first JSON in characters folder
+        # Default to first character JSON in characters/<name>/<name>.json pattern
         base_dir = Path(__file__).parent
-        json_files = list((base_dir / "characters").glob("*.json"))
+        characters_dir = base_dir / "characters"
+        json_files = list(characters_dir.glob("*/*.json"))
+        # Filter to only character files (not items)
+        json_files = [f for f in json_files if "items" not in str(f)]
         if json_files:
             json_path = json_files[0]
         else:

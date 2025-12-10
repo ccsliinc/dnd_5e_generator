@@ -1,0 +1,3317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thorek Bearward - Character Sheet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Scada:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+/* =================================================================
+   D&D 5e Character Sheet - Stylesheet
+   =================================================================
+
+   STRUCTURE:
+   1. CSS Variables (edit colors, sizes here - ONE place)
+   2. Base Box Class (all boxes inherit from this)
+   3. Corner Accents (4-corner decorative accents)
+   4. Label Modifiers (top/bottom label positions)
+   5. Layout Components (page, grid, columns)
+   6. Specific Components (only unique overrides)
+
+   ================================================================= */
+
+/* -----------------------------------------------------------------
+   1. CSS VARIABLES - Single source of truth
+   ----------------------------------------------------------------- */
+:root {
+    /* Colors - Background */
+    --bg-page: #ffffff;
+    --bg-box: #faf8f5;
+    --bg-label: #f5f0e6;
+
+    /* Colors - Borders (warm brown tones) */
+    --border-dark: #6b4423;
+    --border-medium: #8b6b4a;
+    --border-light: #c4a882;
+
+    /* Colors - Text */
+    --text-primary: #2a2a2a;
+    --text-secondary: #555555;
+    --text-label: #666666;
+
+    /* Colors - Accents */
+    --accent-primary: #8b4513;
+    --accent-secondary: #c9a227;
+    --accent-highlight: rgba(201, 162, 39, 0.15);
+
+    /* Typography */
+    --font-display: 'Cinzel', serif;
+    --font-body: 'Scada', sans-serif;
+
+    /* Font Sizes */
+    --font-xs: 5.5pt;
+    --font-sm: 6.5pt;
+    --font-base: 7pt;
+    --font-md: 8pt;
+    --font-lg: 10pt;
+    --font-xl: 16pt;
+    --font-xxl: 20pt;
+
+    /* Spacing */
+    --gap-xs: 1mm;
+    --gap-sm: 1.5mm;
+    --gap-md: 2mm;
+    --gap-lg: 3mm;
+
+    /* Page Dimensions */
+    --page-width: 210mm;
+    --page-height: 297mm;
+    --page-margin: 8mm;
+
+    /* Box Styling */
+    --box-radius: 0;
+    --box-border-width: 1px;
+    --box-padding: 2mm;
+
+    /* Corner Accents */
+    --corner-size: 4mm;
+    --corner-color: var(--accent-secondary);
+    --corner-width: 1px;
+    --corner-offset: 2px;
+}
+
+/* -----------------------------------------------------------------
+   2. BASE RESET & PAGE
+   ----------------------------------------------------------------- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+@page {
+    size: A4;
+    margin: 0;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: 9pt;
+    line-height: 1.3;
+    color: var(--text-primary);
+    background: #e0e0e0;
+}
+
+@media print {
+    body { background: white !important; }
+    .page {
+        margin: 0 !important;
+        box-shadow: none !important;
+        height: 297mm !important;
+        width: 210mm !important;
+        background: white !important;
+    }
+    /* Preserve box gradients, labels, and coin colors when printing */
+    .box,
+    .box__label,
+    .coin-icon {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+.page {
+    width: var(--page-width);
+    height: var(--page-height);
+    margin: 10mm auto;
+    padding: var(--page-margin);
+    background: var(--bg-page);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+}
+.page:last-child { page-break-after: avoid; }
+
+/* -----------------------------------------------------------------
+   3. BASE BOX CLASS - All boxes inherit from this
+   ----------------------------------------------------------------- */
+.box {
+    border: var(--box-border-width) solid var(--border-dark);
+    border-radius: var(--box-radius);
+    background:
+        /* Corner aging - old paper effect with white center */
+        radial-gradient(ellipse 50% 50% at 0% 0%, #f0ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 100% 0%, #f0ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 0% 100%, #f0ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 100% 100%, #f0ebe3 0%, transparent 55%),
+        #ffffff;
+    position: relative;
+}
+
+/* -----------------------------------------------------------------
+   4. CORNER ACCENTS - Faded notch effect on all 4 corners
+   Creates elegant "ticket stub" look with fading corner lines
+   ----------------------------------------------------------------- */
+.box::before {
+    content: '';
+    position: absolute;
+    inset: var(--corner-offset);
+    pointer-events: none;
+    z-index: 1;
+    background:
+        /* Top-left horizontal - fades right */
+        linear-gradient(to right, var(--corner-color), transparent)
+            0 0 / var(--corner-size) var(--corner-width) no-repeat,
+        /* Top-left vertical - fades down */
+        linear-gradient(to bottom, var(--corner-color), transparent)
+            0 0 / var(--corner-width) var(--corner-size) no-repeat,
+        /* Top-right horizontal - fades left */
+        linear-gradient(to left, var(--corner-color), transparent)
+            100% 0 / var(--corner-size) var(--corner-width) no-repeat,
+        /* Top-right vertical - fades down */
+        linear-gradient(to bottom, var(--corner-color), transparent)
+            100% 0 / var(--corner-width) var(--corner-size) no-repeat,
+        /* Bottom-left horizontal - fades right */
+        linear-gradient(to right, var(--corner-color), transparent)
+            0 100% / var(--corner-size) var(--corner-width) no-repeat,
+        /* Bottom-left vertical - fades up */
+        linear-gradient(to top, var(--corner-color), transparent)
+            0 100% / var(--corner-width) var(--corner-size) no-repeat,
+        /* Bottom-right horizontal - fades left */
+        linear-gradient(to left, var(--corner-color), transparent)
+            100% 100% / var(--corner-size) var(--corner-width) no-repeat,
+        /* Bottom-right vertical - fades up */
+        linear-gradient(to top, var(--corner-color), transparent)
+            100% 100% / var(--corner-width) var(--corner-size) no-repeat;
+}
+
+/* -----------------------------------------------------------------
+   4.5 UTILITY CLASSES
+   ----------------------------------------------------------------- */
+
+/* Flex utilities */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Reference card base - used by weapon, spell, feature cards */
+.ref-card {
+    margin-bottom: 2.5mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dashed var(--border-light);
+}
+.ref-card:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+/* Styled list base - used by item-list and prof-list */
+.styled-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: var(--font-base);
+    line-height: 1.4;
+}
+.styled-list li {
+    padding: 0.3mm 0;
+    padding-left: 3mm;
+    position: relative;
+}
+.styled-list li::before {
+    content: '◆';
+    color: var(--accent-secondary);
+    font-size: 5pt;
+    position: absolute;
+    left: 0;
+    top: 0.5mm;
+}
+
+/* Two-column list variant */
+.styled-list--columns {
+    column-count: 2;
+    column-gap: var(--gap-lg);
+}
+.styled-list--columns li {
+    break-inside: avoid;
+}
+
+/* -----------------------------------------------------------------
+   5. LABEL MODIFIERS - Position labels top or bottom
+   ----------------------------------------------------------------- */
+
+/* Label at bottom of box */
+.box__label {
+    font-size: 6pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 0.3px;
+    color: var(--text-secondary);
+    background: var(--bg-label);
+    padding: 0.5mm 2mm;
+}
+
+.box--label-bottom {
+    padding-bottom: 5mm;
+}
+.box--label-bottom > .box__label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: var(--box-border-width) solid var(--border-light);
+    border-radius: 0 0 var(--box-radius) var(--box-radius);
+}
+
+/* Label at top of box */
+.box--label-top {
+    padding-top: 6mm !important;
+}
+.box--label-top > .box__label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-bottom: var(--box-border-width) solid var(--border-light);
+    border-radius: var(--box-radius) var(--box-radius) 0 0;
+}
+
+/* Centered content */
+.box--centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* -----------------------------------------------------------------
+   6. COMMON VALUE STYLES
+   ----------------------------------------------------------------- */
+.value--large {
+    font-family: var(--font-display);
+    font-size: 16pt;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.value--xlarge {
+    font-family: var(--font-display);
+    font-size: 18pt;
+    font-weight: 700;
+}
+
+.value--medium {
+    font-size: 11pt;
+    font-weight: 600;
+}
+
+/* -----------------------------------------------------------------
+   6.5 TEXT CONTENT STYLES - Paragraphs and lists
+   ----------------------------------------------------------------- */
+
+/* Justified text with paragraph indentation */
+.text-content {
+    font-size: 7.5pt;
+    line-height: 1.5;
+    text-align: justify;
+    hyphens: auto;
+}
+
+.text-content p {
+    text-indent: 4mm;
+    margin-bottom: 1mm;
+}
+
+/* Generic item list - extends styled-list */
+.item-list {
+    /* Inherits from styled-list */
+}
+
+/* Two-column list variant */
+.item-list--columns {
+    /* Inherits from styled-list--columns */
+}
+
+/* -----------------------------------------------------------------
+   7. PAGE HEADER
+   ----------------------------------------------------------------- */
+.page-header {
+    display: grid;
+    grid-template-columns: 75mm 1fr;
+    gap: 3mm;
+    margin-bottom: 3mm;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-brand {
+    font-family: var(--font-display);
+    font-size: 7pt;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 1mm;
+}
+
+.header-name-row {
+    display: flex;
+    gap: 2mm;
+    flex: 1;
+}
+
+.portrait-frame {
+    width: 20mm;
+    height: 20mm;
+    border: var(--box-border-width) solid var(--border-dark);
+    background: var(--bg-box);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.portrait-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.header-name {
+    padding: 2mm 3mm 6mm;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.header-name .value--large {
+    text-align: center;
+}
+
+.header-right {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr 1fr;
+    gap: 1.5mm;
+}
+
+.info-field {
+    padding: 1mm 2mm 5mm;
+}
+
+/* -----------------------------------------------------------------
+   8. MAIN CONTENT LAYOUT
+   ----------------------------------------------------------------- */
+.main-content {
+    display: grid;
+    grid-template-columns: 62mm 1fr 52mm;
+    gap: 2mm;
+    flex: 1;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5mm;
+}
+
+.left-section {
+    display: grid;
+    grid-template-columns: 20mm 1fr;
+    gap: 1.5mm;
+}
+
+.abilities-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1mm;
+}
+
+.stats-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5mm;
+}
+
+/* -----------------------------------------------------------------
+   9. ABILITY SCORES
+   ----------------------------------------------------------------- */
+.ability-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1mm;
+}
+
+.ability-score {
+    padding: 1mm 1.5mm 1.5mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ability-score .box__label {
+    font-size: 5pt;
+    margin: -1mm -1.5mm 0.5mm;
+    width: calc(100% + 3mm);
+    border-bottom: var(--box-border-width) solid var(--border-light);
+    border-radius: var(--box-radius) var(--box-radius) 0 0;
+}
+
+.ability-modifier {
+    width: 10mm;
+    height: 6mm;
+    border: var(--box-border-width) solid var(--border-dark);
+    border-radius: 0 0 5mm 5mm;
+    background: var(--bg-box);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9pt;
+    font-weight: 700;
+    margin-top: 0.5mm;
+}
+
+/* -----------------------------------------------------------------
+   10. STAT ROWS (Inspiration, Proficiency Bonus)
+   ----------------------------------------------------------------- */
+.stat-row {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    padding: 1.5mm 2mm;
+}
+
+.stat-circle {
+    width: 7mm;
+    height: 7mm;
+    border: var(--box-border-width) solid var(--border-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9pt;
+    font-weight: 700;
+    background: var(--bg-box);
+}
+
+.stat-label {
+    font-size: 6.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* -----------------------------------------------------------------
+   11. SAVES & SKILLS
+   ----------------------------------------------------------------- */
+.saves-skills-box {
+    padding: 1.5mm;
+}
+.saves-skills-box.box--flex { flex: 1; }
+
+.save-row, .skill-row {
+    display: flex;
+    align-items: center;
+    gap: 1mm;
+    padding: 0.3mm 0;
+    font-size: 7pt;
+}
+
+.prof-circle {
+    width: 3mm;
+    height: 3mm;
+    border: 1px solid var(--border-dark);
+    border-radius: 50%;
+}
+.prof-circle.filled { background: var(--border-dark); }
+
+.save-mod, .skill-mod {
+    width: 5mm;
+    font-weight: 700;
+    text-align: right;
+    font-size: 7pt;
+}
+
+.skill-ability {
+    font-size: 5.5pt;
+    color: var(--text-label);
+}
+
+/* -----------------------------------------------------------------
+   12. PASSIVE PERCEPTION
+   ----------------------------------------------------------------- */
+.passive-box {
+    padding: 1.5mm;
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+}
+
+.passive-value {
+    width: 8mm;
+    height: 8mm;
+    border: var(--box-border-width) solid var(--border-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10pt;
+    font-weight: 700;
+    background: var(--bg-box);
+}
+
+.passive-label {
+    font-size: 6pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+/* -----------------------------------------------------------------
+   13. PROFICIENCIES LIST
+   ----------------------------------------------------------------- */
+.proficiencies-box {
+    padding: var(--box-padding) var(--box-padding) 5mm;
+    flex: 1;
+}
+
+/* Proficiencies - extends styled-list with columns */
+.prof-list {
+    column-count: 2;
+    column-gap: var(--gap-lg);
+}
+.prof-list li {
+    padding: 0.2mm 0;
+    break-inside: avoid;
+}
+
+/* -----------------------------------------------------------------
+   14. COMBAT STATS
+   ----------------------------------------------------------------- */
+.combat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2mm;
+}
+
+.combat-stat {
+    padding: 1mm 2mm 4mm;
+    text-align: center;
+}
+
+.combat-value {
+    min-height: 10mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* -----------------------------------------------------------------
+   15. HP SECTIONS
+   ----------------------------------------------------------------- */
+.hp-section {
+    padding: 2mm 2mm 4mm;
+}
+
+.hp-max-row {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    margin-bottom: 1mm;
+    padding-bottom: 1mm;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.hp-max-label {
+    font-size: 5.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.hp-max-value {
+    flex: 1;
+    font-size: 11pt;
+    font-weight: 700;
+    text-align: center;
+}
+
+.hp-current {
+    min-height: 12mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 20pt;
+    font-weight: 700;
+}
+
+.hp-temp {
+    padding: 2mm 2mm 4mm;
+}
+
+.hp-temp-value {
+    min-height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12pt;
+    font-weight: 700;
+}
+
+/* -----------------------------------------------------------------
+   16. HIT DICE & DEATH SAVES
+   ----------------------------------------------------------------- */
+.hitdice-death-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2mm;
+}
+
+.hitdice-box, .death-box {
+    padding: 1.5mm 1.5mm 4mm;
+}
+
+.hitdice-total {
+    font-size: 5.5pt;
+    color: var(--text-label);
+}
+
+.hitdice-value {
+    font-size: 10pt;
+    font-weight: 700;
+    text-align: center;
+    min-height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.death-row {
+    display: flex;
+    align-items: center;
+    gap: 1mm;
+    font-size: 6pt;
+    margin-bottom: 1mm;
+}
+
+.death-label { width: 12mm; }
+
+.death-circles { display: flex; gap: 1mm; }
+
+.death-circle {
+    width: 3.5mm;
+    height: 3.5mm;
+    border: 1.5px solid var(--border-dark);
+    border-radius: 50%;
+}
+
+/* -----------------------------------------------------------------
+   17. ATTACKS BOX
+   ----------------------------------------------------------------- */
+.attacks-box {
+    padding: 1.5mm;
+}
+
+.attack-header {
+    display: grid;
+    grid-template-columns: 1.3fr 0.8fr 1.8fr;
+    gap: 1mm;
+    font-size: 5.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-label);
+    padding-bottom: 1mm;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 1mm;
+}
+
+.attack-row {
+    display: grid;
+    grid-template-columns: 1.3fr 0.8fr 1.8fr;
+    gap: 1mm;
+    padding: 0.5mm 0;
+    font-size: 7pt;
+    border-bottom: 1px solid #eee;
+    min-height: 5mm;
+}
+
+.attack-name {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.attack-bonus {
+    text-align: center;
+    white-space: nowrap;
+}
+.attack-damage {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* -----------------------------------------------------------------
+   18. EQUIPMENT BOX
+   ----------------------------------------------------------------- */
+.equipment-box {
+    padding: var(--box-padding) var(--box-padding) 5mm;
+    flex: 1;
+}
+
+.equipment-box .box-content {
+    font-size: 7pt;
+    line-height: 1.3;
+    margin-top: 1mm;
+}
+
+.coin-row {
+    display: flex;
+    justify-content: space-around;
+    padding: 2mm 1mm;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 1mm;
+}
+
+.coin {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5mm;
+}
+
+.coin-icon {
+    width: 8mm;
+    height: 8mm;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8pt;
+    font-weight: 700;
+    position: relative;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), inset 0 -1px 2px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.15);
+}
+
+/* Coin inner ring detail */
+.coin-icon::before {
+    content: '';
+    position: absolute;
+    width: 6mm;
+    height: 6mm;
+    border-radius: 50%;
+    border: 0.3mm solid rgba(0,0,0,0.15);
+}
+
+/* Copper - brown/orange tones */
+.coin--cp .coin-icon {
+    background: linear-gradient(145deg, #cd7f32, #b87333);
+    border: 0.5mm solid #8b4513;
+    color: #4a2800;
+}
+
+/* Silver - gray/white tones */
+.coin--sp .coin-icon {
+    background: linear-gradient(145deg, #e8e8e8, #c0c0c0);
+    border: 0.5mm solid #808080;
+    color: #404040;
+}
+
+/* Electrum - pale gold/silver mix */
+.coin--ep .coin-icon {
+    background: linear-gradient(145deg, #e6d5a8, #c9b896);
+    border: 0.5mm solid #9a8b6e;
+    color: #5a4f3a;
+}
+
+/* Gold - rich gold tones */
+.coin--gp .coin-icon {
+    background: linear-gradient(145deg, #ffd700, #daa520);
+    border: 0.5mm solid #b8860b;
+    color: #654321;
+}
+
+/* Platinum - bright silver/white */
+.coin--pp .coin-icon {
+    background: linear-gradient(145deg, #f5f5f5, #e5e4e2);
+    border: 0.5mm solid #a9a9a9;
+    color: #505050;
+}
+
+.coin-value {
+    font-size: 7pt;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.coin-label {
+    font-size: 5pt;
+    font-weight: 700;
+    color: var(--text-label);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* -----------------------------------------------------------------
+   19. TRAIT BOXES (Right Column)
+   ----------------------------------------------------------------- */
+.trait-box {
+    padding: var(--box-padding) var(--box-padding) 5mm;
+}
+.trait-box.box--flex { flex: 1; }
+
+.trait-content {
+    font-size: 7pt;
+    line-height: 1.3;
+}
+
+/* -----------------------------------------------------------------
+   20. PAGE 2 - BACKGROUND
+   ----------------------------------------------------------------- */
+.page2-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm;
+    flex: 1;
+}
+
+.page2-grid .column {
+    display: flex;
+    flex-direction: column;
+    gap: 2mm;
+}
+
+.large-box {
+    padding: var(--box-padding);
+}
+.large-box.box--flex { flex: 1; }
+
+.large-box-content {
+    font-size: 7.5pt;
+    line-height: 1.4;
+}
+
+/* Notes box with lined paper effect */
+.notes-box {
+    min-height: 25mm;
+    display: flex;
+    flex-direction: column;
+}
+.notes-box.box--flex { flex: 1; }
+
+.notes-box > .box__label {
+    flex-shrink: 0;
+}
+
+.notes-lines {
+    flex: 1;
+    min-height: 20mm;
+    background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 5.5mm,
+        #c4beb3 5.5mm,
+        #c4beb3 6mm
+    );
+    background-position: 0 2mm;
+}
+
+/* Page 2 alternate layout with full-width notes row */
+.page2-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 3mm;
+}
+
+.page2-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm;
+    flex: 1;
+}
+
+.page2-columns .column {
+    display: flex;
+    flex-direction: column;
+    gap: 2mm;
+}
+
+.page2-notes-row {
+    width: 100%;
+}
+
+/* -----------------------------------------------------------------
+   21. PAGE 3 - SPELLCASTING
+   ----------------------------------------------------------------- */
+.spell-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 2mm;
+    flex: 1;
+}
+
+.spell-level-box {
+    padding: var(--box-padding);
+    display: flex;
+    flex-direction: column;
+}
+
+.spell-level-header {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    margin-bottom: 1.5mm;
+    padding-bottom: 1mm;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.spell-level-num {
+    width: 7mm;
+    height: 7mm;
+    background: var(--bg-label);
+    color: var(--text-primary);
+    border: var(--box-border-width) solid var(--border-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 10pt;
+    font-weight: 700;
+    border-radius: var(--box-radius);
+}
+
+.spell-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5mm;
+    font-size: 5.5pt;
+}
+
+.spell-slots-row {
+    display: flex;
+    align-items: center;
+    gap: 1mm;
+}
+
+.spell-slot-box {
+    width: 5mm;
+    height: 4mm;
+    border: 1px solid var(--border-dark);
+    border-radius: 2px;
+    font-size: 6pt;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spell-list {
+    font-size: 7pt;
+    line-height: 1.4;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.spell-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5mm;
+    padding: 0.8mm 0;
+    min-height: 4mm;
+    border-bottom: 1px solid #ddd;
+}
+
+.spell-prepared {
+    width: 3mm;
+    height: 3mm;
+    border: 1px solid var(--border-dark);
+    border-radius: 50%;
+}
+.spell-prepared.filled { background: var(--border-dark); }
+
+/* Cantrip special styling */
+.cantrip-box .spell-level-num {
+    background: var(--accent-highlight);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+/* -----------------------------------------------------------------
+   22. PAGE 4 - REFERENCE / CHEAT SHEET
+   ----------------------------------------------------------------- */
+.page4-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm;
+    flex: 1;
+}
+
+.page4-grid .column {
+    display: flex;
+    flex-direction: column;
+    gap: 2mm;
+}
+
+/* Reference section boxes */
+.ref-box {
+    padding: var(--box-padding);
+}
+.ref-box.box--flex { flex: 1; }
+
+.ref-section-title {
+    font-family: var(--font-display);
+    font-size: 9pt;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 2mm;
+    padding-bottom: 1mm;
+    border-bottom: 1px solid var(--border-light);
+}
+
+/* Weapon reference cards - extends ref-card */
+.weapon-card {
+    /* Uses ref-card base styles */
+}
+
+.weapon-name {
+    font-weight: 700;
+    font-size: 8pt;
+    color: var(--text-primary);
+}
+
+.weapon-type {
+    font-size: 6pt;
+    color: var(--text-label);
+    font-style: italic;
+}
+
+.weapon-stats {
+    display: flex;
+    gap: 3mm;
+    margin-top: 0.5mm;
+    font-size: 7pt;
+}
+
+.weapon-damage {
+    font-weight: 600;
+    color: var(--accent-primary);
+}
+
+.weapon-properties {
+    font-size: 6pt;
+    color: var(--text-secondary);
+    margin-top: 0.5mm;
+}
+
+.weapon-notes {
+    font-size: 6pt;
+    color: var(--text-label);
+    font-style: italic;
+    margin-top: 0.5mm;
+}
+
+/* Spell reference cards - extends ref-card */
+.spell-card {
+    /* Uses ref-card base styles */
+}
+
+.spell-name {
+    font-weight: 700;
+    font-size: 8pt;
+    color: var(--text-primary);
+}
+
+.spell-level-tag {
+    font-size: 6pt;
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+.spell-meta {
+    display: flex;
+    gap: 2mm;
+    margin-top: 0.5mm;
+    font-size: 6pt;
+    color: var(--text-label);
+}
+
+.spell-meta span {
+    display: flex;
+    gap: 0.5mm;
+}
+
+.spell-meta-label {
+    font-weight: 600;
+}
+
+.spell-desc {
+    font-size: 7pt;
+    line-height: 1.4;
+    margin-top: 1mm;
+    text-align: justify;
+}
+
+/* Feature reference cards - extends ref-card with smaller margins */
+.feature-card {
+    margin-bottom: var(--gap-md);
+    padding-bottom: var(--gap-sm);
+}
+
+.feature-name {
+    font-weight: 700;
+    font-size: 7.5pt;
+    color: var(--accent-primary);
+}
+
+.feature-desc {
+    font-size: 6.5pt;
+    line-height: 1.4;
+    margin-top: 0.5mm;
+}
+
+/* Companion stat block */
+.companion-block {
+    padding: var(--box-padding);
+}
+
+.companion-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5mm;
+    padding-bottom: 1mm;
+    border-bottom: 2px solid var(--accent-primary);
+}
+
+.companion-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.companion-portrait {
+    width: 18mm;
+    height: 18mm;
+    overflow: hidden;
+    border: 1px solid var(--border-medium);
+    flex-shrink: 0;
+}
+
+.companion-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.companion-name {
+    font-family: var(--font-display);
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.companion-type {
+    font-size: 6.5pt;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+.companion-stats-row {
+    display: flex;
+    gap: 2mm;
+    margin: 1mm 0;
+    font-size: 6.5pt;
+}
+
+.companion-stat {
+    display: flex;
+    gap: 1mm;
+}
+
+.companion-stat-label {
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.companion-abilities {
+    display: flex;
+    justify-content: space-between;
+    margin: 1mm 0;
+    padding: 1mm 1.5mm;
+    background: var(--bg-label);
+    border-radius: var(--box-radius);
+}
+
+.companion-ability {
+    text-align: center;
+}
+
+.companion-ability-name {
+    font-size: 5.5pt;
+    font-weight: 700;
+    color: var(--text-label);
+}
+
+.companion-ability-score {
+    font-size: 8pt;
+    font-weight: 700;
+}
+
+.companion-ability-mod {
+    font-size: 6pt;
+    color: var(--text-secondary);
+}
+
+.companion-section {
+    margin-top: 1.5mm;
+}
+
+.companion-section-title {
+    font-weight: 700;
+    font-size: 6.5pt;
+    color: var(--accent-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5mm;
+    padding-bottom: 0.5mm;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.companion-trait {
+    margin-bottom: 1mm;
+}
+
+.companion-trait-name {
+    font-weight: 700;
+    font-size: 6.5pt;
+    font-style: italic;
+}
+
+.companion-trait-desc {
+    font-size: 6pt;
+    line-height: 1.25;
+}
+
+.companion-action {
+    margin-bottom: 1mm;
+}
+
+.companion-action-name {
+    font-weight: 700;
+    font-size: 6.5pt;
+    font-style: italic;
+}
+
+.companion-action-desc {
+    font-size: 6pt;
+    line-height: 1.25;
+}
+
+.companion-commands {
+    font-size: 6pt;
+    line-height: 1.3;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.companion-commands li {
+    margin-bottom: 0.3mm;
+    padding-left: 2.5mm;
+    position: relative;
+}
+
+.companion-commands li::before {
+    content: '•';
+    color: var(--accent-primary);
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+/* =================================================================
+   GALLERY ROW - Page 1 Bottom
+   ================================================================= */
+
+.gallery-row {
+    display: flex;
+    justify-content: center;
+    gap: 3mm;
+    margin-top: 2mm;
+    padding: 1mm 0;
+}
+
+.gallery-item {
+    width: 28mm;
+    height: 28mm;
+    overflow: hidden;
+    border: 1px solid var(--border-medium);
+    background: var(--bg-box);
+    position: relative;
+}
+
+/* Corner accents for gallery items */
+.gallery-item::before {
+    content: '';
+    position: absolute;
+    top: var(--corner-offset);
+    left: var(--corner-offset);
+    width: var(--corner-size);
+    height: var(--corner-size);
+    border-top: var(--corner-width) solid var(--corner-color);
+    border-left: var(--corner-width) solid var(--corner-color);
+    z-index: 1;
+}
+
+.gallery-item::after {
+    content: '';
+    position: absolute;
+    bottom: var(--corner-offset);
+    right: var(--corner-offset);
+    width: var(--corner-size);
+    height: var(--corner-size);
+    border-bottom: var(--corner-width) solid var(--corner-color);
+    border-right: var(--corner-width) solid var(--corner-color);
+    z-index: 1;
+}
+
+.gallery-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* =================================================================
+   TURN STRUCTURE & COMBAT REFERENCE - Page 4
+   ================================================================= */
+
+/* Turn Structure Box */
+.turn-box {
+    padding: var(--box-padding);
+}
+
+.turn-phase {
+    display: flex;
+    align-items: flex-start;
+    gap: 2mm;
+    margin-bottom: 1.5mm;
+    padding-bottom: 1mm;
+    border-bottom: 1px dotted var(--border-light);
+}
+
+.turn-phase:last-of-type {
+    margin-bottom: 1.5mm;
+}
+
+.turn-phase-name {
+    font-weight: 700;
+    font-size: 7pt;
+    color: var(--accent-primary);
+    min-width: 18mm;
+    flex-shrink: 0;
+}
+
+.turn-phase-desc {
+    font-size: 6.5pt;
+    line-height: 1.3;
+    color: var(--text-secondary);
+}
+
+.turn-reaction {
+    display: flex;
+    align-items: flex-start;
+    gap: 2mm;
+    margin-top: 1mm;
+}
+
+/* Combat Reference Box */
+.combat-ref-box {
+    padding: var(--box-padding);
+}
+
+.combat-action {
+    display: flex;
+    align-items: flex-start;
+    gap: 2mm;
+    margin-bottom: 1mm;
+    font-size: 6.5pt;
+}
+
+.combat-action-name {
+    font-weight: 700;
+    color: var(--text-primary);
+    min-width: 16mm;
+    flex-shrink: 0;
+}
+
+.combat-action-desc {
+    color: var(--text-secondary);
+    line-height: 1.3;
+}
+
+.combat-condition {
+    display: flex;
+    align-items: flex-start;
+    gap: 2mm;
+    margin-bottom: 1mm;
+    font-size: 6.5pt;
+}
+
+.combat-condition-name {
+    font-weight: 700;
+    color: var(--accent-primary);
+    min-width: 16mm;
+    flex-shrink: 0;
+}
+
+.combat-condition-desc {
+    color: var(--text-secondary);
+    line-height: 1.3;
+}
+
+.combat-cover {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    margin-bottom: 0.5mm;
+    font-size: 6.5pt;
+}
+
+.combat-cover-type {
+    font-weight: 700;
+    color: var(--text-primary);
+    min-width: 22mm;
+}
+
+.combat-cover-bonus {
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+    
+/* =================================================================
+   MAGIC ITEM SHEET - Uses character sheet design system
+   ================================================================= */
+
+/* Rarity Colors */
+:root {
+    --rarity-common: #666666;
+    --rarity-uncommon: #1a8b1a;
+    --rarity-rare: #0066cc;
+    --rarity-very-rare: #7f00ff;
+    --rarity-legendary: #ff6600;
+}
+
+/* =================================================================
+   ITEM HEADER
+   ================================================================= */
+.item-header {
+    display: flex;
+    gap: 4mm;
+    margin-bottom: 3mm;
+    padding-bottom: 3mm;
+    border-bottom: 2px solid var(--accent-primary);
+    position: relative;
+}
+
+.header-bg-decoration {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: auto;
+    transform: translateY(-50%);
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.header-bg-decoration path {
+    fill: #2d5a3d;
+}
+
+.item-image-frame,
+.item-title-block {
+    position: relative;
+    z-index: 1;
+}
+
+.item-image-frame {
+    width: 32mm;
+    height: 32mm;
+    border: 2px solid var(--border-dark);
+    background: var(--bg-box);
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.item-image-frame::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px solid var(--accent-secondary);
+    pointer-events: none;
+}
+
+.item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-title-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.item-name {
+    font-family: var(--font-display);
+    font-size: 20pt;
+    font-weight: 700;
+    color: var(--accent-primary);
+    line-height: 1.1;
+    margin-bottom: 0.5mm;
+}
+
+.item-subtitle {
+    font-size: 8pt;
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-bottom: 1.5mm;
+}
+
+.item-stats-row {
+    display: flex;
+    gap: 4mm;
+    flex-wrap: wrap;
+}
+
+.item-stat {
+    display: flex;
+    align-items: center;
+    gap: 1.5mm;
+    padding: 1.5mm 3mm;
+    background: var(--bg-label);
+    border: 1px solid var(--border-light);
+}
+
+.item-stat-label {
+    font-size: 6pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-label);
+}
+
+.item-stat-value {
+    font-size: 9pt;
+    font-weight: 600;
+}
+
+.rarity-common { color: var(--rarity-common); }
+.rarity-uncommon { color: var(--rarity-uncommon); }
+.rarity-rare { color: var(--rarity-rare); }
+.rarity-very-rare { color: var(--rarity-very-rare); }
+.rarity-legendary { color: var(--rarity-legendary); }
+
+/* =================================================================
+   CONTENT LAYOUT
+   ================================================================= */
+.item-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm;
+    flex: 1;
+}
+
+.content-column {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5mm;
+}
+
+/* =================================================================
+   SECTION BOXES
+   ================================================================= */
+.section-box {
+    padding: var(--box-padding);
+}
+
+.section-box.flex-grow {
+    flex: 1;
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: 9pt;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 2mm;
+    padding-bottom: 1mm;
+    border-bottom: 1px solid var(--border-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.section-content {
+    font-size: 7.5pt;
+    line-height: 1.5;
+}
+
+/* =================================================================
+   DESCRIPTION BOX (Lore/Visual)
+   ================================================================= */
+.description-box {
+    background:
+        linear-gradient(135deg, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 50% at 0% 0%, #f0ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 100% 0%, #f0ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 0% 100%, #f0ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 100% 100%, #f0ebe3 0%, transparent 55%),
+        #fffef8;
+}
+
+.description-text {
+    font-style: italic;
+    text-align: justify;
+    hyphens: auto;
+}
+
+/* =================================================================
+   PROPERTIES LIST
+   ================================================================= */
+.property-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.property-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 2mm;
+    margin-bottom: 2mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dotted var(--border-light);
+}
+
+.property-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.property-icon {
+    width: 5mm;
+    height: 5mm;
+    background: var(--accent-highlight);
+    border: 1px solid var(--accent-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8pt;
+    flex-shrink: 0;
+    margin-top: 0.5mm;
+}
+
+.property-content {
+    flex: 1;
+}
+
+.property-name {
+    font-weight: 700;
+    font-size: 8pt;
+    color: var(--text-primary);
+}
+
+.property-desc {
+    font-size: 7pt;
+    color: var(--text-secondary);
+    margin-top: 0.5mm;
+}
+
+/* =================================================================
+   SCALING TABLE
+   ================================================================= */
+.scaling-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7pt;
+}
+
+.scaling-table th {
+    background: var(--bg-label);
+    border: 1px solid var(--border-light);
+    padding: 1.5mm 2mm;
+    font-weight: 700;
+    text-align: center;
+    font-size: 6pt;
+    text-transform: uppercase;
+    color: var(--text-label);
+}
+
+.scaling-table td {
+    border: 1px solid var(--border-light);
+    padding: 1.5mm 2mm;
+    text-align: center;
+}
+
+.scaling-table tr:nth-child(even) td {
+    background: rgba(245, 240, 230, 0.5);
+}
+
+.scaling-table .highlight-row td {
+    background: var(--accent-highlight);
+    font-weight: 600;
+}
+
+/* =================================================================
+   ABILITY BLOCKS
+   ================================================================= */
+.ability-block {
+    margin-bottom: 2mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dotted var(--border-light);
+}
+
+.ability-block:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.ability-name {
+    font-weight: 700;
+    font-size: 8pt;
+    color: var(--accent-primary);
+    margin-bottom: 1mm;
+}
+
+.ability-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ability-bullets li {
+    font-size: 7pt;
+    padding-left: 3mm;
+    position: relative;
+    margin-bottom: 0.5mm;
+    line-height: 1.4;
+}
+
+.ability-bullets li::before {
+    content: '◆';
+    color: var(--accent-secondary);
+    font-size: 5pt;
+    position: absolute;
+    left: 0;
+    top: 0.5mm;
+}
+
+/* =================================================================
+   LORE SECTION
+   ================================================================= */
+.lore-quote {
+    font-style: italic;
+    font-size: 7.5pt;
+    line-height: 1.5;
+    text-align: justify;
+    padding: 2mm 3mm;
+    background: rgba(139, 69, 19, 0.05);
+    border-left: 2px solid var(--accent-primary);
+    margin-bottom: 2mm;
+}
+
+.lore-attribution {
+    font-size: 6pt;
+    text-align: right;
+    color: var(--text-label);
+    font-style: normal;
+    margin-top: 1mm;
+}
+
+.legendary-tale {
+    display: flex;
+    gap: 2mm;
+    margin-bottom: 1.5mm;
+    font-size: 7pt;
+}
+
+.tale-title {
+    font-weight: 700;
+    color: var(--accent-primary);
+    min-width: 30mm;
+    flex-shrink: 0;
+}
+
+.tale-desc {
+    color: var(--text-secondary);
+}
+
+/* =================================================================
+   SYNERGY SECTION
+   ================================================================= */
+.synergy-header {
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+    margin-bottom: 2mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.synergy-icon {
+    width: 10mm;
+    height: 10mm;
+    border: 1px solid var(--border-medium);
+    background: var(--bg-box);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14pt;
+}
+
+.synergy-title {
+    font-family: var(--font-display);
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.synergy-subtitle {
+    font-size: 7pt;
+    color: var(--text-secondary);
+}
+
+.stat-comparison {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2mm;
+    align-items: center;
+    margin-bottom: 2mm;
+    font-size: 7.5pt;
+}
+
+.stat-before, .stat-after {
+    padding: 1.5mm 2mm;
+    background: var(--bg-label);
+    text-align: center;
+}
+
+.stat-after {
+    background: var(--accent-highlight);
+    font-weight: 600;
+}
+
+.stat-arrow {
+    font-size: 12pt;
+    color: var(--accent-secondary);
+}
+
+/* =================================================================
+   FOOTER
+   ================================================================= */
+.item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3mm;
+    padding-top: 2mm;
+    border-top: 1px solid var(--border-light);
+    font-size: 6pt;
+    color: var(--text-label);
+}
+
+.market-value {
+    font-weight: 600;
+}
+
+    </style>
+</head>
+<body>
+    <!-- PAGE 1: Main Stats -->
+    <div class="page">
+        
+        <div class="page-header">
+            <div class="header-left">
+                <div class="header-brand">Dungeons & Dragons</div>
+                <div class="header-name-row">
+                    <div class="portrait-frame">
+                        <img src="../../images/thorek/thorek_ironjaw_autumn.jpg" alt="Character Portrait" class="portrait-img">
+                    </div>
+                <div class="box box--label-bottom header-name">
+                    <div class="value--large">Thorek Bearward</div>
+                    <div class="box__label">Character Name</div>
+                </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Ranger 3</div>
+                    <div class="box__label">Class & Level</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Folk Hero</div>
+                    <div class="box__label">Background</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Joe</div>
+                    <div class="box__label">Player Name</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Hill Dwarf</div>
+                    <div class="box__label">Race</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Neutral Good</div>
+                    <div class="box__label">Alignment</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">900</div>
+                    <div class="box__label">Experience Points</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- LEFT COLUMN -->
+            <div class="column">
+                <div class="left-section">
+                    <div class="abilities-column">
+                        <div class="ability-block">
+                    <div class="box ability-score">
+                        <div class="box__label">STR</div>
+                        <div class="value--large">15</div>
+                        <div class="ability-modifier">+2</div>
+                    </div>
+                    <div class="box ability-score">
+                        <div class="box__label">DEX</div>
+                        <div class="value--large">13</div>
+                        <div class="ability-modifier">+1</div>
+                    </div>
+                    <div class="box ability-score">
+                        <div class="box__label">CON</div>
+                        <div class="value--large">16</div>
+                        <div class="ability-modifier">+3</div>
+                    </div>
+                    <div class="box ability-score">
+                        <div class="box__label">INT</div>
+                        <div class="value--large">8</div>
+                        <div class="ability-modifier">-1</div>
+                    </div>
+                    <div class="box ability-score">
+                        <div class="box__label">WIS</div>
+                        <div class="value--large">15</div>
+                        <div class="ability-modifier">+2</div>
+                    </div>
+                    <div class="box ability-score">
+                        <div class="box__label">CHA</div>
+                        <div class="value--large">9</div>
+                        <div class="ability-modifier">-1</div>
+                    </div></div>
+                    </div>
+                    <div class="stats-column">
+                        <div class="box stat-row">
+                            <div class="stat-circle"></div>
+                            <div class="stat-label">Inspiration</div>
+                        </div>
+                        <div class="box stat-row">
+                            <div class="stat-circle">+2</div>
+                            <div class="stat-label">Proficiency Bonus</div>
+                        </div>
+                        <div class="box box--label-top saves-skills-box">
+                            <div class="box__label">Saving Throws</div>
+                    <div class="save-row">
+                        <div class="prof-circle filled"></div>
+                        <div class="save-mod">+4</div>
+                        <div class="save-name">Strength</div>
+                    </div>
+                    <div class="save-row">
+                        <div class="prof-circle filled"></div>
+                        <div class="save-mod">+3</div>
+                        <div class="save-name">Dexterity</div>
+                    </div>
+                    <div class="save-row">
+                        <div class="prof-circle "></div>
+                        <div class="save-mod">+3</div>
+                        <div class="save-name">Constitution</div>
+                    </div>
+                    <div class="save-row">
+                        <div class="prof-circle "></div>
+                        <div class="save-mod">-1</div>
+                        <div class="save-name">Intelligence</div>
+                    </div>
+                    <div class="save-row">
+                        <div class="prof-circle "></div>
+                        <div class="save-mod">+2</div>
+                        <div class="save-name">Wisdom</div>
+                    </div>
+                    <div class="save-row">
+                        <div class="prof-circle "></div>
+                        <div class="save-mod">-1</div>
+                        <div class="save-name">Charisma</div>
+                    </div>
+                        </div>
+                        <div class="box box--label-top saves-skills-box box--flex">
+                            <div class="box__label">Skills</div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">+1</div>
+                        <div class="skill-name">Acrobatics <span class="skill-ability">(Dex)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle filled"></div>
+                        <div class="skill-mod">+4</div>
+                        <div class="skill-name">Animal Handling <span class="skill-ability">(Wis)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">-1</div>
+                        <div class="skill-name">Arcana <span class="skill-ability">(Int)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle filled"></div>
+                        <div class="skill-mod">+4</div>
+                        <div class="skill-name">Athletics <span class="skill-ability">(Str)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">-1</div>
+                        <div class="skill-name">Deception <span class="skill-ability">(Cha)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">-1</div>
+                        <div class="skill-name">History <span class="skill-ability">(Int)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">+2</div>
+                        <div class="skill-name">Insight <span class="skill-ability">(Wis)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">-1</div>
+                        <div class="skill-name">Intimidation <span class="skill-ability">(Cha)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">-1</div>
+                        <div class="skill-name">Investigation <span class="skill-ability">(Int)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">+2</div>
+                        <div class="skill-name">Medicine <span class="skill-ability">(Wis)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">-1</div>
+                        <div class="skill-name">Nature <span class="skill-ability">(Int)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle filled"></div>
+                        <div class="skill-mod">+4</div>
+                        <div class="skill-name">Perception <span class="skill-ability">(Wis)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">-1</div>
+                        <div class="skill-name">Performance <span class="skill-ability">(Cha)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">-1</div>
+                        <div class="skill-name">Persuasion <span class="skill-ability">(Cha)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">-1</div>
+                        <div class="skill-name">Religion <span class="skill-ability">(Int)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">+1</div>
+                        <div class="skill-name">Sleight Of Hand <span class="skill-ability">(Dex)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle "></div>
+                        <div class="skill-mod">+1</div>
+                        <div class="skill-name">Stealth <span class="skill-ability">(Dex)</span></div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="prof-circle filled"></div>
+                        <div class="skill-mod">+4</div>
+                        <div class="skill-name">Survival <span class="skill-ability">(Wis)</span></div>
+                    </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box passive-box">
+                    <div class="passive-value">14</div>
+                    <div class="passive-label">Passive Wisdom<br>(Perception)</div>
+                </div>
+                <div class="box box--label-bottom proficiencies-box">
+                    <ul class="styled-list prof-list"><li>Light armor</li><li>Medium armor</li><li>Shields</li><li>Simple weapons</li><li>Martial weapons</li><li>Battleaxe</li><li>Handaxe</li><li>Light hammer</li><li>Warhammer</li><li>Carpenter's tools</li><li>Herbalism kit</li><li>Common</li><li>Dwarvish</li><li>Orc</li></ul>
+                    <div class="box__label">Other Proficiencies & Languages</div>
+                </div>
+            </div>
+
+            <!-- MIDDLE COLUMN -->
+            <div class="column">
+                <div class="combat-row">
+                    <div class="box box--label-bottom combat-stat">
+                        <div class="combat-value value--xlarge">15</div>
+                        <div class="box__label">Armor Class</div>
+                    </div>
+                    <div class="box box--label-bottom combat-stat">
+                        <div class="combat-value value--xlarge">+1</div>
+                        <div class="box__label">Initiative</div>
+                    </div>
+                    <div class="box box--label-bottom combat-stat">
+                        <div class="combat-value value--xlarge">25</div>
+                        <div class="box__label">Speed</div>
+                    </div>
+                </div>
+                <div class="box box--label-bottom hp-section">
+                    <div class="hp-max-row">
+                        <div class="hp-max-label">Hit Point Maximum</div>
+                        <div class="hp-max-value">34</div>
+                    </div>
+                    <div class="hp-current"></div>
+                    <div class="box__label">Current Hit Points</div>
+                </div>
+                <div class="box box--label-bottom hp-temp">
+                    <div class="hp-temp-value"></div>
+                    <div class="box__label">Temporary Hit Points</div>
+                </div>
+                <div class="hitdice-death-row">
+                    <div class="box box--label-bottom hitdice-box">
+                        <div class="hitdice-total">Total: 3d10</div>
+                        <div class="hitdice-value"></div>
+                        <div class="box__label">Hit Dice</div>
+                    </div>
+                    <div class="box box--label-bottom death-box">
+                        <div class="death-row">
+                            <div class="death-label">Successes</div>
+                            <div class="death-circles">
+                                <div class="death-circle"></div>
+                                <div class="death-circle"></div>
+                                <div class="death-circle"></div>
+                            </div>
+                        </div>
+                        <div class="death-row">
+                            <div class="death-label">Failures</div>
+                            <div class="death-circles">
+                                <div class="death-circle"></div>
+                                <div class="death-circle"></div>
+                                <div class="death-circle"></div>
+                            </div>
+                        </div>
+                        <div class="box__label">Death Saves</div>
+                    </div>
+                </div>
+                <div class="box box--label-top attacks-box">
+                    <div class="box__label">Attacks & Spellcasting</div>
+                    <div class="attack-header">
+                        <div>Name</div>
+                        <div>Atk Bonus</div>
+                        <div>Damage/Type</div>
+                    </div>
+                    <div class="attack-row">
+                        <div class="attack-name">Longbow</div>
+                        <div class="attack-bonus">+5</div>
+                        <div class="attack-damage">1d8+1 piercing</div>
+                    </div>
+                    <div class="attack-row">
+                        <div class="attack-name">Warhammer</div>
+                        <div class="attack-bonus">+4</div>
+                        <div class="attack-damage">1d8+2 bludgeoning</div>
+                    </div>
+                    <div class="attack-row">
+                        <div class="attack-name">Handaxe</div>
+                        <div class="attack-bonus">+4</div>
+                        <div class="attack-damage">1d6+2 slashing</div>
+                    </div>
+                    <div class="attack-row">
+                        <div class="attack-name">Hunter's Mark</div>
+                        <div class="attack-bonus">--</div>
+                        <div class="attack-damage">+1d6 to marked target</div>
+                    </div>
+                    <div class="attack-row">
+                        <div class="attack-name">Ironjaw Bite</div>
+                        <div class="attack-bonus">+4</div>
+                        <div class="attack-damage">1d6+4 piercing</div>
+                    </div>
+                </div>
+                <div class="box box--label-bottom equipment-box">
+                    
+                    <div class="coin-row">
+                        <div class="coin coin--cp"><div class="coin-icon">0</div><div class="coin-label">Copper</div></div>
+                        <div class="coin coin--sp"><div class="coin-icon">0</div><div class="coin-label">Silver</div></div>
+                        <div class="coin coin--ep"><div class="coin-icon">0</div><div class="coin-label">Electrum</div></div>
+                        <div class="coin coin--gp"><div class="coin-icon">10</div><div class="coin-label">Gold</div></div>
+                        <div class="coin coin--pp"><div class="coin-icon">0</div><div class="coin-label">Platinum</div></div>
+                    </div>
+                    <div class="box-content"><ul class="styled-list"><li>Scale Mail (AC 14 + Dex)</li><li>Shield (+2 AC)</li><li>Longbow</li><li>Warhammer</li><li>Handaxe (2)</li><li>20 Arrows</li><li>Explorer's Pack</li><li>Carpenter's tools</li><li>Herbalism kit</li><li>Shovel</li><li>Iron pot</li><li>Common clothes</li><li>Belt pouch</li></ul></div>
+                    <div class="box__label">Equipment</div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="column">
+                <div class="box box--label-bottom trait-box">
+                    <div class="trait-content">I judge people by their actions, not their words. When I set my mind to something, I follow through no matter what gets in my way.</div>
+                    <div class="box__label">Personality Traits</div>
+                </div>
+                <div class="box box--label-bottom trait-box">
+                    <div class="trait-content">Respect. People deserve to be treated with dignity and respect. Freedom. Tyrants must not be allowed to oppress the people.</div>
+                    <div class="box__label">Ideals</div>
+                </div>
+                <div class="box box--label-bottom trait-box">
+                    <div class="trait-content">Ironjaw and I saved a village from a marauding orc warband. The bear has been my companion ever since.</div>
+                    <div class="box__label">Bonds</div>
+                </div>
+                <div class="box box--label-bottom trait-box">
+                    <div class="trait-content">The tyrant who rules my land will stop at nothing to see me killed. I'm convinced of the significance of my destiny, and blind to my shortcomings.</div>
+                    <div class="box__label">Flaws</div>
+                </div>
+                <div class="box box--label-bottom trait-box">
+                    <div class="trait-content"><ul class="styled-list"><li>Darkvision (60 ft)</li><li>Dwarven Resilience (Adv. vs poison)</li><li>Dwarven Toughness (+1 HP/level)</li><li>Stonecunning</li><li>Favored Enemy: Orcs & Goblins</li><li>Natural Explorer: Forest</li><li>Fighting Style: Archery (+2 ranged)</li><li>Beast Master: Ironjaw (Black Bear)</li><li>Rustic Hospitality</li></ul></div>
+                    <div class="box__label">Features & Traits</div>
+                </div>
+                <div class="box box--label-top notes-box box--flex">
+                    <div class="box__label">Notes</div>
+                    <div class="notes-lines"></div>
+                </div>
+            </div>
+        </div>
+                <div class="gallery-row">
+                        <div class="gallery-item">
+                            <img src="../../images/thorek/ring_nature_moss.jpg" alt="Character Art" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="../../images/thorek/thorek_face_closeup.jpg" alt="Character Art" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="../../images/thorek/thorek_ranger_forest.jpg" alt="Character Art" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="../../images/thorek/ironjaw_fullbody_armored.jpg" alt="Character Art" class="gallery-img">
+                        </div>
+                </div>
+    </div>
+    <!-- PAGE 2: Background -->
+    <div class="page">
+        
+        <div class="page-header">
+            <div class="header-left">
+                <div class="header-brand">Dungeons & Dragons</div>
+                
+                <div class="box box--label-bottom header-name">
+                    <div class="value--large">Thorek Bearward</div>
+                    <div class="box__label">Character Name</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">65</div>
+                    <div class="box__label">Age</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">4'2"</div>
+                    <div class="box__label">Height</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">165 lbs</div>
+                    <div class="box__label">Weight</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Amber</div>
+                    <div class="box__label">Eyes</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Tan, weathered</div>
+                    <div class="box__label">Skin</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Brown, full beard</div>
+                    <div class="box__label">Hair</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page2-content">
+            <div class="page2-columns">
+                <div class="column">
+                    <div class="box box--label-top large-box" style="min-height: 45mm;">
+                        <div class="box__label">Character Appearance</div>
+                        <div class="large-box-content"><div class="text-content"><p>A sturdy hill dwarf with weathered tan skin and keen amber eyes that constantly scan the treeline. His brown beard is thick and well-kept, often with bits of forest debris caught in it. He moves with the quiet confidence of someone who has spent years navigating wild places, and the faint smell of pine and bear musk follows him.</p></div></div>
+                    </div>
+                    <div class="box box--label-top large-box box--flex">
+                        <div class="box__label">Character Backstory</div>
+                        <div class="large-box-content"><div class="text-content"><p>Thorek was a simple woodsman living on the edge of the great forest, making his living as a carpenter and guide. One fateful autumn, an orc warband descended upon his village. During the attack, he discovered a wounded bear cub whose mother had been slain by the orcs. Together, they fought off the raiders. Thorek wielded his grandfather's warhammer while the young bear battled with surprising ferocity.</p><p>The village elder proclaimed them both heroes, and from that day forward, Thorek and the bear became inseparable companions. He named the bear Ironjaw for his powerful bite, and now they travel the land together as defenders of the common folk.</p></div></div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box box--label-top large-box" style="min-height: 60mm;">
+                        <div class="box__label">Allies & Organizations</div>
+                        <div style="font-weight: 600; margin-bottom: 2mm;">The Village of Millhaven</div>
+                        <div class="large-box-content"><div class="text-content"><p>The village Thorek and Ironjaw saved from the orc warband. The villagers consider him a hero and will always offer shelter and aid. He also has connections with local woodcutters and the trappers guild.</p></div></div>
+                    </div>
+                    <div class="box box--label-top large-box">
+                        <div class="box__label">Additional Features & Traits</div>
+                        <div class="large-box-content"><ul class="styled-list"><li>IRONJAW (Black Bear Companion):</li><li>AC: 13, HP: 25 (19 base + 6 from ring)</li><li>Speed: 40 ft, climb 30 ft</li><li>STR 15, DEX 10, CON 14, INT 2, WIS 12, CHA 7</li><li>Keen Smell (Adv. on smell Perception)</li><li>Multiattack: Bite +4 (1d6+6) & Claws +4 (2d4+6)</li><li>Ring bonus: +2 dmg, magical attacks, charm/fear adv.</li></ul></div>
+                    </div>
+                    <div class="box box--label-top large-box box--flex">
+                        <div class="box__label">Treasure</div>
+                        <div class="large-box-content"><ul class="styled-list"><li>Ring of the Wild Hunt (Rare, attuned)</li><li>- Ironjaw: +2 damage, +6 HP, magical attacks</li><li>- Ironjaw: Adv. vs charm/frighten</li></ul></div>
+                    </div>
+                </div>
+            </div>
+            <div class="page2-notes-row">
+                <div class="box box--label-top large-box notes-box" style="min-height: 110mm;">
+                    <div class="box__label">Notes</div>
+                    <div class="notes-lines"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- PAGE 3: Spellcasting -->
+    <div class="page">
+        
+        <div class="page-header">
+            <div class="header-left">
+                <div class="header-brand">Dungeons & Dragons</div>
+                <div class="box box--label-bottom header-name">
+                    <div class="value--large">Ranger</div>
+                    <div class="box__label">Spellcasting Class</div>
+                </div>
+            </div>
+            <div class="header-right" style="grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr;">
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Wisdom</div>
+                    <div class="box__label">Spellcasting Ability</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">12</div>
+                    <div class="box__label">Spell Save DC</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">+4</div>
+                    <div class="box__label">Spell Attack Bonus</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="spell-grid">
+            <div class="box spell-level-box cantrip-box">
+                <div class="spell-level-header">
+                    <div class="spell-level-num">0</div>
+                    <div style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase;">Cantrips</div>
+                </div>
+                <div class="spell-list">
+                </div>
+            </div>
+            
+            <div class="box spell-level-box">
+                <div class="spell-level-header">
+                    <div class="spell-level-num">1</div>
+                    <div class="spell-slots">
+                        <div class="spell-slots-row">
+                            <span>Slots:</span>
+                            <div class="spell-slot-box">3</div>
+                        </div>
+                        <div class="spell-slots-row">
+                            <span>Used:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="spell-list">
+                    <div class="spell-item">
+                        <div class="spell-prepared filled"></div>
+                        <span>Hunter's Mark</span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared filled"></div>
+                        <span>Cure Wounds</span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared filled"></div>
+                        <span>Goodberry</span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="box spell-level-box">
+                <div class="spell-level-header">
+                    <div class="spell-level-num">2</div>
+                    <div class="spell-slots">
+                        <div class="spell-slots-row">
+                            <span>Slots:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                        <div class="spell-slots-row">
+                            <span>Used:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="spell-list">
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="box spell-level-box">
+                <div class="spell-level-header">
+                    <div class="spell-level-num">3</div>
+                    <div class="spell-slots">
+                        <div class="spell-slots-row">
+                            <span>Slots:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                        <div class="spell-slots-row">
+                            <span>Used:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="spell-list">
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="box spell-level-box">
+                <div class="spell-level-header">
+                    <div class="spell-level-num">4</div>
+                    <div class="spell-slots">
+                        <div class="spell-slots-row">
+                            <span>Slots:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                        <div class="spell-slots-row">
+                            <span>Used:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="spell-list">
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="box spell-level-box">
+                <div class="spell-level-header">
+                    <div class="spell-level-num">5</div>
+                    <div class="spell-slots">
+                        <div class="spell-slots-row">
+                            <span>Slots:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                        <div class="spell-slots-row">
+                            <span>Used:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="spell-list">
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="box spell-level-box">
+                <div class="spell-level-header">
+                    <div class="spell-level-num">6</div>
+                    <div class="spell-slots">
+                        <div class="spell-slots-row">
+                            <span>Slots:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                        <div class="spell-slots-row">
+                            <span>Used:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="spell-list">
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="box spell-level-box">
+                <div class="spell-level-header">
+                    <div class="spell-level-num">7</div>
+                    <div class="spell-slots">
+                        <div class="spell-slots-row">
+                            <span>Slots:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                        <div class="spell-slots-row">
+                            <span>Used:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="spell-list">
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="box spell-level-box">
+                <div class="spell-level-header">
+                    <div class="spell-level-num">8</div>
+                    <div class="spell-slots">
+                        <div class="spell-slots-row">
+                            <span>Slots:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                        <div class="spell-slots-row">
+                            <span>Used:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="spell-list">
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="box spell-level-box">
+                <div class="spell-level-header">
+                    <div class="spell-level-num">9</div>
+                    <div class="spell-slots">
+                        <div class="spell-slots-row">
+                            <span>Slots:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                        <div class="spell-slots-row">
+                            <span>Used:</span>
+                            <div class="spell-slot-box">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="spell-list">
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                    <div class="spell-item">
+                        <div class="spell-prepared"></div>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="box spell-level-box notes-box">
+                <div class="box__label" style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: var(--accent-primary);">Notes</div>
+                <div class="notes-lines"></div>
+            </div>
+            <div class="box spell-level-box notes-box">
+                <div class="box__label" style="font-size: 6.5pt; font-weight: 700; text-transform: uppercase; color: var(--accent-primary);">Notes</div>
+                <div class="notes-lines"></div>
+            </div>
+        </div>
+    </div>
+    <!-- PAGE 4: Reference / Cheat Sheet -->
+    <div class="page">
+        
+        <div class="page-header">
+            <div class="header-left">
+                <div class="header-brand">Dungeons & Dragons</div>
+                <div class="box box--label-bottom header-name">
+                    <div class="value--large">Quick Reference</div>
+                    <div class="box__label">Thorek Bearward</div>
+                </div>
+            </div>
+            <div class="header-right" style="grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr;">
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">Ranger 3</div>
+                    <div class="box__label">Class & Level</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">+2</div>
+                    <div class="box__label">Proficiency Bonus</div>
+                </div>
+                <div class="box box--label-bottom box--centered info-field">
+                    <div class="value--medium">12</div>
+                    <div class="box__label">Spell Save DC</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page4-grid">
+            <div class="column">
+                <div class="box ref-box turn-box">
+                    <div class="ref-section-title">Your Turn</div>
+                        <div class="turn-phase">
+                            <span class="turn-phase-name">Movement</span>
+                            <span class="turn-phase-desc">Move up to your speed (can split before/after action)</span>
+                        </div>
+                        <div class="turn-phase">
+                            <span class="turn-phase-name">Action</span>
+                            <span class="turn-phase-desc">Attack, Cast Spell, Dash, Disengage, Dodge, Help, Hide, Ready, Search, Use Object</span>
+                        </div>
+                        <div class="turn-phase">
+                            <span class="turn-phase-name">Bonus Action</span>
+                            <span class="turn-phase-desc">If available (some spells, class features, two-weapon fighting)</span>
+                        </div>
+                        <div class="turn-phase">
+                            <span class="turn-phase-name">Free Interaction</span>
+                            <span class="turn-phase-desc">Draw/sheathe weapon, open door, pick up item, speak briefly</span>
+                        </div>
+                    <div class="turn-reaction">
+                        <span class="turn-phase-name">Reaction</span>
+                        <span class="turn-phase-desc">Once per round, even on others' turns (opportunity attacks, some spells)</span>
+                    </div>
+                </div>
+                <div class="box ref-box combat-ref-box">
+                    <div class="ref-section-title">Actions</div>
+                        <div class="combat-action">
+                            <span class="combat-action-name">Attack</span>
+                            <span class="combat-action-desc">Make one melee or ranged attack (or more with Extra Attack)</span>
+                        </div>
+                        <div class="combat-action">
+                            <span class="combat-action-name">Cast a Spell</span>
+                            <span class="combat-action-desc">Cast a spell with casting time of 1 action</span>
+                        </div>
+                        <div class="combat-action">
+                            <span class="combat-action-name">Dash</span>
+                            <span class="combat-action-desc">Gain extra movement equal to your speed</span>
+                        </div>
+                        <div class="combat-action">
+                            <span class="combat-action-name">Disengage</span>
+                            <span class="combat-action-desc">Your movement doesn't provoke opportunity attacks</span>
+                        </div>
+                        <div class="combat-action">
+                            <span class="combat-action-name">Dodge</span>
+                            <span class="combat-action-desc">Attacks against you have disadvantage; DEX saves have advantage</span>
+                        </div>
+                        <div class="combat-action">
+                            <span class="combat-action-name">Help</span>
+                            <span class="combat-action-desc">Give ally advantage on next ability check or attack roll</span>
+                        </div>
+                        <div class="combat-action">
+                            <span class="combat-action-name">Hide</span>
+                            <span class="combat-action-desc">Make DEX (Stealth) check to hide</span>
+                        </div>
+                        <div class="combat-action">
+                            <span class="combat-action-name">Ready</span>
+                            <span class="combat-action-desc">Prepare action for a trigger (uses reaction when triggered)</span>
+                        </div>
+                    <div class="ref-section-title" style="margin-top: 2mm;">Conditions</div>
+                        <div class="combat-condition">
+                            <span class="combat-condition-name">Prone</span>
+                            <span class="combat-condition-desc">Disadvantage on attacks; melee attacks against have advantage, ranged have disadvantage; stand costs half movement</span>
+                        </div>
+                        <div class="combat-condition">
+                            <span class="combat-condition-name">Grappled</span>
+                            <span class="combat-condition-desc">Speed becomes 0; ends if grappler incapacitated or effect moves you out of reach</span>
+                        </div>
+                        <div class="combat-condition">
+                            <span class="combat-condition-name">Frightened</span>
+                            <span class="combat-condition-desc">Disadvantage on ability checks and attacks while source of fear is in sight; can't move closer to source</span>
+                        </div>
+                        <div class="combat-condition">
+                            <span class="combat-condition-name">Incapacitated</span>
+                            <span class="combat-condition-desc">Can't take actions or reactions</span>
+                        </div>
+                        <div class="combat-condition">
+                            <span class="combat-condition-name">Stunned</span>
+                            <span class="combat-condition-desc">Incapacitated, can't move, auto-fail STR/DEX saves, attacks against have advantage</span>
+                        </div>
+                    <div class="ref-section-title" style="margin-top: 2mm;">Cover</div>
+                        <div class="combat-cover">
+                            <span class="combat-cover-type">Half Cover</span>
+                            <span class="combat-cover-bonus">+2 AC and DEX saves</span>
+                        </div>
+                        <div class="combat-cover">
+                            <span class="combat-cover-type">Three-Quarters</span>
+                            <span class="combat-cover-bonus">+5 AC and DEX saves</span>
+                        </div>
+                        <div class="combat-cover">
+                            <span class="combat-cover-type">Total Cover</span>
+                            <span class="combat-cover-bonus">Can't be targeted directly</span>
+                        </div>
+                </div>
+                <div class="box ref-box box--flex">
+                    <div class="ref-section-title">Weapons</div>
+                    <div class="weapon-card ref-card">
+                        <div class="weapon-name">Longbow</div>
+                        <div class="weapon-type">Martial Ranged</div>
+                        <div class="weapon-stats">
+                            <span class="weapon-damage">1d8 piercing</span>
+                        </div>
+                        <div class="weapon-properties">Ammunition (range 150/600), heavy, two-handed</div>
+                        <div class="weapon-notes">+2 from Archery fighting style included in attack bonus</div>
+                    </div>
+                    <div class="weapon-card ref-card">
+                        <div class="weapon-name">Warhammer</div>
+                        <div class="weapon-type">Martial Melee</div>
+                        <div class="weapon-stats">
+                            <span class="weapon-damage">1d8 bludgeoning (1d10 versatile)</span>
+                        </div>
+                        <div class="weapon-properties">Versatile</div>
+                        <div class="weapon-notes">Can be used one or two-handed</div>
+                    </div>
+                    <div class="weapon-card ref-card">
+                        <div class="weapon-name">Handaxe</div>
+                        <div class="weapon-type">Simple Melee</div>
+                        <div class="weapon-stats">
+                            <span class="weapon-damage">1d6 slashing</span>
+                        </div>
+                        <div class="weapon-properties">Light, thrown (range 20/60)</div>
+                        <div class="weapon-notes">Can throw or use in melee</div>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="box ref-box">
+                    <div class="ref-section-title">Spells</div>
+                    <div class="spell-card ref-card">
+                        <div class="spell-name">Hunter's Mark <span class="spell-level-tag">(1st)</span></div>
+                        <div class="spell-meta">
+                            <span><span class="spell-meta-label">Cast:</span> 1 bonus action</span>
+                            <span><span class="spell-meta-label">Range:</span> 90 feet</span>
+                            <span><span class="spell-meta-label">Duration:</span> Concentration, up to 1 hour</span>
+                        </div>
+                        <div class="spell-desc">Mark a creature you can see. Deal extra 1d6 damage to it whenever you hit with a weapon attack. Advantage on Perception/Survival checks to find it. If target drops to 0 HP, use bonus action to mark new creature.</div>
+                    </div>
+                    <div class="spell-card ref-card">
+                        <div class="spell-name">Cure Wounds <span class="spell-level-tag">(1st)</span></div>
+                        <div class="spell-meta">
+                            <span><span class="spell-meta-label">Cast:</span> 1 action</span>
+                            <span><span class="spell-meta-label">Range:</span> Touch</span>
+                            <span><span class="spell-meta-label">Duration:</span> Instantaneous</span>
+                        </div>
+                        <div class="spell-desc">Creature you touch regains 1d8 + spellcasting modifier (WIS +2) hit points. No effect on undead or constructs.</div>
+                    </div>
+                    <div class="spell-card ref-card">
+                        <div class="spell-name">Goodberry <span class="spell-level-tag">(1st)</span></div>
+                        <div class="spell-meta">
+                            <span><span class="spell-meta-label">Cast:</span> 1 action</span>
+                            <span><span class="spell-meta-label">Range:</span> Touch</span>
+                            <span><span class="spell-meta-label">Duration:</span> Instantaneous</span>
+                        </div>
+                        <div class="spell-desc">Create 10 magical berries. Eating a berry (1 action) restores 1 HP and provides nourishment for one day. Berries lose potency after 24 hours.</div>
+                    </div>
+                </div>
+                <div class="box companion-block box--flex">
+                    <div class="companion-header-row">
+                        <div class="companion-header">
+                            <div class="companion-name">Ironjaw</div>
+                            <div class="companion-type">Medium beast Black Bear</div>
+                        </div>
+                        <div class="companion-portrait">
+                            <img src="../../images/thorek/ironjaw_portrait_armored.jpg" alt="Ironjaw" class="companion-img">
+                        </div>
+                    </div>
+                    <div class="companion-stats-row">
+                        <div class="companion-stat"><span class="companion-stat-label">AC</span> 13</div>
+                        <div class="companion-stat"><span class="companion-stat-label">HP</span> 25 <span style="font-size: 6pt; color: #666;">(19 base + 6 from Ring of the Wild Hunt)</span></div>
+                        <div class="companion-stat"><span class="companion-stat-label">Speed</span> 40 ft., climb 30 ft.</div>
+                    </div>
+                    <div class="companion-abilities">
+                        <div class="companion-ability">
+                            <div class="companion-ability-name">STR</div>
+                            <div class="companion-ability-score">15</div>
+                            <div class="companion-ability-mod">(+2)</div>
+                        </div>
+                        <div class="companion-ability">
+                            <div class="companion-ability-name">DEX</div>
+                            <div class="companion-ability-score">10</div>
+                            <div class="companion-ability-mod">(+0)</div>
+                        </div>
+                        <div class="companion-ability">
+                            <div class="companion-ability-name">CON</div>
+                            <div class="companion-ability-score">14</div>
+                            <div class="companion-ability-mod">(+2)</div>
+                        </div>
+                        <div class="companion-ability">
+                            <div class="companion-ability-name">INT</div>
+                            <div class="companion-ability-score">2</div>
+                            <div class="companion-ability-mod">(-4)</div>
+                        </div>
+                        <div class="companion-ability">
+                            <div class="companion-ability-name">WIS</div>
+                            <div class="companion-ability-score">12</div>
+                            <div class="companion-ability-mod">(+1)</div>
+                        </div>
+                        <div class="companion-ability">
+                            <div class="companion-ability-name">CHA</div>
+                            <div class="companion-ability-score">7</div>
+                            <div class="companion-ability-mod">(-2)</div>
+                        </div>
+                    </div>
+                    <div class="companion-stats-row">
+                        <div class="companion-stat"><span class="companion-stat-label">Skills</span> Perception +3</div>
+                        <div class="companion-stat"><span class="companion-stat-label">Senses</span> Passive Perception 13</div>
+                    </div>
+                    <div class="companion-section">
+                        <div class="companion-section-title">Traits</div>
+                        <div class="companion-trait">
+                            <span class="companion-trait-name">Keen Smell.</span>
+                            <span class="companion-trait-desc">Advantage on Perception checks that rely on smell.</span>
+                        </div>
+                        <div class="companion-trait">
+                            <span class="companion-trait-name">Ring of the Wild Hunt.</span>
+                            <span class="companion-trait-desc">+2 damage on attacks, +6 HP, attacks count as magical, advantage on saves vs charm and frighten effects.</span>
+                        </div>
+                    </div>
+                    <div class="companion-section">
+                        <div class="companion-section-title">Actions</div>
+                        <div class="companion-action">
+                            <span class="companion-action-name">Multiattack.</span>
+                            <span class="companion-action-desc">Ironjaw makes two attacks: one bite and one claw.</span>
+                        </div>
+                        <div class="companion-action">
+                            <span class="companion-action-name">Bite.</span>
+                            <span class="companion-action-desc">Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 1d6+4 piercing damage (includes +2 from ring).</span>
+                        </div>
+                        <div class="companion-action">
+                            <span class="companion-action-name">Claws.</span>
+                            <span class="companion-action-desc">Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 2d4+4 slashing damage (includes +2 from ring).</span>
+                        </div>
+                    </div>
+                    <div class="companion-section">
+                        <div class="companion-section-title">Beast Master Commands</div>
+                        <ul class="companion-commands"><li>Use action to command Ironjaw to take Attack, Dash, Disengage, Dodge, or Help action</li><li>If no command given, Ironjaw takes Dodge action</li><li>Can also use reaction to command Ironjaw when hit by attack</li></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ITEMS -->
+    <div class="page">
+        <div class="item-header">
+            <svg class="header-bg-decoration" viewBox="0 0 2893.32 468.16" preserveAspectRatio="xMidYMid slice">
+                <path d="M77.32,283.91c3.82-1.28,3.92-4.87,5.06-7.94,15.98-43.08,36.53-93.85,74.23-121.89,13.18,6.16,11.96,31.57,9.82,43.94-1.41,8.16-17.1,41.69-24.57,43.63-3.57.92-7.38-2.61-9.5.17-1.03,2.35-6.22,13.9-.08,12.06,28.92-18.04,64.07-32.81,91.7-52.31C321.99,132.42,378.66,50.66,508.86,28.45c10.55-1.8,67.53-8.58,71.59-2.67l.88,8.11c-68.03,9.9-134.01,35.31-189.99,75.03,9.81.42,18.48-1.76,28.75-.76,17.08,1.66,31.99,10.64,46.99,17.98,5.84,9.23-18.23,19.83-24.64,21.87-22.6,7.21-43.39,5.19-65.07-3.14-3.99-1.53-7.82-6.04-11.43-6.59-21.09-3.23-51.07,33.64-64.6,47.61,112-22.46,227.1-23.58,336.66,11.53,17.54-11.53,33.81-25.05,51.5-36.34,24.24-15.47,73.89-35.88,84.85-63.25,1.25-3.11-1.62-9.98-1.17-14.94,4.26-46.95,37.62-72.71,81.3-82.89l3.91,1.88c4.7,4.73-1.53,24.06-3.64,30.45-4.68,14.15-15.27,33.49-26.37,43.63-11.04,10.08-29.06,12.36-31.03,27.95,83.38-33.03,167.95-41.1,255.62-20.63,18.54,4.33,59.9,21.22,74.74,20.17,16.25-1.15,37.89-11.89,51.61-20.54-7.3-.63-23.97,10.24-30.06,6.11-6.82-4.62,10.05-27.06,14.13-32.04,15.47-18.89,38.17-33.21,61.51-40.49,49.24-15.38,55.73-2.05,30.01,40.01-20.98,34.31-57.23,52.63-95.57,61.45,6.79,5.72,31.15,19.54,39.18,20,2.27.13,4.18-.47,5.97-1.85,56.6-41.48,118.93-80.81,185.31-104.72,8.66-3.12,43.19-15.46,49.48-12.5,5.89,2.77,4.4,6.47-.05,9.94-10.56,8.21-38.56,17.93-52.52,25.47-45.35,24.49-110.7,65.25-149.21,98.79-2.27,1.97-4.93,3.08-4.15,6.82l227.05,144.01c29.17-15.41,35.49-50.9,49.57-78.36,8.1-15.79,24.25-45.85,36.29-57.71,12.73-12.54,22.5-20.91,26.9,1.3,4,20.2-.91,38.72-11.47,56.14-4.66,7.69-11.14,20.33-21.43,15.2l-1.89,1.39c-.15,2.36-6.13,13.95-.06,12.05,6.51-2.04,23.38-11.74,30.38-15.63,69.21-38.39,115.91-87.6,177.74-134.26,65.47-49.4,142.29-88.35,226.91-78.05l-.87,6.09c-65.46,13.57-126.83,37.68-181.11,76.89,9.59.02,19.22-1.94,28.97-.99,9.22.89,46.35,12.56,46.33,22.97-17.21,23.57-59,25.44-84.7,15.39-4.66-1.82-10.25-7.42-14.02-8.02-20.28-3.26-49.34,34.47-62.59,47.62,107.73-22.49,217.44-23.16,322.67,11.52,20.25-14.43,40.49-29.01,61.49-42.35s47.37-22.12,63.8-42.2c17.25-21.09,6.47-27.48,13.44-50.56,6.92-22.92,24.81-39.47,45.26-50.74,9.4-5.19,38.63-21.15,37.26-.95-1.35,19.76-18.54,55.54-33.87,68.34-9.71,8.11-28.23,10.54-27.03,24.98,64.89-25.38,135.95-38.23,205.69-29.74,19.41,2.36,42.68,7.42,61.7,12.3,37.35,9.58,51.27,24.48,91.57,8.41,7.01-2.79,13.68-10.02,21.99-11.02.41-3.75-4.08-1.68-6.03-1.03-8.09,2.69-15.71,7.11-24.67,7.19-9.02-1.81,8.83-28.09,11.88-31.97,16.47-21.02,44.59-37.31,70.43-43.57,37.21-9.02,45.18-1.99,27.5,33.49-19.72,39.55-60.18,59.12-101.09,69.93-1.86,2.4,35.8,19.84,39.18,20.02,1.71.09,3.27-.03,4.71-1.06,56.62-41.66,118.42-81.31,185.06-105.02,7.96-2.83,44.33-15.49,49.75-13.8,3.41,1.06,4.52,7.17,3.01,9.6-1.68,2.7-49.23,23.6-57.07,27.89-40.32,22.05-115.9,67.25-147.62,98.38-1.94,1.9-3.8,2.58-3.04,5.93l225.3,143.62c30.18-11.26,30.1-46.02,46.69-69.59v134l-35.18-16.03c-5.04-.26-18.47,8.94-20.82,14.01,20.92-2.21,38.12,9.48,56,18.02v60c-14-6.46-54.15-26.94-55.4-43.33-.18-2.32,1.26-4.4,1.45-6.66,2.06-1.51,14.38,5.67,15.94.01-17.1-5.66-39.1-8.27-57.03-6.07-9.75,1.19-34.5,15.22-46.46,19.54-21.74,7.86-45.35,13.81-68.12,17.88-75.4,13.46-149.29,2.64-222.37-17.35-2.55,2.06,36.13,43.44,37.17,53.84,1.41,14.08-36.57-1.18-43.81-6.22-22.85-15.9-19.33-34.37-32.47-51.53-9.44-12.33-61.65-25.86-79.39-32.61-84.29-32.07-165.02-71.55-248.48-105.52l35.08,42.92c46.31,14.4,78.65,30.89,94.43,79.57,5.85,18.05,12.06,43.03,7.23,61.27-6.21,3.9-52.09-19.12-60.36-24.14-38.01-23.05-58.07-56.87-65.63-100.37l-70.97-79.34c-3.7-.38-28.33,19.73-34.16,23.73-30.07,20.64-61.47,40.87-93.29,58.71-25.88,14.51-53.86,29.3-81.34,39.68,5.18,6.61,16.97,5.55,24.89,8.09,18.93,6.08,35.92,18.11,49.91,32.09,3.09,3.09,18.99,21.26,20.2,23.82,6.85,14.51-24.48,10.58-33.73,9.72-21.26-1.98-56.43-15.2-67.37-34.62-2.86-5.08-1.21-11.87-2.08-12.93-.77-.93-20.35-5.29-23.36-5.62-20.61-2.24-40.39,8.23-60.43,12.45-75.8,15.95-153.76-.08-223.37-30.67-7.63-3.35-33.92-18.91-39.53-18.37-3.94.38-16.72,9.98-19.12,14,39.51.08,78.36,30.72,91.55,67.47,5.7,15.89,7.86,20.61-11.66,17.65-18.69-2.84-68.57-25.81-76.99-42.98-1.94-3.96-6.17-14.1,1.66-13.77,3.44.14,13.44,6.57,15.43,1.68-17.38-7.12-40.25-10.37-59.03-8.07-9.34,1.14-31.35,13.55-42.46,17.54-73.17,26.33-136.23,31.26-213.21,20.22-28.1-4.03-55.85-10.74-83.28-17.7,3.21,12.43,43.5,46.23,35.13,58.11-5.5,7.81-38.69-8.02-45.18-13.08-20.81-16.2-18.85-46.82-38.54-57.46-18-9.73-54.52-17.99-75.91-26.09-82.94-31.39-162.28-70.43-244.48-103.52l34,42c39.72,15.15,73.45,26.58,91.04,68.96,4.28,10.31,19.87,67.33,11.75,72.88-43.87-9.81-93.37-36.9-112.81-79.82-5.85-12.91-7.93-34.71-13.25-44.75-4-7.55-36.53-42.44-44.72-51.28-4.03-4.35-24.58-25.84-27.98-25.94-38.61,24.74-75.89,51.44-115.71,74.31-29.62,17.01-61.14,34.34-93.35,45.68-.59,4.77-.07,3.19,2.77,4.21,9.25,3.32,19.87,3.2,30.6,7.41,13.01,5.11,32.68,19.51,42.63,29.37,4.53,4.49,27.59,29.14,16.71,32.69-4.15,1.35-24.03.73-29.66.27-24.02-1.97-53.71-13.8-67.89-34.09-2.66-3.81-4.28-12.2-5.04-12.84-3.31-2.78-18.74-5.96-23.64-6.47-21.16-2.22-31.79,5.79-50.8,10.09-92.3,20.86-188.56,1.72-271.65-40.65v-74ZM689.33,213.89c56.38,17.27,109.96,53.07,166.46,68.55,124.1,33.99,223.05-48.37,313.49-119.53-83.87-44.74-176.96-71.57-272.37-52.41-61.48,12.34-147.52,54.42-197.37,92.63-2.24,1.72-12.43,7.82-10.21,10.76ZM2077.32,213.89c16.91,5.17,33.67,12.17,49.93,19.09,91.65,38.97,146.96,79.66,251.99,43.86,67.18-22.9,121.56-70.47,176.04-113.92-42.55-24.37-91.2-43.19-139.54-52.42-105.42-20.12-189.01,9.64-278.25,62.58-4.39,2.6-62.77,38.26-60.16,40.81ZM1429.31,329.87l-2.1-4.85c-74.34-48.65-146.96-100.26-224.93-143.09-77.14,62.47-156.15,132.05-258.97,144.97,73.36,31.29,155.45,60.01,235.27,68.75,89.31,9.78,176.03-19.02,250.74-65.79ZM2817.32,325.94l-227.05-144.01c-76.72,62.46-156.79,131.93-258.97,144.97,49.89,21.5,101.38,40.95,154.38,53.64,90.04,21.55,160.93,25.27,248.67-8.6,6.96-2.69,87.1-39.9,82.96-46ZM593.32,227.93c-93.1-27.2-196.21-25.2-290.38-3.4-65.6,15.19-119.02,44.84-174.68,81.32-3.27,2.14-34.29,22.2-32.94,24.03,19.02,6.66,36.58,16.51,55.5,23.52,80.2,29.73,159.56,29.45,239.53-1.46,5.97-2.31,20.87-7.4,24.88-11.12,10.53-9.78,8.87-47.23,17.72-64.28,11.03-21.23,34.89-37.38,57.28-44.72,5.75-1.89,17.49-6.96,20.85-.61,3.05,9.21-19.72,51.71-26.94,60.53-10.74,13.12-22.44,15.65-32.89,25.11-2.51,2.27-7.47,7.32-.98,7.03,49.83-28.49,98.26-60.48,143.03-95.96ZM1985.32,227.93c-112.18-31.94-247.82-25.82-354.71,22.27-41.14,18.5-89.28,49.53-126.68,75.25-1.76,1.21-3.7-.32-2.6,4.43,22.63,8.45,44.06,20.2,66.96,28.07,53.2,18.26,105.74,22.14,161.1,11.03,27.56-5.53,53.58-17.12,79.47-27.53,10.49-21.68,5.89-44.68,16.81-66.19,7.68-15.13,23.25-28.22,38.3-35.7,6.05-3.01,41.68-18.84,40.49-5.52-.96,10.81-18.9,46.51-26.3,55.71-11.44,14.21-23.39,16.93-34.89,27.11-1.6,1.41-6.1,4.95-2.96,7.04,50.99-27.62,98.89-60.91,145.01-95.97Z"/>
+            </svg>
+            <div class="item-image-frame">
+                <img src="../../images/thorek/ring_nature_moss.jpg" alt="Ring of the Wild Hunt" class="item-image">
+            </div>
+            <div class="item-title-block">
+                <div class="item-title-group">
+                    <div class="item-name">Ring of the Wild Hunt</div>
+                    <div class="item-subtitle">Forged in the Moonwell of Eternal Spring, blessed by the Great Bear Spirit</div>
+                </div>
+                <div class="item-stats-row">
+                    <div class="item-stat">
+                        <span class="item-stat-label">Rarity</span>
+                        <span class="item-stat-value rarity-rare">Rare</span>
+                    </div>
+                    <div class="item-stat">
+                        <span class="item-stat-label">Attunement</span>
+                        <span class="item-stat-value ">Beast Master Ranger</span>
+                    </div>
+                    <div class="item-stat">
+                        <span class="item-stat-label">Weight</span>
+                        <span class="item-stat-value ">0.1 lbs</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="item-content">
+            <div class="content-column">
+                <div class="box section-box description-box"><div class="section-title">Description</div>
+                    <div class="section-content description-text">This ancient iron ring bears intricate carvings of intertwining vines punctuated by tiny animal tracks — wolf paws, bear claws, eagle talons, and deer hooves that seem to circle endlessly around the band. When worn by a Beast Master, the etchings emit a faint green luminescence, and the ranger's animal companion's eyes occasionally gleam with the same emerald light. The ring feels warm to the touch when beasts are near, and observers swear the carved vines slowly shift when viewed from the corner of one's eye.</div>
+                </div>
+                <div class="box section-box"><div class="section-title">Beast Empowerment</div>
+                    <ul class="property-list">
+                        <li class="property-item">
+                            <div class="property-icon">⚔</div>
+                            <div class="property-content">
+                                <div class="property-name">Enhanced Damage</div>
+                                <div class="property-desc">+2 bonus to all damage rolls</div>
+                            </div>
+                        </li>
+                        <li class="property-item">
+                            <div class="property-icon">❤</div>
+                            <div class="property-content">
+                                <div class="property-name">Vital Force</div>
+                                <div class="property-desc">Maximum HP increases by 2 × your ranger level</div>
+                            </div>
+                        </li>
+                        <li class="property-item">
+                            <div class="property-icon">🛡</div>
+                            <div class="property-content">
+                                <div class="property-name">Mental Fortitude</div>
+                                <div class="property-desc">Advantage on saves vs. charm and frighten effects</div>
+                            </div>
+                        </li>
+                        <li class="property-item">
+                            <div class="property-icon">✨</div>
+                            <div class="property-content">
+                                <div class="property-name">Magic Fang</div>
+                                <div class="property-desc">Natural weapons count as magical for overcoming resistance and immunity</div>
+                            </div>
+                        </li></ul>
+                </div>
+                <div class="box section-box"><div class="section-title">Scaling Benefits</div>
+                    <table class="scaling-table">
+                        <thead><tr><th>Ranger Level</th><th>HP Bonus</th><th>Total HP</th></tr></thead>
+                        <tbody><tr><td>Level 3</td><td>+6 HP</td><td>25 HP</td></tr><tr><td>Level 5</td><td>+10 HP</td><td>29 HP</td></tr><tr><td>Level 7</td><td>+14 HP</td><td>33 HP</td></tr><tr><td>Level 11</td><td>+22 HP</td><td>41 HP</td></tr><tr><td>Level 15</td><td>+30 HP</td><td>49 HP</td></tr><tr><td>Level 20</td><td>+40 HP</td><td>59 HP</td></tr></tbody>
+                    </table>
+                    <div style="font-size: 6pt; color: var(--text-label); margin-top: 1mm; font-style: italic;">
+                        * Base HP assumes Black Bear companion (19 HP)
+                    </div>
+                </div>
+                <div class="box section-box box--flex">
+                    
+                    <div class="synergy-header">
+                        <div class="synergy-icon">🐻</div>
+                        <div>
+                            <div class="synergy-title">Synergy with Ironjaw</div>
+                            <div class="synergy-subtitle">Thorek Bearward's Companion</div>
+                        </div>
+                    </div>
+                    <div class="stat-comparison">
+                        <div class="stat-before">HP: 19</div>
+                        <div class="stat-arrow">→</div>
+                        <div class="stat-after">HP: 25 (+31%)</div>
+                    </div>
+                    <div class="stat-comparison">
+                        <div class="stat-before">Bite: 1d6+2</div>
+                        <div class="stat-arrow">→</div>
+                        <div class="stat-after">Bite: 1d6+4</div>
+                    </div>
+                    <div class="stat-comparison">
+                        <div class="stat-before">Claws: 2d4+2</div>
+                        <div class="stat-arrow">→</div>
+                        <div class="stat-after">Claws: 2d4+4</div>
+                    </div>
+                    <div class="ability-block" style="margin-top: 2mm;">
+                        <div class="ability-name">Tactical Combinations</div>
+                        <ul class="ability-bullets"><li>Use telepathic bond for silent coordination in ambushes</li><li>Share senses for scouting while maintaining your position</li><li>Ironjaw can protect you with reaction while you rain arrows</li><li>Magical attacks let Ironjaw damage incorporeal creatures</li></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="content-column">
+                <div class="box section-box"><div class="section-title">Combat Applications</div>
+                    
+                    <div class="ability-block">
+                        <div class="ability-name">Action Economy</div>
+                        <ul class="ability-bullets"><li><strong>No action required</strong> — all benefits are passive while worn</li><li>Companion can use reaction to impose disadvantage on one attack against you (1/short rest)</li></ul>
+                    </div>
+                    <div class="ability-block">
+                        <div class="ability-name">Tactical Advantages</div>
+                        <ul class="ability-bullets"><li>Companion becomes viable tank with increased HP</li><li>+2 damage makes companion attacks meaningful at higher levels</li><li>Magical attacks overcome common resistances</li><li>Charm/fear immunity keeps companion in the fight</li></ul>
+                    </div>
+                </div>
+                <div class="box section-box"><div class="section-title">Lore & History</div>
+                    <div class="lore-quote">
+                        Forged in the First Age by the Archdruid Kelthanas Ironbark, these rings were created to honor the rangers who stood beside their animal companions during the War of Thorns. Only seven were made, each quenched in the Moonwell of Eternal Spring and blessed by the Great Bear Spirit. This ring was thought lost when Ranger-Captain Thorne Grimbear fell defending Silverwood Pass — until you recovered it.
+                        <div class="lore-attribution">— From the Archives of the Emerald Enclave</div>
+                    </div><div class="section-content" style="margin-top: 2mm;">
+                        <div class="legendary-tale">
+                            <span class="tale-title">Battle of Frozen Peaks</span>
+                            <span class="tale-desc">Ranger Alara's wolf held off an entire orc warband</span>
+                        </div>
+                        <div class="legendary-tale">
+                            <span class="tale-title">Siege of Ironhold</span>
+                            <span class="tale-desc">The ring's magic let a bear break through magical wards</span>
+                        </div>
+                        <div class="legendary-tale">
+                            <span class="tale-title">Hunt of the Shadow Stag</span>
+                            <span class="tale-desc">Enhanced senses let a hawk track an invisible fey</span>
+                        </div></div>
+                </div>
+                <div class="box section-box"><div class="section-title">Identification</div>
+                    
+                    <div class="ability-block">
+                        <div class="ability-name">Identifying Marks</div>
+                        <ul class="ability-bullets"><li>Druidic runes spelling "WILD-HEART" on inner band</li><li>Maker's mark: Tiny oak leaf near size adjustment</li><li>Serial glyph: Three claw marks (3rd of 7 rings made)</li></ul>
+                    </div>
+                    <div class="ability-block">
+                        <div class="ability-name">Detection Properties</div>
+                        <ul class="ability-bullets"><li><strong>Detect Magic:</strong> Strong transmutation with hints of divination</li><li><strong>Identify:</strong> Reveals all properties and name "Kelthanas"</li><li><strong>Legend Lore:</strong> Uncovers full history and previous wielders</li></ul>
+                    </div>
+                </div>
+                <div class="box section-box box--flex"><div class="section-title">Passive Abilities</div>
+                    
+                    <div class="ability-block">
+                        <div class="ability-name">Primal Bond</div>
+                        <ul class="ability-bullets"><li>Communicate simple emotions telepathically within 100 feet</li><li>Companion gains +10 feet movement speed</li><li>Always know direction and distance to companion (same plane)</li></ul>
+                    </div>
+                    <div class="ability-block">
+                        <div class="ability-name">Wild Sense</div>
+                        <ul class="ability-bullets"><li>As an action, see/hear through companion's senses for 10 minutes</li><li>You are blind and deaf to your own surroundings during this time</li><li>Recharges on a long rest</li></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item-footer">
+            <div>Ring of the Wild Hunt • 3rd of 7 • Forged by Archdruid Kelthanas Ironbark</div>
+            <div class="market-value">Market Value: 5,000 - 8,000 gp</div>
+        </div>
+    </div>
+
+</body>
+</html>
