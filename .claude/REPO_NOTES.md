@@ -9,29 +9,42 @@ This project generates printable D&D 5th Edition character sheets from JSON data
 ```
 d_and_d/
 ├── characters/           # Character JSON data files
-│   ├── example.json      # Template/example character (Aldric the Brave)
+│   ├── aldric.json       # Template/example character (Aldric the Brave)
+│   ├── aldric/           # Aldric's items
+│   │   └── items/
+│   │       └── flamebrand_longsword.json  # Example item card
 │   ├── thorek.json       # Joe's Ranger (Thorek Bearward + Ironjaw companion)
-│   └── kazrek.json       # Mountain Dwarf Sorcerer (Kazrek Spellforge)
+│   ├── thorek/           # Thorek's items
+│   │   └── items/
+│   │       └── ring_of_wild_hunt.json
+│   ├── kazrek.json       # Mountain Dwarf Sorcerer (Kazrek Spellforge)
+│   └── kazrek/           # Kazrek's items (empty)
 │
 ├── images/               # Character artwork and assets
-│   ├── example/          # Example character images (for public repo)
-│   ├── thorek/           # Thorek's character art (7 images)
-│   └── kazrek/           # Kazrek's character art (3 images)
+│   ├── aldric/           # Example character + item images (for public repo)
+│   ├── thorek/           # Thorek's character art
+│   └── kazrek/           # Kazrek's character art
 │
-├── output/               # Generated sheets (gitignored except example/)
-│   ├── example/          # Committed example output for README
+├── lib/                  # Core library (OOP architecture)
+│   ├── __init__.py       # Package initialization
+│   ├── renderers.py      # Content type renderers
+│   ├── character_renderers.py  # Character-specific renderers
+│   ├── components.py     # Section, Column, Page dataclasses
+│   └── document.py       # Document, CharacterDocument, ItemDocument
+│
+├── output/               # Generated sheets (gitignored except Aldric)
+│   ├── Aldric_the_Brave/ # Committed example output for README
 │   └── [Character_Name]/ # Timestamped outputs per character
 │
 ├── styles/
-│   └── sheet.css         # Character sheet styling
+│   ├── sheet.css         # Character sheet styling
+│   └── item.css          # Magic item card styling
 │
-├── tools/
-│   ├── build-sheet.sh    # Main build script (HTML → PDF)
-│   └── package.sh        # Creates distributable zip packages
-│
-├── generate.py           # Python script that renders JSON → HTML
+├── generate.py           # Python CLI for generating sheets
 ├── README.md             # Public documentation
-└── CREATE_CHARACTER.md   # Guide for creating new characters
+├── CREATE_CHARACTER.md   # Guide for creating new characters
+├── CREATE_ITEM.md        # Guide for creating magic items
+└── SCHEMA.md             # Complete JSON schema reference
 ```
 
 ## Git Remotes (Dual-Push Configuration)
@@ -57,10 +70,10 @@ characters/*.json → generate.py → HTML → Chrome headless → PDF
 **Commands:**
 ```bash
 # Generate a character sheet
-./tools/build-sheet.sh characters/thorek.json
+python3 generate.py characters/thorek.json --compress --open
 
-# Create distributable package
-./tools/package.sh output/Thorek_Bearward/Thorek_Bearward_2025-12-09_1410
+# Generate character with bundled items
+python3 generate.py characters/thorek.json --bundle --compress --open
 ```
 
 ## Character JSON Structure

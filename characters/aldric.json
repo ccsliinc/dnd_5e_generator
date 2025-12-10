@@ -1,0 +1,251 @@
+{
+  "meta": {
+    "version": "1.0",
+    "generated": null,
+    "portrait": "../../images/aldric/aldric_portrait.jpg",
+    "gallery": [
+      "../../images/aldric/aldric_action.jpg",
+      "../../images/aldric/fantasy_landscape.jpg"
+    ]
+  },
+
+  "header": {
+    "character_name": "Aldric the Brave",
+    "class_level": "Fighter 3",
+    "background": "Soldier",
+    "player_name": "Your Name",
+    "race": "Human",
+    "alignment": "Lawful Good",
+    "experience_points": "900"
+  },
+
+  "inspiration": false,
+  "proficiency_bonus": 2,
+
+  "abilities": {
+    "strength": { "score": 16 },
+    "dexterity": { "score": 14 },
+    "constitution": { "score": 15 },
+    "intelligence": { "score": 10 },
+    "wisdom": { "score": 12 },
+    "charisma": { "score": 8 }
+  },
+
+  "saving_throws": {
+    "strength": { "proficient": true },
+    "dexterity": { "proficient": false },
+    "constitution": { "proficient": true },
+    "intelligence": { "proficient": false },
+    "wisdom": { "proficient": false },
+    "charisma": { "proficient": false }
+  },
+
+  "skills": {
+    "acrobatics": { "proficient": false },
+    "animal_handling": { "proficient": false },
+    "arcana": { "proficient": false },
+    "athletics": { "proficient": true },
+    "deception": { "proficient": false },
+    "history": { "proficient": false },
+    "insight": { "proficient": false },
+    "intimidation": { "proficient": true },
+    "investigation": { "proficient": false },
+    "medicine": { "proficient": false },
+    "nature": { "proficient": false },
+    "perception": { "proficient": true },
+    "performance": { "proficient": false },
+    "persuasion": { "proficient": false },
+    "religion": { "proficient": false },
+    "sleight_of_hand": { "proficient": false },
+    "stealth": { "proficient": false },
+    "survival": { "proficient": true }
+  },
+
+  "combat": {
+    "armor_class": 18,
+    "initiative": null,
+    "speed": "30 ft",
+    "hp_maximum": 28,
+    "hp_current": null,
+    "hp_temporary": null,
+    "hit_dice": {
+      "total": "3d10",
+      "current": null
+    }
+  },
+
+  "attacks": [
+    {
+      "name": "Longsword",
+      "atk_bonus": "+5",
+      "damage_type": "1d8+3 slashing"
+    },
+    {
+      "name": "Handaxe",
+      "atk_bonus": "+5",
+      "damage_type": "1d6+3 slashing"
+    },
+    {
+      "name": "Longbow",
+      "atk_bonus": "+4",
+      "damage_type": "1d8+2 piercing"
+    }
+  ],
+
+  "personality": {
+    "traits": "I face problems head-on. A simple, direct solution is the best path to success.",
+    "ideals": "Greater Good. Our lot is to lay down our lives in defense of others.",
+    "bonds": "I would still lay down my life for the people I served with.",
+    "flaws": "I made a terrible mistake in battle that cost many lives, and I would do anything to keep that secret."
+  },
+
+  "proficiencies_languages": [
+    "All armor",
+    "Shields",
+    "Simple weapons",
+    "Martial weapons",
+    "Dice set",
+    "Vehicles (land)",
+    "Common",
+    "Dwarvish"
+  ],
+
+  "equipment": [
+    "Chain mail",
+    "Longsword",
+    "Shield",
+    "Handaxe (2)",
+    "Longbow",
+    "Quiver with 20 arrows",
+    "Explorer's pack",
+    "Insignia of rank",
+    "Trophy from fallen enemy",
+    "Dice set",
+    "Common clothes"
+  ],
+
+  "currency": {
+    "cp": 0,
+    "sp": 0,
+    "ep": 0,
+    "gp": 15,
+    "pp": 0
+  },
+
+  "features_traits": [
+    "Fighting Style: Defense (+1 AC)",
+    "Second Wind (1d10+3 HP)",
+    "Action Surge (1/rest)",
+    "Military Rank"
+  ],
+
+  "appearance": {
+    "age": "28",
+    "height": "6'1\"",
+    "weight": "195 lbs",
+    "eyes": "Blue",
+    "skin": "Fair",
+    "hair": "Brown"
+  },
+
+  "character_appearance_description": "Aldric stands tall with a soldier's bearing, his posture straight and confident. His face bears the weathered look of someone who has seen battle, with a thin scar across his left cheek. He keeps his brown hair cropped short in military fashion, and his blue eyes hold a steady, determined gaze.\n\nHis chain mail is well-maintained but shows signs of heavy use, and he carries himself with the quiet confidence of an experienced warrior.",
+
+  "backstory": "Born to a farming family in the borderlands, Aldric enlisted in the local militia at sixteen after his village was raided by bandits. His natural aptitude for combat and unwavering courage quickly earned him recognition, and he rose through the ranks to become a sergeant.\n\nDuring a border skirmish three years ago, Aldric led a patrol into an ambush. Though he fought valiantly and saved several of his men, the battle cost the lives of half his squad. The weight of those deaths haunts him still.\n\nSeeking redemption and purpose, Aldric left the military and turned to adventuring. He hopes that by protecting the innocent and fighting evil, he can honor the memory of those who fell under his command.",
+
+  "allies_organizations": {
+    "name": "The Iron Brotherhood",
+    "description": "A loose fellowship of former soldiers turned adventurers. Members share information about threats, offer shelter to each other, and occasionally band together for dangerous missions.\n\nAldric maintains contact with his former captain, now retired, who serves as his mentor and confidant."
+  },
+
+  "additional_features_traits": [
+    "Martial Archetype: Champion",
+    "Improved Critical (19-20)"
+  ],
+
+  "treasure": [
+    "Silver locket with portrait of parents",
+    "Letter of commendation from former commander"
+  ],
+
+  "spellcasting": {
+    "class": "Fighter",
+    "ability": "N/A",
+    "spell_save_dc": "-",
+    "spell_attack_bonus": "-",
+    "cantrips": [],
+    "spells": {}
+  },
+
+  "reference": {
+    "weapons": [
+      {
+        "name": "Longsword",
+        "type": "Martial Melee",
+        "damage": "1d8 slashing",
+        "properties": "Versatile (1d10)",
+        "notes": "+5 to hit, +3 damage"
+      },
+      {
+        "name": "Handaxe",
+        "type": "Simple Melee",
+        "damage": "1d6 slashing",
+        "properties": "Light, Thrown (20/60)",
+        "notes": "+5 to hit, +3 damage"
+      },
+      {
+        "name": "Longbow",
+        "type": "Martial Ranged",
+        "damage": "1d8 piercing",
+        "properties": "Ammunition, Heavy, Range (150/600), Two-Handed",
+        "notes": "+4 to hit, +2 damage"
+      }
+    ],
+    "spells": [],
+    "features": [
+      {
+        "name": "Second Wind",
+        "description": "On your turn, you can use a bonus action to regain 1d10 + 3 hit points. Once you use this feature, you must finish a short or long rest before you can use it again."
+      },
+      {
+        "name": "Action Surge",
+        "description": "On your turn, you can take one additional action. Once you use this feature, you must finish a short or long rest before you can use it again."
+      },
+      {
+        "name": "Improved Critical",
+        "description": "Your weapon attacks score a critical hit on a roll of 19 or 20."
+      }
+    ],
+    "turn_structure": {
+      "title": "Your Turn",
+      "phases": [
+        { "name": "Movement", "desc": "Move up to 30 ft (can split)" },
+        { "name": "Action", "desc": "Attack, Dash, Dodge, Help, Hide, Ready, etc." },
+        { "name": "Bonus Action", "desc": "Second Wind, off-hand attack" },
+        { "name": "Free Action", "desc": "Interact with one object, speak briefly" }
+      ],
+      "reaction": "Opportunity Attack when enemy leaves your reach"
+    },
+    "combat_reference": {
+      "actions": [
+        { "name": "Attack", "desc": "Melee or ranged weapon attack" },
+        { "name": "Dash", "desc": "Double movement for the turn" },
+        { "name": "Dodge", "desc": "Attacks against you have disadvantage" },
+        { "name": "Help", "desc": "Give ally advantage on next check" },
+        { "name": "Ready", "desc": "Prepare action with trigger" }
+      ],
+      "conditions_quick": [
+        { "name": "Prone", "desc": "Melee adv, ranged disadv, half move to stand" },
+        { "name": "Grappled", "desc": "Speed 0, can break with Athletics/Acrobatics" },
+        { "name": "Restrained", "desc": "Speed 0, attacks have disadv, Dex saves disadv" },
+        { "name": "Stunned", "desc": "Incapacitated, auto-fail Str/Dex saves" }
+      ],
+      "cover": [
+        { "type": "Half", "bonus": "+2 AC, +2 Dex saves" },
+        { "type": "3/4", "bonus": "+5 AC, +5 Dex saves" },
+        { "type": "Full", "bonus": "Can't be targeted directly" }
+      ]
+    }
+  },
+
+  "companion": null
+}

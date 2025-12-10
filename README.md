@@ -2,21 +2,24 @@
 
 Generate printable HTML character sheets and magic item cards from JSON data files.
 
-![Character Sheet Preview](images/example/preview_page1.png)
+![Character Sheet Preview](images/aldric/preview_page1.png)
 
-**[View Example PDF](output/example/Aldric_the_Brave.pdf)**
+**[View Example PDF](output/Aldric_the_Brave/Aldric_the_Brave.pdf)**
 
 ## Quick Start
 
 ```bash
 # Generate HTML only
-python3 generate.py example.json
+python3 generate.py aldric.json
 
 # Generate HTML + PDF
-python3 generate.py example.json --pdf
+python3 generate.py aldric.json --pdf
 
 # Full pipeline: HTML + PDF + compressed print version, then open
-python3 generate.py example.json --compress --open
+python3 generate.py aldric.json --compress --open
+
+# Generate character sheet bundled with their items
+python3 generate.py thorek.json --bundle --compress --open
 
 # Generate a magic item
 python3 generate.py characters/thorek/items/ring_of_wild_hunt.json --compress --open
@@ -42,7 +45,7 @@ Options:
 ┌─────────────────────────────────────────────────────────────────┐
 │                      generate.py                                │
 │                                                                 │
-│  Input: characters/example.json                                 │
+│  Input: characters/aldric.json                                   │
 │         characters/<name>/items/<item>.json                     │
 └─────────────────────────────────────────────────────────────────┘
                               │
@@ -61,28 +64,29 @@ Options:
 ```
 d_and_d/
 ├── characters/
-│   ├── example.json              # Character data
+│   ├── aldric.json               # Example character (Aldric the Brave)
+│   ├── aldric/
+│   │   └── items/
+│   │       └── flamebrand_longsword.json  # Example item
 │   └── <name>/
 │       └── items/
-│           └── <item>.json       # Magic item data
+│           └── <item>.json       # Character's magic items
 ├── images/
-│   ├── example/*.jpg             # Character images
-│   └── <name>/*.jpg              # Character-specific images
+│   ├── aldric/                   # Example character images + item
+│   └── <name>/                   # Character-specific images
+├── lib/                          # Core library (OOP architecture)
+│   ├── renderers.py              # Content type renderers
+│   ├── character_renderers.py    # Character-specific renderers
+│   ├── components.py             # Section, Column, Page classes
+│   └── document.py               # Document classes
 ├── styles/
-│   ├── sheet.css                 # Base stylesheet
-│   └── item.css                  # Item-specific styles
-├── tools/
-│   └── package.sh                # Create distribution zip
+│   ├── sheet.css                 # Character sheet styling
+│   └── item.css                  # Magic item card styling
 ├── output/                       # Generated files (gitignored)
-│   ├── <CharacterName>/
-│   │   ├── *.html
-│   │   ├── *.pdf
-│   │   └── *_print.pdf
-│   └── items/
+│   └── <CharacterName>/
 │       ├── *.html
-│       ├── *.pdf
-│       └── *_print.pdf
-└── generate.py                   # Main generator script
+│       └── *.pdf
+└── generate.py                   # Main generator CLI
 ```
 
 ## Requirements
@@ -141,11 +145,3 @@ Key CSS variables:
 }
 ```
 
-## Distribution
-
-Create a zip package for sharing:
-
-```bash
-./tools/package.sh
-# Creates output/packages/dnd-character-sheet.zip
-```

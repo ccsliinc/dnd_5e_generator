@@ -45,7 +45,15 @@
       "Bash(convert:*)",
       "Bash(magick:*)",
       "Bash(brew list:*)",
-      "mcp__puppeteer__puppeteer_navigate"
+      "mcp__puppeteer__puppeteer_navigate",
+      "Bash(git tag:*)",
+      "Bash(cat:*)",
+      "WebSearch",
+      "WebFetch(domain:www.aiscribbles.com)",
+      "WebFetch(domain:pixabay.com)",
+      "WebFetch(domain:opengameart.org)",
+      "Bash(curl:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
