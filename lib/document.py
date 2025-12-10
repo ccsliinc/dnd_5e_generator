@@ -76,7 +76,7 @@ class ItemDocument(Document):
 
     def build_html(self) -> str:
         """Build complete HTML for item document."""
-        css = self.load_css("sheet.css", "item.css")
+        css = self.load_css("base.css", "components.css", "item.css")
 
         # Render header and footer
         header_html = self._render_header()
@@ -236,7 +236,7 @@ class CharacterDocument(Document):
 
     def build_html(self) -> str:
         """Build complete HTML for character sheet."""
-        css = self.load_css("sheet.css")
+        css = self.load_css("base.css", "components.css", "sheet.css")
 
         pages_html = ""
         pages_html += self._build_page1()
