@@ -251,7 +251,7 @@ def find_json_file(input_arg: str) -> Optional[Path]:
     if path.is_file():
         return path
 
-    # Try in characters folder: "thorek" -> characters/thorek.json
+    # Try in characters folder: "aldric" -> characters/aldric.json
     path = characters_dir / f"{input_arg}.json"
     if path.is_file():
         return path
@@ -397,11 +397,10 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python3 generate.py thorek.json                     # Generate HTML only
-  python3 generate.py thorek.json --pdf               # Generate HTML + PDF
-  python3 generate.py thorek.json --compress --open   # Full pipeline + open
-  python3 generate.py thorek.json --bundle --compress # Character + all items
-  python3 generate.py characters/thorek/items/ring_of_wild_hunt.json --compress
+  python3 generate.py aldric                          # Generate HTML only
+  python3 generate.py aldric --pdf                    # Generate HTML + PDF
+  python3 generate.py aldric --compress --open        # Full pipeline + open
+  python3 generate.py aldric --bundle --compress      # Character + all items
         """
     )
     parser.add_argument("input", nargs="?", help="JSON file (character or item)")

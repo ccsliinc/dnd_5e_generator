@@ -286,8 +286,8 @@ Multiple content blocks in sequence.
 
 ```bash
 # Character only
-python3 generate.py thorek --compress --open
+python3 generate.py aldric --compress --open
 
 # Character + all embedded items
-python3 generate.py thorek --bundle --compress --open
+python3 generate.py aldric --bundle --compress --open
 ```

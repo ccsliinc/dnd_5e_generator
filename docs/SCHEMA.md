@@ -83,10 +83,10 @@ Basic character identification shown in the header area.
 
 ```json
 "header": {
-  "character_name": "Thorek Bearward",
-  "class_level": "Ranger 3",
-  "background": "Folk Hero",
-  "player_name": "Joe",
+  "character_name": "Aldric the Brave",
+  "class_level": "Paladin 5",
+  "background": "Knight",
+  "player_name": "Player Name",
   "race": "Hill Dwarf",
   "alignment": "Neutral Good",
   "experience_points": "900"
@@ -371,7 +371,7 @@ Physical description shown in Page 2 header.
 Character history (Page 2). Use `\n\n` for paragraph breaks.
 
 ```json
-"character_appearance_description": "Thorek is a stocky dwarf with...",
+"character_appearance_description": "A tall, broad-shouldered human with...",
 
 "backstory": "Born in the mountain halls of Kazak-Thurn...\n\nAfter witnessing the destruction...\n\nNow he wanders the forests..."
 ```
@@ -385,7 +385,7 @@ Allies and organizational affiliations (Page 2).
 ```json
 "allies_organizations": {
   "name": "The Emerald Enclave",
-  "description": "A far-reaching network of druids and rangers who protect the natural world.\n\nThorek serves as a scout and beast handler."
+  "description": "A far-reaching network of knights and paladins who protect the realm.\n\nAldric serves as a champion of justice."
 }
 ```
 
@@ -478,7 +478,7 @@ Beast companion for Beast Master Rangers, familiars, etc. (Page 4).
   "hit_points": 25,
   "hp_notes": "4d8+8",
   "speed": "40 ft, climb 30 ft",
-  "image": "../../images/thorek/ironjaw_portrait.jpg",
+  "image": "../../images/aldric/companion_portrait.jpg",
 
   "abilities": {
     "str": 16,
@@ -666,8 +666,8 @@ Item identification and display information.
 "header": {
   "name": "Ring of the Wild Hunt",
   "subtitle": "Forged in the Moonwell of Eternal Spring",
-  "image": "../../images/thorek/ring_wild_hunt.png",
-  "background_svg": "../../images/thorek/decoration.svg",
+  "image": "../../images/aldric/magic_item.png",
+  "background_svg": "../../images/aldric/decoration.svg",
   "stats": [
     { "label": "Rarity", "value": "Rare", "class": "rarity-rare" },
     { "label": "Attunement", "value": "Beast Master Ranger" },
