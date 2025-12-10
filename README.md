@@ -1,6 +1,6 @@
-# D&D 5e Character Sheet Generator
+# D&D 5e Sheet Generator
 
-Generate printable HTML character sheets from JSON data files.
+Generate printable HTML character sheets and magic item cards from JSON data files.
 
 ![Character Sheet Preview](images/example/preview_page1.png)
 
@@ -9,58 +9,51 @@ Generate printable HTML character sheets from JSON data files.
 ## Quick Start
 
 ```bash
-# One command does everything
-./tools/build-sheet.sh
+# Generate HTML only
+python3 generate.py example.json
 
-# Or specify character and DPI
-./tools/build-sheet.sh example.json 150
+# Generate HTML + PDF
+python3 generate.py example.json --pdf
+
+# Full pipeline: HTML + PDF + compressed print version, then open
+python3 generate.py example.json --compress --open
+
+# Generate a magic item
+python3 generate.py characters/thorek/items/ring_of_wild_hunt.json --compress --open
 ```
 
-This generates HTML, prints to PDF, compresses it, and opens both for review.
+## Command Line Options
+
+```
+python3 generate.py <input.json> [options]
+
+Options:
+  --pdf           Generate PDF via Chrome headless
+  --compress      Compress PDF for printing (implies --pdf)
+  --dpi <value>   DPI for compression (default: 150)
+  --open          Open output files when done
+  --output <dir>  Custom output directory
+  -h, --help      Show help message
+```
 
 ## How It Works
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    build-sheet.sh                               │
+│                      generate.py                                │
+│                                                                 │
+│  Input: characters/example.json                                 │
+│         characters/<name>/items/<item>.json                     │
 └─────────────────────────────────────────────────────────────────┘
                               │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  STEP 1: Generate HTML                                          │
-│                                                                 │
-│  characters/example.json  ──▶  generate.py  ──▶  output/*.html  │
-│                                    │                            │
-│                            styles/sheet.css                     │
-│                            images/example/*.jpg                 │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  STEP 2: Print to PDF (Chrome Headless)                         │
-│                                                                 │
-│  output/*.html  ──▶  Chrome --headless  ──▶  output/*.pdf       │
-│                      --print-to-pdf           (13MB vector)     │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  STEP 3: Flatten/Compress                                       │
-│                                                                 │
-│  output/*.pdf  ──▶  pdftoppm  ──▶  temp/*.png  ──▶  img2pdf     │
-│   (13MB)           (rasterize)     (150 DPI)         │          │
-│                                                      ▼          │
-│                                   output/compressed/*_print.pdf │
-│                                             (1.8MB raster)      │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  STEP 4: Open for Review                                        │
-│                                                                 │
-│  open output/*.html           (browser)                         │
-│  open output/compressed/*.pdf (Preview)                         │
-└─────────────────────────────────────────────────────────────────┘
+        ┌─────────────────────┼─────────────────────┐
+        ▼                     ▼                     ▼
+┌───────────────┐   ┌─────────────────┐   ┌─────────────────┐
+│  HTML Output  │   │   PDF Output    │   │  Print Output   │
+│               │   │  (--pdf flag)   │   │ (--compress)    │
+│  *.html       │   │  *.pdf (vector) │   │  *_print.pdf    │
+│               │   │  Chrome headless│   │  (rasterized)   │
+└───────────────┘   └─────────────────┘   └─────────────────┘
 ```
 
 ## Project Structure
@@ -68,41 +61,61 @@ This generates HTML, prints to PDF, compresses it, and opens both for review.
 ```
 d_and_d/
 ├── characters/
-│   └── example.json        # Character data (input)
+│   ├── example.json              # Character data
+│   └── <name>/
+│       └── items/
+│           └── <item>.json       # Magic item data
 ├── images/
-│   └── example/*.jpg       # Character images
+│   ├── example/*.jpg             # Character images
+│   └── <name>/*.jpg              # Character-specific images
 ├── styles/
-│   └── sheet.css           # Stylesheet
+│   ├── sheet.css                 # Base stylesheet
+│   └── item.css                  # Item-specific styles
 ├── tools/
-│   ├── build-sheet.sh      # Full pipeline script
-│   └── package.sh          # Create distribution zip
-├── output/                  # Generated files (gitignored)
-│   └── <CharacterName>/
+│   └── package.sh                # Create distribution zip
+├── output/                       # Generated files (gitignored)
+│   ├── <CharacterName>/
+│   │   ├── *.html
+│   │   ├── *.pdf
+│   │   └── *_print.pdf
+│   └── items/
 │       ├── *.html
-│       ├── *.pdf           # Full quality vector
-│       └── *_print.pdf     # Compressed for printing
-└── generate.py             # HTML generator
+│       ├── *.pdf
+│       └── *_print.pdf
+└── generate.py                   # Main generator script
 ```
 
 ## Requirements
 
-- Python 3
-- Google Chrome (for headless PDF generation)
-- poppler (`brew install poppler`) - for pdftoppm
-- img2pdf (`brew install img2pdf`) - for PDF compression
+- **Python 3** - Core generator
+- **Google Chrome** - PDF generation (headless mode)
+- **poppler** - PDF compression (`brew install poppler`)
+- **img2pdf** - PDF compression (`brew install img2pdf`)
 
-## Manual Usage
+Note: poppler and img2pdf are only required for `--compress` option.
 
-If you prefer to run steps individually:
+## Documentation
 
-```bash
-# Generate HTML only
-python3 generate.py example.json
+| Guide | Description |
+|-------|-------------|
+| [CREATE_CHARACTER.md](CREATE_CHARACTER.md) | Character sheet creation guide with examples |
+| [CREATE_ITEM.md](CREATE_ITEM.md) | Magic item card creation guide with content types |
+| [SCHEMA.md](SCHEMA.md) | Complete JSON schema reference for all document types |
 
-# Then print manually from browser, or use Chrome headless:
-/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
-    --headless --print-to-pdf=output.pdf --print-background file.html
-```
+## Document Types
+
+### Character Sheets
+4-page character sheets with:
+- Page 1: Stats, skills, combat, equipment
+- Page 2: Background, appearance, backstory
+- Page 3: Spellcasting
+- Page 4: Quick reference, companion stats
+
+### Magic Items
+Single-page item cards with:
+- Header with image, name, rarity, attunement
+- Two-column layout with customizable sections
+- Support for tables, properties, quotes, and more
 
 ## Print Settings
 
@@ -110,29 +123,18 @@ When printing manually from browser:
 1. File → Print (Cmd + P)
 2. Enable **Background graphics**
 3. Set margins to **Minimum**
-4. Print all 4 pages
-
-## Creating a New Character
-
-See `CREATE_CHARACTER.md` for the full JSON template and guide.
-
-Key sections in the JSON:
-- `meta.portrait` - Character portrait image
-- `meta.gallery` - Additional images for page 1
-- `header` - Name, class, race, etc.
-- `abilities` - Ability scores
-- `spellcasting` - Spells and slots
-- `companion` - Beast companion (optional)
-- `reference` - Quick reference for page 4
+4. Print all pages
 
 ## Customizing Styles
 
-Edit `styles/sheet.css`. Key variables:
+Edit `styles/sheet.css` for characters or `styles/item.css` for items.
 
+Key CSS variables:
 ```css
 :root {
     --bg-page: #ffffff;
     --border-dark: #6b4423;
+    --accent-primary: #8b4513;
     --accent-secondary: #c9a227;
     --font-display: 'Cinzel', serif;
     --font-body: 'Scada', sans-serif;

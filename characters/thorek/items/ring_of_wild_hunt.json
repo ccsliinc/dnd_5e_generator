@@ -1,0 +1,197 @@
+{
+  "type": "item",
+  "meta": {
+    "version": "1.0"
+  },
+  "header": {
+    "name": "Ring of the Wild Hunt",
+    "subtitle": "Forged in the Moonwell of Eternal Spring, blessed by the Great Bear Spirit",
+    "image": "images/thorek/ring_nature_moss.jpg",
+    "background_svg": "images/thorek/ring_header.svg",
+    "stats": [
+      { "label": "Rarity", "value": "Rare", "class": "rarity-rare" },
+      { "label": "Attunement", "value": "Beast Master Ranger" },
+      { "label": "Weight", "value": "0.1 lbs" }
+    ]
+  },
+  "footer": {
+    "left": "Ring of the Wild Hunt • 3rd of 7 • Forged by Archdruid Kelthanas Ironbark",
+    "right": "Market Value: 5,000 - 8,000 gp"
+  },
+  "pages": [
+    {
+      "layout": {
+        "columns": 2,
+        "gap": "3mm"
+      },
+      "sections": [
+        {
+          "column": 1,
+          "title": "Description",
+          "variant": "lore",
+          "content": {
+            "type": "text_italic",
+            "text": "This ancient iron ring bears intricate carvings of intertwining vines punctuated by tiny animal tracks — wolf paws, bear claws, eagle talons, and deer hooves that seem to circle endlessly around the band. When worn by a Beast Master, the etchings emit a faint green luminescence, and the ranger's animal companion's eyes occasionally gleam with the same emerald light. The ring feels warm to the touch when beasts are near, and observers swear the carved vines slowly shift when viewed from the corner of one's eye."
+          }
+        },
+        {
+          "column": 1,
+          "title": "Beast Empowerment",
+          "content": {
+            "type": "properties",
+            "items": [
+              { "icon": "⚔", "name": "Enhanced Damage", "desc": "+2 bonus to all damage rolls" },
+              { "icon": "❤", "name": "Vital Force", "desc": "Maximum HP increases by 2 × your ranger level" },
+              { "icon": "🛡", "name": "Mental Fortitude", "desc": "Advantage on saves vs. charm and frighten effects" },
+              { "icon": "✨", "name": "Magic Fang", "desc": "Natural weapons count as magical for overcoming resistance and immunity" }
+            ]
+          }
+        },
+        {
+          "column": 1,
+          "title": "Scaling Benefits",
+          "content": {
+            "type": "table",
+            "columns": ["Ranger Level", "HP Bonus", "Total HP"],
+            "rows": [
+              ["Level 3", "+6 HP", "25 HP"],
+              ["Level 5", "+10 HP", "29 HP"],
+              ["Level 7", "+14 HP", "33 HP"],
+              ["Level 11", "+22 HP", "41 HP"],
+              ["Level 15", "+30 HP", "49 HP"],
+              ["Level 20", "+40 HP", "59 HP"]
+            ],
+            "footer": "* Base HP assumes Black Bear companion (19 HP)"
+          }
+        },
+        {
+          "column": 1,
+          "title": null,
+          "flex_grow": true,
+          "content": {
+            "type": "synergy",
+            "header": {
+              "icon": "🐻",
+              "title": "Synergy with Ironjaw",
+              "subtitle": "Thorek Bearward's Companion"
+            },
+            "comparisons": [
+              { "before": "HP: 19", "after": "HP: 25 (+31%)" },
+              { "before": "Bite: 1d6+2", "after": "Bite: 1d6+4" },
+              { "before": "Claws: 2d4+2", "after": "Claws: 2d4+4" }
+            ],
+            "subsections": [
+              {
+                "name": "Tactical Combinations",
+                "bullets": [
+                  "Use telepathic bond for silent coordination in ambushes",
+                  "Share senses for scouting while maintaining your position",
+                  "Ironjaw can protect you with reaction while you rain arrows",
+                  "Magical attacks let Ironjaw damage incorporeal creatures"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "column": 2,
+          "title": "Combat Applications",
+          "content": {
+            "type": "subsections",
+            "items": [
+              {
+                "name": "Action Economy",
+                "bullets": [
+                  "**No action required** — all benefits are passive while worn",
+                  "Companion can use reaction to impose disadvantage on one attack against you (1/short rest)"
+                ]
+              },
+              {
+                "name": "Tactical Advantages",
+                "bullets": [
+                  "Companion becomes viable tank with increased HP",
+                  "+2 damage makes companion attacks meaningful at higher levels",
+                  "Magical attacks overcome common resistances",
+                  "Charm/fear immunity keeps companion in the fight"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "column": 2,
+          "title": "Lore & History",
+          "content": {
+            "type": "mixed",
+            "blocks": [
+              {
+                "type": "quote",
+                "text": "Forged in the First Age by the Archdruid Kelthanas Ironbark, these rings were created to honor the rangers who stood beside their animal companions during the War of Thorns. Only seven were made, each quenched in the Moonwell of Eternal Spring and blessed by the Great Bear Spirit. This ring was thought lost when Ranger-Captain Thorne Grimbear fell defending Silverwood Pass — until you recovered it.",
+                "attribution": "— From the Archives of the Emerald Enclave"
+              },
+              {
+                "type": "tales",
+                "items": [
+                  { "title": "Battle of Frozen Peaks", "desc": "Ranger Alara's wolf held off an entire orc warband" },
+                  { "title": "Siege of Ironhold", "desc": "The ring's magic let a bear break through magical wards" },
+                  { "title": "Hunt of the Shadow Stag", "desc": "Enhanced senses let a hawk track an invisible fey" }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "column": 2,
+          "title": "Identification",
+          "content": {
+            "type": "subsections",
+            "items": [
+              {
+                "name": "Identifying Marks",
+                "bullets": [
+                  "Druidic runes spelling \"WILD-HEART\" on inner band",
+                  "Maker's mark: Tiny oak leaf near size adjustment",
+                  "Serial glyph: Three claw marks (3rd of 7 rings made)"
+                ]
+              },
+              {
+                "name": "Detection Properties",
+                "bullets": [
+                  "**Detect Magic:** Strong transmutation with hints of divination",
+                  "**Identify:** Reveals all properties and name \"Kelthanas\"",
+                  "**Legend Lore:** Uncovers full history and previous wielders"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "column": 2,
+          "title": "Passive Abilities",
+          "flex_grow": true,
+          "content": {
+            "type": "subsections",
+            "items": [
+              {
+                "name": "Primal Bond",
+                "bullets": [
+                  "Communicate simple emotions telepathically within 100 feet",
+                  "Companion gains +10 feet movement speed",
+                  "Always know direction and distance to companion (same plane)"
+                ]
+              },
+              {
+                "name": "Wild Sense",
+                "bullets": [
+                  "As an action, see/hear through companion's senses for 10 minutes",
+                  "You are blind and deaf to your own surroundings during this time",
+                  "Recharges on a long rest"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
