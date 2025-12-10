@@ -1,16 +1,184 @@
 """
 Layout Components
 
-Section, Column, and Page classes for building document layouts.
+Row, Col, Grid, Section, and Page classes for building document layouts.
+
+Layout Hierarchy:
+- Page: Full A4 page container
+- Row: Horizontal flex container
+- Col: Vertical flex container / flex child
+- Grid: CSS Grid container
+- Section: Titled content box
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any, Optional, Union
 from .renderers import render_content
 
 
 # =============================================================================
-# SECTION
+# ROW - Horizontal flex container
+# =============================================================================
+
+@dataclass
+class Row:
+    """Horizontal flex container for layout."""
+
+    children: list = field(default_factory=list)
+    gap: str = "md"  # "xs", "sm", "md", "lg" or custom value
+    stretch: bool = False
+    center: bool = False
+    wrap: bool = False
+    css_class: Optional[str] = None
+    style: Optional[str] = None
+
+    def render(self, context: Optional[dict] = None) -> str:
+        """Render row to HTML."""
+        classes = ["row"]
+
+        # Gap modifier
+        if self.gap in ("xs", "sm", "lg"):
+            classes.append(f"row--gap-{self.gap}")
+        elif self.gap == "none":
+            classes.append("row--no-gap")
+        # "md" is default, no class needed
+
+        if self.stretch:
+            classes.append("row--stretch")
+        if self.center:
+            classes.append("row--center")
+        if self.wrap:
+            classes.append("row--wrap")
+        if self.css_class:
+            classes.append(self.css_class)
+
+        class_str = " ".join(classes)
+        style_attr = f' style="{self.style}"' if self.style else ""
+
+        # Render children
+        children_html = ""
+        for child in self.children:
+            if hasattr(child, 'render'):
+                children_html += child.render(context)
+            elif isinstance(child, str):
+                children_html += child
+            elif isinstance(child, dict):
+                children_html += render_content(child, context)
+
+        return f'<div class="{class_str}"{style_attr}>{children_html}</div>'
+
+    def add(self, child) -> 'Row':
+        """Add a child element. Returns self for chaining."""
+        self.children.append(child)
+        return self
+
+
+# =============================================================================
+# COL - Vertical flex container
+# =============================================================================
+
+@dataclass
+class Col:
+    """Vertical flex container / flex child for layout."""
+
+    children: list = field(default_factory=list)
+    flex: int = 0  # 0=auto, 1-3=flex ratio
+    gap: str = "sm"  # "xs", "sm", "md", "lg" or "none"
+    css_class: Optional[str] = None
+    style: Optional[str] = None
+
+    def render(self, context: Optional[dict] = None) -> str:
+        """Render column to HTML."""
+        classes = ["col"]
+
+        # Flex modifier
+        if self.flex in (1, 2, 3):
+            classes.append(f"col--{self.flex}")
+
+        # Gap modifier
+        if self.gap == "xs":
+            classes.append("col--gap-xs")
+        elif self.gap == "md":
+            classes.append("col--gap-md")
+        elif self.gap == "none":
+            classes.append("col--no-gap")
+        # "sm" is default, no class needed
+
+        if self.css_class:
+            classes.append(self.css_class)
+
+        class_str = " ".join(classes)
+        style_attr = f' style="{self.style}"' if self.style else ""
+
+        # Render children
+        children_html = ""
+        for child in self.children:
+            if hasattr(child, 'render'):
+                children_html += child.render(context)
+            elif isinstance(child, str):
+                children_html += child
+            elif isinstance(child, dict):
+                children_html += render_content(child, context)
+
+        return f'<div class="{class_str}"{style_attr}>{children_html}</div>'
+
+    def add(self, child) -> 'Col':
+        """Add a child element. Returns self for chaining."""
+        self.children.append(child)
+        return self
+
+
+# =============================================================================
+# GRID - CSS Grid container
+# =============================================================================
+
+@dataclass
+class Grid:
+    """CSS Grid container for layout."""
+
+    children: list = field(default_factory=list)
+    columns: int = 2  # 2, 3, or 4
+    gap: str = "md"  # "sm", "md", "lg"
+    css_class: Optional[str] = None
+    style: Optional[str] = None
+
+    def render(self, context: Optional[dict] = None) -> str:
+        """Render grid to HTML."""
+        classes = ["grid", f"grid--{self.columns}col"]
+
+        # Gap modifier
+        if self.gap == "sm":
+            classes.append("grid--gap-sm")
+        elif self.gap == "lg":
+            classes.append("grid--gap-lg")
+        # "md" is default, no class needed
+
+        if self.css_class:
+            classes.append(self.css_class)
+
+        class_str = " ".join(classes)
+        style_attr = f' style="{self.style}"' if self.style else ""
+
+        # Render children
+        children_html = ""
+        for child in self.children:
+            if hasattr(child, 'render'):
+                children_html += child.render(context)
+            elif isinstance(child, str):
+                children_html += child
+            elif isinstance(child, dict):
+                children_html += render_content(child, context)
+
+        return f'<div class="{class_str}"{style_attr}>{children_html}</div>'
+
+    def add(self, child) -> 'Grid':
+        """Add a child element. Returns self for chaining."""
+        self.children.append(child)
+        return self
+
+
+# =============================================================================
+# SECTION - Titled content box
 # =============================================================================
 
 @dataclass
