@@ -1,18 +1,20 @@
 # D&D 5e Sheet JSON Schema
 
-Complete reference for all available fields in character and item JSON files.
+Complete reference for all available fields in character JSON files.
 
 ---
 
-## Document Types
+## Overview
 
-This generator supports two document types:
-- **Character Sheets** - 4-page character sheets (default)
-- **Magic Items** - Single-page item cards
+Character sheets are stored as JSON files in `characters/<name>.json`. Each file can contain:
+- **Character data** - Stats, abilities, equipment, spellcasting, etc.
+- **Embedded items** - Magic items stored in the `items` array
 
-The document type is determined by the `"type"` field in the JSON root:
-- `"type": "item"` - Magic item
-- No type field or any other value - Character sheet
+Generate sheets with:
+```bash
+python3 generate.py <name> --compress --open         # Character only
+python3 generate.py <name> --bundle --compress --open  # Character + items
+```
 
 ---
 
@@ -35,8 +37,10 @@ The document type is determined by the `"type"` field in the JSON root:
 - [spellcasting](#spellcasting) - Spells and slots
 - [companion](#companion) - Beast companion (optional)
 - [reference](#reference) - Quick reference cards (Page 4)
+- [items](#items) - Embedded magic items
 
 ### Item Schema
+- [item-structure](#item-structure) - Item object format
 - [item-header](#item-header) - Item name, image, stats
 - [item-footer](#item-footer) - Identifier and value
 - [item-pages](#item-pages) - Page layout and sections
@@ -54,12 +58,10 @@ File metadata and character images.
 "meta": {
   "version": "1.0",
   "generated": null,
-  "portrait": "../../images/[character]/portrait.jpg",
+  "portrait": "../../images/<character>/portrait.jpg",
   "gallery": [
-    "../../images/[character]/image1.jpg",
-    "../../images/[character]/image2.jpg",
-    "../../images/[character]/image3.jpg",
-    "../../images/[character]/image4.jpg"
+    "../../images/<character>/image1.jpg",
+    "../../images/<character>/image2.jpg"
   ]
 }
 ```
@@ -71,7 +73,7 @@ File metadata and character images.
 | `portrait` | string | Path to main portrait image (Page 1 header) |
 | `gallery` | array | Additional images shown at bottom of Page 1 (max 4 recommended) |
 
-**Image paths**: Use `../../images/[character]/` prefix since JSON files are in `characters/` folder.
+**Image paths**: Use `../../images/<character>/` prefix. Output files are in `output/<Name>/`, so paths need `../../` to reach the images folder.
 
 ---
 
@@ -618,45 +620,31 @@ Quick reference cards for Page 4. All subsections are optional.
 
 ---
 
-## Complete Minimal Example
+## items
 
-A bare-minimum character with only required fields:
+Magic items embedded in the character file. When using `--bundle`, each item generates a separate page after the character sheet.
 
 ```json
-{
-  "meta": { "version": "1.0" },
-  "header": {
-    "character_name": "Test Character",
-    "class_level": "Fighter 1",
-    "race": "Human"
-  },
-  "abilities": {
-    "strength": { "score": 10 },
-    "dexterity": { "score": 10 },
-    "constitution": { "score": 10 },
-    "intelligence": { "score": 10 },
-    "wisdom": { "score": 10 },
-    "charisma": { "score": 10 }
-  },
-  "proficiency_bonus": 2,
-  "combat": {
-    "armor_class": 10,
-    "speed": "30 ft",
-    "hp_maximum": 10,
-    "hit_dice": { "total": "1d10" }
+"items": [
+  {
+    "type": "item",
+    "meta": { "version": "1.0" },
+    "header": { ... },
+    "footer": { ... },
+    "pages": [ ... ]
   }
-}
+]
 ```
 
-All other fields will use sensible defaults (empty arrays, blank strings, etc.).
+Set to `[]` or omit if no items. See the Item Schema section below for full item structure.
 
 ---
 
 # Item Schema
 
-Magic items use a different structure with `"type": "item"` at the root.
+Magic items are embedded in the character's `items` array. Each item follows this structure.
 
-## Item Structure Overview
+## item-structure
 
 ```json
 {
@@ -678,8 +666,8 @@ Item identification and display information.
 "header": {
   "name": "Ring of the Wild Hunt",
   "subtitle": "Forged in the Moonwell of Eternal Spring",
-  "image": "images/character/item.jpg",
-  "background_svg": "images/character/decoration.svg",
+  "image": "../../images/thorek/ring_wild_hunt.png",
+  "background_svg": "../../images/thorek/decoration.svg",
   "stats": [
     { "label": "Rarity", "value": "Rare", "class": "rarity-rare" },
     { "label": "Attunement", "value": "Beast Master Ranger" },
@@ -697,6 +685,8 @@ Item identification and display information.
 | `stats` | array | Stat badges displayed below title |
 
 **Rarity CSS classes**: `rarity-common`, `rarity-uncommon`, `rarity-rare`, `rarity-very-rare`, `rarity-legendary`
+
+**Image paths**: Use `../../images/<character>/` prefix (same as character images).
 
 ---
 
@@ -907,6 +897,41 @@ Multiple content blocks in sequence.
 
 ---
 
+## Complete Minimal Example
+
+A bare-minimum character with only required fields:
+
+```json
+{
+  "meta": { "version": "1.0" },
+  "header": {
+    "character_name": "Test Character",
+    "class_level": "Fighter 1",
+    "race": "Human"
+  },
+  "abilities": {
+    "strength": { "score": 10 },
+    "dexterity": { "score": 10 },
+    "constitution": { "score": 10 },
+    "intelligence": { "score": 10 },
+    "wisdom": { "score": 10 },
+    "charisma": { "score": 10 }
+  },
+  "proficiency_bonus": 2,
+  "combat": {
+    "armor_class": 10,
+    "speed": "30 ft",
+    "hp_maximum": 10,
+    "hit_dice": { "total": "1d10" }
+  },
+  "items": []
+}
+```
+
+All other fields will use sensible defaults (empty arrays, blank strings, etc.).
+
+---
+
 ## Complete Item Example
 
 ```json
@@ -916,7 +941,7 @@ Multiple content blocks in sequence.
   "header": {
     "name": "Sword of Flames",
     "subtitle": "Forged in dragon fire",
-    "image": "images/hero/sword.jpg",
+    "image": "../../images/hero/sword.jpg",
     "stats": [
       { "label": "Rarity", "value": "Rare", "class": "rarity-rare" },
       { "label": "Type", "value": "Longsword" }

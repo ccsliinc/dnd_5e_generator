@@ -4,6 +4,7 @@
 from .renderers import ContentRenderer, get_renderer, render_content
 from .document import Document, CharacterDocument, ItemDocument
 from .components import Row, Col, Grid, Section, Page, Column
+from .pages import PageBuilder, StatsPage, BackgroundPage, SpellcastingPage, ReferencePage
 
 # Import character renderers to register them
 from . import character_renderers
@@ -21,4 +22,9 @@ __all__ = [
     'Section',
     'Page',
     'Column',
+    'PageBuilder',
+    'StatsPage',
+    'BackgroundPage',
+    'SpellcastingPage',
+    'ReferencePage',
 ]

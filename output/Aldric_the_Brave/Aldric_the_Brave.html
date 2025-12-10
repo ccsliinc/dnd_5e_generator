@@ -7,16 +7,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Scada:wght@400;700&display=swap" rel="stylesheet">
     <style>
 /* =================================================================
-   D&D 5e Character Sheet - Stylesheet
+   D&D 5e Sheet Generator - Base Stylesheet
    =================================================================
 
-   STRUCTURE:
-   1. CSS Variables (edit colors, sizes here - ONE place)
-   2. Base Box Class (all boxes inherit from this)
-   3. Corner Accents (4-corner decorative accents)
-   4. Label Modifiers (top/bottom label positions)
-   5. Layout Components (page, grid, columns)
-   6. Specific Components (only unique overrides)
+   SHARED FOUNDATION:
+   1. CSS Variables (colors, fonts, spacing)
+   2. Reset & Page Setup
+   3. Box Component (universal container)
+   4. Corner Accents (decorative effect)
+   5. Label Modifiers (top/bottom labels)
+   6. Value Styles (number display)
+   7. Layout Components (Row, Col, Grid)
+   8. Utility Classes
 
    ================================================================= */
 
@@ -84,6 +86,7 @@
    2. BASE RESET & PAGE
    ----------------------------------------------------------------- */
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
 @page {
     size: A4;
     margin: 0;
@@ -131,7 +134,7 @@ body {
 .page:last-child { page-break-after: avoid; }
 
 /* -----------------------------------------------------------------
-   3. BASE BOX CLASS - All boxes inherit from this
+   3. BOX COMPONENT - Universal container with paper texture
    ----------------------------------------------------------------- */
 .box {
     border: var(--box-border-width) solid var(--border-dark);
@@ -144,6 +147,17 @@ body {
         radial-gradient(ellipse 50% 50% at 100% 100%, #f0ebe3 0%, transparent 55%),
         #ffffff;
     position: relative;
+}
+
+/* Lore variant - gold tinted background */
+.box--lore {
+    background:
+        linear-gradient(135deg, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 50% at 0% 0%, #f0ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 100% 0%, #f0ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 0% 100%, #f0ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 100% 100%, #f0ebe3 0%, transparent 55%),
+        #fffef8;
 }
 
 /* -----------------------------------------------------------------
@@ -184,69 +198,10 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   4.5 UTILITY CLASSES
-   ----------------------------------------------------------------- */
-
-/* Flex utilities */
-.flex-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.flex-col {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Reference card base - used by weapon, spell, feature cards */
-.ref-card {
-    margin-bottom: 2.5mm;
-    padding-bottom: 2mm;
-    border-bottom: 1px dashed var(--border-light);
-}
-.ref-card:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-/* Styled list base - used by item-list and prof-list */
-.styled-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: var(--font-base);
-    line-height: 1.4;
-}
-.styled-list li {
-    padding: 0.3mm 0;
-    padding-left: 3mm;
-    position: relative;
-}
-.styled-list li::before {
-    content: '◆';
-    color: var(--accent-secondary);
-    font-size: 5pt;
-    position: absolute;
-    left: 0;
-    top: 0.5mm;
-}
-
-/* Two-column list variant */
-.styled-list--columns {
-    column-count: 2;
-    column-gap: var(--gap-lg);
-}
-.styled-list--columns li {
-    break-inside: avoid;
-}
-
-/* -----------------------------------------------------------------
    5. LABEL MODIFIERS - Position labels top or bottom
    ----------------------------------------------------------------- */
 
-/* Label at bottom of box */
+/* Label styling */
 .box__label {
     font-size: 6pt;
     font-weight: 700;
@@ -258,6 +213,7 @@ body {
     padding: 0.5mm 2mm;
 }
 
+/* Label at bottom of box */
 .box--label-bottom {
     padding-bottom: 5mm;
 }
@@ -290,8 +246,11 @@ body {
     justify-content: center;
 }
 
+/* Flex grow modifier */
+.box--flex { flex: 1; }
+
 /* -----------------------------------------------------------------
-   6. COMMON VALUE STYLES
+   6. VALUE STYLES - Number display
    ----------------------------------------------------------------- */
 .value--large {
     font-family: var(--font-display);
@@ -312,10 +271,73 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   6.5 TEXT CONTENT STYLES - Paragraphs and lists
+   7. LAYOUT COMPONENTS - Row, Col, Grid
    ----------------------------------------------------------------- */
 
-/* Justified text with paragraph indentation */
+/* Row - Horizontal flex container */
+.row {
+    display: flex;
+    gap: var(--gap-md);
+}
+
+.row--stretch { align-items: stretch; }
+.row--center { align-items: center; }
+.row--wrap { flex-wrap: wrap; }
+.row--no-gap { gap: 0; }
+.row--gap-sm { gap: var(--gap-sm); }
+.row--gap-lg { gap: var(--gap-lg); }
+
+/* Col - Vertical flex container / flex child */
+.col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-sm);
+}
+
+.col--1 { flex: 1; }
+.col--2 { flex: 2; }
+.col--3 { flex: 3; }
+.col--flex { flex: 1; }
+.col--no-gap { gap: 0; }
+.col--gap-xs { gap: var(--gap-xs); }
+.col--gap-md { gap: var(--gap-md); }
+
+/* Grid - CSS Grid container */
+.grid {
+    display: grid;
+    gap: var(--gap-md);
+}
+
+.grid--2col { grid-template-columns: repeat(2, 1fr); }
+.grid--3col { grid-template-columns: repeat(3, 1fr); }
+.grid--4col { grid-template-columns: repeat(4, 1fr); }
+.grid--gap-sm { gap: var(--gap-sm); }
+.grid--gap-lg { gap: var(--gap-lg); }
+
+/* -----------------------------------------------------------------
+   8. UTILITY CLASSES
+   ----------------------------------------------------------------- */
+
+/* Flex utilities */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-grow { flex: 1; }
+
+/* Text utilities */
+.text-center { text-align: center; }
+.text-justify { text-align: justify; }
+.text-italic { font-style: italic; }
+
+/* Text content - Justified paragraphs */
 .text-content {
     font-size: 7.5pt;
     line-height: 1.5;
@@ -328,18 +350,373 @@ body {
     margin-bottom: 1mm;
 }
 
-/* Generic item list - extends styled-list */
-.item-list {
-    /* Inherits from styled-list */
+/* Styled list - Diamond bullets */
+.styled-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: var(--font-base);
+    line-height: 1.4;
+}
+.styled-list li {
+    padding: 0.3mm 0;
+    padding-left: 3mm;
+    position: relative;
+}
+.styled-list li::before {
+    content: '◆';
+    color: var(--accent-secondary);
+    font-size: 5pt;
+    position: absolute;
+    left: 0;
+    top: 0.5mm;
 }
 
 /* Two-column list variant */
-.item-list--columns {
-    /* Inherits from styled-list--columns */
+.styled-list--columns {
+    column-count: 2;
+    column-gap: var(--gap-lg);
+}
+.styled-list--columns li {
+    break-inside: avoid;
+}
+
+/* Reference card base - used by weapon, spell, feature cards */
+.ref-card {
+    margin-bottom: 2.5mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dashed var(--border-light);
+}
+.ref-card:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+/* =================================================================
+   D&D 5e Sheet Generator - Shared Components
+   =================================================================
+
+   SHARED UI COMPONENTS:
+   1. Section Box (titled content container)
+   2. Lined Paper (notes/spell lists)
+   3. Stat Box (numeric display with label)
+   4. Property List (icon + name + description)
+   5. Data Table (rows and columns)
+   6. Quote Block (attributed quotes)
+   7. Subsections (nested content blocks)
+
+   ================================================================= */
+
+/* -----------------------------------------------------------------
+   1. SECTION BOX - Titled content container
+   ----------------------------------------------------------------- */
+.section-box {
+    padding: var(--box-padding);
+}
+
+.section-box.flex-grow {
+    flex: 1;
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: 9pt;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 2mm;
+    padding-bottom: 1mm;
+    border-bottom: 1px solid var(--border-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.section-content {
+    font-size: 7.5pt;
+    line-height: 1.5;
 }
 
 /* -----------------------------------------------------------------
-   7. PAGE HEADER
+   2. LINED PAPER - Notes and spell lists
+   ----------------------------------------------------------------- */
+.lined-paper {
+    min-height: 20mm;
+    background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 5.5mm,
+        #c4beb3 5.5mm,
+        #c4beb3 6mm
+    );
+    background-position: 0 2mm;
+}
+
+.lined-paper--tight {
+    background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 4mm,
+        #c4beb3 4mm,
+        #c4beb3 4.5mm
+    );
+}
+
+/* -----------------------------------------------------------------
+   3. STAT BOX - Numeric display with label
+   (AC, Initiative, Speed, HP, etc.)
+   ----------------------------------------------------------------- */
+.stat-box {
+    padding: 1mm 2mm 4mm;
+    text-align: center;
+}
+
+.stat-box__value {
+    min-height: 10mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-box__value--large {
+    font-family: var(--font-display);
+    font-size: 16pt;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* -----------------------------------------------------------------
+   4. PROPERTY LIST - Icon + name + description
+   (Magic item properties, features, etc.)
+   ----------------------------------------------------------------- */
+.property-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.property-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 2mm;
+    margin-bottom: 2mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dotted var(--border-light);
+}
+
+.property-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.property-icon {
+    width: 5mm;
+    height: 5mm;
+    background: var(--accent-highlight);
+    border: 1px solid var(--accent-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8pt;
+    flex-shrink: 0;
+    margin-top: 0.5mm;
+}
+
+.property-content {
+    flex: 1;
+}
+
+.property-name {
+    font-weight: 700;
+    font-size: 8pt;
+    color: var(--text-primary);
+}
+
+.property-desc {
+    font-size: 7pt;
+    color: var(--text-secondary);
+    margin-top: 0.5mm;
+}
+
+/* -----------------------------------------------------------------
+   5. DATA TABLE - Rows and columns
+   ----------------------------------------------------------------- */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7pt;
+}
+
+.data-table th {
+    background: var(--bg-label);
+    border: 1px solid var(--border-light);
+    padding: 1.5mm 2mm;
+    font-weight: 700;
+    text-align: center;
+    font-size: 6pt;
+    text-transform: uppercase;
+    color: var(--text-label);
+}
+
+.data-table td {
+    border: 1px solid var(--border-light);
+    padding: 1.5mm 2mm;
+    text-align: center;
+}
+
+.data-table tr:nth-child(even) td {
+    background: rgba(245, 240, 230, 0.5);
+}
+
+.data-table .highlight-row td {
+    background: var(--accent-highlight);
+    font-weight: 600;
+}
+
+/* Alias for item compatibility */
+.scaling-table { /* Uses .data-table styles */ }
+
+/* -----------------------------------------------------------------
+   6. QUOTE BLOCK - Attributed quotes
+   ----------------------------------------------------------------- */
+.quote-block {
+    font-style: italic;
+    font-size: 7.5pt;
+    line-height: 1.5;
+    text-align: justify;
+    padding: 2mm 3mm;
+    background: rgba(139, 69, 19, 0.05);
+    border-left: 2px solid var(--accent-primary);
+    margin-bottom: 2mm;
+}
+
+.quote-block__text {
+    margin-bottom: 1mm;
+}
+
+.quote-block__attribution {
+    font-size: 6pt;
+    text-align: right;
+    color: var(--text-label);
+    font-style: normal;
+}
+
+/* Alias for item compatibility */
+.lore-quote { /* Uses .quote-block styles */ }
+.lore-attribution { /* Uses .quote-block__attribution styles */ }
+
+/* -----------------------------------------------------------------
+   7. SUBSECTIONS - Nested content blocks
+   ----------------------------------------------------------------- */
+.subsection {
+    margin-bottom: 2mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dotted var(--border-light);
+}
+
+.subsection:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.subsection__name {
+    font-weight: 700;
+    font-size: 8pt;
+    color: var(--accent-primary);
+    margin-bottom: 1mm;
+}
+
+.subsection__bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.subsection__bullets li {
+    font-size: 7pt;
+    padding-left: 3mm;
+    position: relative;
+    margin-bottom: 0.5mm;
+    line-height: 1.4;
+}
+
+.subsection__bullets li::before {
+    content: '◆';
+    color: var(--accent-secondary);
+    font-size: 5pt;
+    position: absolute;
+    left: 0;
+    top: 0.5mm;
+}
+
+/* Aliases for item compatibility */
+.ability-block { /* Uses .subsection styles */ }
+.ability-name { /* Uses .subsection__name styles */ }
+.ability-bullets { /* Uses .subsection__bullets styles */ }
+
+/* -----------------------------------------------------------------
+   8. LEGENDARY TALES - Lore items
+   ----------------------------------------------------------------- */
+.tales-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tale-item {
+    display: flex;
+    gap: 2mm;
+    margin-bottom: 1.5mm;
+    font-size: 7pt;
+}
+
+.tale-item__title {
+    font-weight: 700;
+    color: var(--accent-primary);
+    min-width: 30mm;
+    flex-shrink: 0;
+}
+
+.tale-item__desc {
+    color: var(--text-secondary);
+}
+
+/* Aliases for item compatibility */
+.legendary-tale { /* Uses .tale-item styles */ }
+.tale-title { /* Uses .tale-item__title styles */ }
+.tale-desc { /* Uses .tale-item__desc styles */ }
+
+/* =================================================================
+   D&D 5e Character Sheet - Stylesheet
+   =================================================================
+
+   IMPORTS:
+   - base.css: Variables, reset, box, layout, utilities
+   - components.css: Section box, lined paper, tables, etc.
+
+   CHARACTER-SPECIFIC:
+   1. Page Header (portrait, name, info fields)
+   2. Main Content Layout (3-column grid)
+   3. Ability Scores
+   4. Stat Rows (Inspiration, Proficiency)
+   5. Saves & Skills
+   6. Passive Perception
+   7. Proficiencies List
+   8. Combat Stats (AC, Init, Speed)
+   9. HP Sections
+   10. Hit Dice & Death Saves
+   11. Attacks Box
+   12. Equipment Box (coins)
+   13. Trait Boxes
+   14. Page 2 - Background
+   15. Page 3 - Spellcasting
+   16. Page 4 - Reference / Companion
+
+   ================================================================= */
+
+/* -----------------------------------------------------------------
+   1. PAGE HEADER
    ----------------------------------------------------------------- */
 .page-header {
     display: grid;
@@ -407,7 +784,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   8. MAIN CONTENT LAYOUT
+   2. MAIN CONTENT LAYOUT
    ----------------------------------------------------------------- */
 .main-content {
     display: grid;
@@ -441,7 +818,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   9. ABILITY SCORES
+   3. ABILITY SCORES
    ----------------------------------------------------------------- */
 .ability-block {
     display: flex;
@@ -479,7 +856,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   10. STAT ROWS (Inspiration, Proficiency Bonus)
+   4. STAT ROWS (Inspiration, Proficiency Bonus)
    ----------------------------------------------------------------- */
 .stat-row {
     display: flex;
@@ -508,7 +885,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   11. SAVES & SKILLS
+   5. SAVES & SKILLS
    ----------------------------------------------------------------- */
 .saves-skills-box {
     padding: 1.5mm;
@@ -544,7 +921,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   12. PASSIVE PERCEPTION
+   6. PASSIVE PERCEPTION
    ----------------------------------------------------------------- */
 .passive-box {
     padding: 1.5mm;
@@ -573,7 +950,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   13. PROFICIENCIES LIST
+   7. PROFICIENCIES LIST
    ----------------------------------------------------------------- */
 .proficiencies-box {
     padding: var(--box-padding) var(--box-padding) 5mm;
@@ -591,7 +968,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   14. COMBAT STATS
+   8. COMBAT STATS
    ----------------------------------------------------------------- */
 .combat-row {
     display: grid;
@@ -612,7 +989,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   15. HP SECTIONS
+   9. HP SECTIONS
    ----------------------------------------------------------------- */
 .hp-section {
     padding: 2mm 2mm 4mm;
@@ -664,7 +1041,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   16. HIT DICE & DEATH SAVES
+   10. HIT DICE & DEATH SAVES
    ----------------------------------------------------------------- */
 .hitdice-death-row {
     display: grid;
@@ -711,7 +1088,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   17. ATTACKS BOX
+   11. ATTACKS BOX
    ----------------------------------------------------------------- */
 .attacks-box {
     padding: 1.5mm;
@@ -757,7 +1134,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   18. EQUIPMENT BOX
+   12. EQUIPMENT BOX
    ----------------------------------------------------------------- */
 .equipment-box {
     padding: var(--box-padding) var(--box-padding) 5mm;
@@ -859,7 +1236,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   19. TRAIT BOXES (Right Column)
+   13. TRAIT BOXES (Right Column)
    ----------------------------------------------------------------- */
 .trait-box {
     padding: var(--box-padding) var(--box-padding) 5mm;
@@ -872,7 +1249,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   20. PAGE 2 - BACKGROUND
+   14. PAGE 2 - BACKGROUND
    ----------------------------------------------------------------- */
 .page2-grid {
     display: grid;
@@ -948,7 +1325,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   21. PAGE 3 - SPELLCASTING
+   15. PAGE 3 - SPELLCASTING
    ----------------------------------------------------------------- */
 .spell-grid {
     display: grid;
@@ -1046,7 +1423,7 @@ body {
 }
 
 /* -----------------------------------------------------------------
-   22. PAGE 4 - REFERENCE / CHEAT SHEET
+   16. PAGE 4 - REFERENCE / CHEAT SHEET
    ----------------------------------------------------------------- */
 .page4-grid {
     display: grid;
@@ -1077,7 +1454,7 @@ body {
     border-bottom: 1px solid var(--border-light);
 }
 
-/* Weapon reference cards - extends ref-card */
+/* Weapon reference cards */
 .weapon-card {
     /* Uses ref-card base styles */
 }
@@ -1119,7 +1496,7 @@ body {
     margin-top: 0.5mm;
 }
 
-/* Spell reference cards - extends ref-card */
+/* Spell reference cards */
 .spell-card {
     /* Uses ref-card base styles */
 }
@@ -1160,7 +1537,7 @@ body {
     text-align: justify;
 }
 
-/* Feature reference cards - extends ref-card with smaller margins */
+/* Feature reference cards */
 .feature-card {
     margin-bottom: var(--gap-md);
     padding-bottom: var(--gap-sm);
@@ -1499,10 +1876,26 @@ body {
 
     
 /* =================================================================
-   MAGIC ITEM SHEET - Uses character sheet design system
+   MAGIC ITEM SHEET - Item-specific styles
+   =================================================================
+
+   IMPORTS:
+   - base.css: Variables, reset, box, layout, utilities
+   - components.css: Section box, property list, tables, etc.
+
+   ITEM-SPECIFIC:
+   1. Rarity Colors
+   2. Item Header
+   3. Content Layout
+   4. Description Box (lore variant)
+   5. Synergy Section
+   6. Footer
+
    ================================================================= */
 
-/* Rarity Colors */
+/* -----------------------------------------------------------------
+   1. RARITY COLORS
+   ----------------------------------------------------------------- */
 :root {
     --rarity-common: #666666;
     --rarity-uncommon: #1a8b1a;
@@ -1511,9 +1904,15 @@ body {
     --rarity-legendary: #ff6600;
 }
 
-/* =================================================================
-   ITEM HEADER
-   ================================================================= */
+.rarity-common { color: var(--rarity-common); }
+.rarity-uncommon { color: var(--rarity-uncommon); }
+.rarity-rare { color: var(--rarity-rare); }
+.rarity-very-rare { color: var(--rarity-very-rare); }
+.rarity-legendary { color: var(--rarity-legendary); }
+
+/* -----------------------------------------------------------------
+   2. ITEM HEADER
+   ----------------------------------------------------------------- */
 .item-header {
     display: flex;
     gap: 4mm;
@@ -1619,15 +2018,9 @@ body {
     font-weight: 600;
 }
 
-.rarity-common { color: var(--rarity-common); }
-.rarity-uncommon { color: var(--rarity-uncommon); }
-.rarity-rare { color: var(--rarity-rare); }
-.rarity-very-rare { color: var(--rarity-very-rare); }
-.rarity-legendary { color: var(--rarity-legendary); }
-
-/* =================================================================
-   CONTENT LAYOUT
-   ================================================================= */
+/* -----------------------------------------------------------------
+   3. CONTENT LAYOUT
+   ----------------------------------------------------------------- */
 .item-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1641,45 +2034,12 @@ body {
     gap: 2.5mm;
 }
 
-/* =================================================================
-   SECTION BOXES
-   ================================================================= */
-.section-box {
-    padding: var(--box-padding);
-}
-
-.section-box.flex-grow {
-    flex: 1;
-}
-
-.section-title {
-    font-family: var(--font-display);
-    font-size: 9pt;
-    font-weight: 700;
-    color: var(--accent-primary);
-    margin-bottom: 2mm;
-    padding-bottom: 1mm;
-    border-bottom: 1px solid var(--border-light);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.section-content {
-    font-size: 7.5pt;
-    line-height: 1.5;
-}
-
-/* =================================================================
-   DESCRIPTION BOX (Lore/Visual)
-   ================================================================= */
+/* -----------------------------------------------------------------
+   4. DESCRIPTION BOX (Lore variant)
+   Uses .box--lore from base.css
+   ----------------------------------------------------------------- */
 .description-box {
-    background:
-        linear-gradient(135deg, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse 50% 50% at 0% 0%, #f0ebe3 0%, transparent 55%),
-        radial-gradient(ellipse 50% 50% at 100% 0%, #f0ebe3 0%, transparent 55%),
-        radial-gradient(ellipse 50% 50% at 0% 100%, #f0ebe3 0%, transparent 55%),
-        radial-gradient(ellipse 50% 50% at 100% 100%, #f0ebe3 0%, transparent 55%),
-        #fffef8;
+    /* Extends .box--lore */
 }
 
 .description-text {
@@ -1688,182 +2048,9 @@ body {
     hyphens: auto;
 }
 
-/* =================================================================
-   PROPERTIES LIST
-   ================================================================= */
-.property-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.property-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 2mm;
-    margin-bottom: 2mm;
-    padding-bottom: 2mm;
-    border-bottom: 1px dotted var(--border-light);
-}
-
-.property-item:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.property-icon {
-    width: 5mm;
-    height: 5mm;
-    background: var(--accent-highlight);
-    border: 1px solid var(--accent-secondary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8pt;
-    flex-shrink: 0;
-    margin-top: 0.5mm;
-}
-
-.property-content {
-    flex: 1;
-}
-
-.property-name {
-    font-weight: 700;
-    font-size: 8pt;
-    color: var(--text-primary);
-}
-
-.property-desc {
-    font-size: 7pt;
-    color: var(--text-secondary);
-    margin-top: 0.5mm;
-}
-
-/* =================================================================
-   SCALING TABLE
-   ================================================================= */
-.scaling-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 7pt;
-}
-
-.scaling-table th {
-    background: var(--bg-label);
-    border: 1px solid var(--border-light);
-    padding: 1.5mm 2mm;
-    font-weight: 700;
-    text-align: center;
-    font-size: 6pt;
-    text-transform: uppercase;
-    color: var(--text-label);
-}
-
-.scaling-table td {
-    border: 1px solid var(--border-light);
-    padding: 1.5mm 2mm;
-    text-align: center;
-}
-
-.scaling-table tr:nth-child(even) td {
-    background: rgba(245, 240, 230, 0.5);
-}
-
-.scaling-table .highlight-row td {
-    background: var(--accent-highlight);
-    font-weight: 600;
-}
-
-/* =================================================================
-   ABILITY BLOCKS
-   ================================================================= */
-.ability-block {
-    margin-bottom: 2mm;
-    padding-bottom: 2mm;
-    border-bottom: 1px dotted var(--border-light);
-}
-
-.ability-block:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.ability-name {
-    font-weight: 700;
-    font-size: 8pt;
-    color: var(--accent-primary);
-    margin-bottom: 1mm;
-}
-
-.ability-bullets {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.ability-bullets li {
-    font-size: 7pt;
-    padding-left: 3mm;
-    position: relative;
-    margin-bottom: 0.5mm;
-    line-height: 1.4;
-}
-
-.ability-bullets li::before {
-    content: '◆';
-    color: var(--accent-secondary);
-    font-size: 5pt;
-    position: absolute;
-    left: 0;
-    top: 0.5mm;
-}
-
-/* =================================================================
-   LORE SECTION
-   ================================================================= */
-.lore-quote {
-    font-style: italic;
-    font-size: 7.5pt;
-    line-height: 1.5;
-    text-align: justify;
-    padding: 2mm 3mm;
-    background: rgba(139, 69, 19, 0.05);
-    border-left: 2px solid var(--accent-primary);
-    margin-bottom: 2mm;
-}
-
-.lore-attribution {
-    font-size: 6pt;
-    text-align: right;
-    color: var(--text-label);
-    font-style: normal;
-    margin-top: 1mm;
-}
-
-.legendary-tale {
-    display: flex;
-    gap: 2mm;
-    margin-bottom: 1.5mm;
-    font-size: 7pt;
-}
-
-.tale-title {
-    font-weight: 700;
-    color: var(--accent-primary);
-    min-width: 30mm;
-    flex-shrink: 0;
-}
-
-.tale-desc {
-    color: var(--text-secondary);
-}
-
-/* =================================================================
-   SYNERGY SECTION
-   ================================================================= */
+/* -----------------------------------------------------------------
+   5. SYNERGY SECTION
+   ----------------------------------------------------------------- */
 .synergy-header {
     display: flex;
     align-items: center;
@@ -1921,9 +2108,9 @@ body {
     color: var(--accent-secondary);
 }
 
-/* =================================================================
-   FOOTER
-   ================================================================= */
+/* -----------------------------------------------------------------
+   6. FOOTER
+   ----------------------------------------------------------------- */
 .item-footer {
     display: flex;
     justify-content: space-between;
@@ -1937,6 +2124,129 @@ body {
 
 .market-value {
     font-weight: 600;
+}
+
+/* -----------------------------------------------------------------
+   7. SCALING TABLE
+   ----------------------------------------------------------------- */
+.scaling-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7pt;
+}
+
+.scaling-table th {
+    background: var(--bg-label);
+    border: 1px solid var(--border-light);
+    padding: 1.5mm 2mm;
+    font-weight: 700;
+    text-align: center;
+    font-size: 6pt;
+    text-transform: uppercase;
+    color: var(--text-label);
+}
+
+.scaling-table td {
+    border: 1px solid var(--border-light);
+    padding: 1.5mm 2mm;
+    text-align: center;
+}
+
+.scaling-table tr:nth-child(even) td {
+    background: rgba(245, 240, 230, 0.5);
+}
+
+.scaling-table .highlight-row td {
+    background: var(--accent-highlight);
+    font-weight: 600;
+}
+
+/* -----------------------------------------------------------------
+   8. ABILITY BLOCKS (Subsections with bullets)
+   ----------------------------------------------------------------- */
+.ability-block {
+    margin-bottom: 2mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dotted var(--border-light);
+}
+
+.ability-block:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.ability-name {
+    font-weight: 700;
+    font-size: 8pt;
+    color: var(--accent-primary);
+    margin-bottom: 1mm;
+}
+
+.ability-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ability-bullets li {
+    font-size: 7pt;
+    padding-left: 3mm;
+    position: relative;
+    margin-bottom: 0.5mm;
+    line-height: 1.4;
+}
+
+.ability-bullets li::before {
+    content: '◆';
+    color: var(--accent-secondary);
+    font-size: 5pt;
+    position: absolute;
+    left: 0;
+    top: 0.5mm;
+}
+
+/* -----------------------------------------------------------------
+   9. LORE SECTION
+   ----------------------------------------------------------------- */
+.lore-quote {
+    font-style: italic;
+    font-size: 7.5pt;
+    line-height: 1.5;
+    text-align: justify;
+    padding: 2mm 3mm;
+    background: rgba(139, 69, 19, 0.05);
+    border-left: 2px solid var(--accent-primary);
+    margin-bottom: 2mm;
+}
+
+.lore-attribution {
+    font-size: 6pt;
+    text-align: right;
+    color: var(--text-label);
+    font-style: normal;
+    margin-top: 1mm;
+}
+
+/* -----------------------------------------------------------------
+   10. LEGENDARY TALES
+   ----------------------------------------------------------------- */
+.legendary-tale {
+    display: flex;
+    gap: 2mm;
+    margin-bottom: 1.5mm;
+    font-size: 7pt;
+}
+
+.tale-title {
+    font-weight: 700;
+    color: var(--accent-primary);
+    min-width: 30mm;
+    flex-shrink: 0;
+}
+
+.tale-desc {
+    color: var(--text-secondary);
 }
 
     </style>
@@ -1987,6 +2297,7 @@ body {
         </div>
 
         <div class="main-content">
+            
             <!-- LEFT COLUMN -->
             <div class="column">
                 <div class="left-section">
@@ -2169,7 +2480,7 @@ body {
                     <div class="box__label">Other Proficiencies & Languages</div>
                 </div>
             </div>
-
+            
             <!-- MIDDLE COLUMN -->
             <div class="column">
                 <div class="combat-row">
@@ -2270,7 +2581,7 @@ body {
                     <div class="box__label">Equipment</div>
                 </div>
             </div>
-
+            
             <!-- RIGHT COLUMN -->
             <div class="column">
                 <div class="box box--label-bottom trait-box">
@@ -2314,7 +2625,6 @@ body {
         <div class="page-header">
             <div class="header-left">
                 <div class="header-brand">Dungeons & Dragons</div>
-                
                 <div class="box box--label-bottom header-name">
                     <div class="value--large">Aldric the Brave</div>
                     <div class="box__label">Character Name</div>
@@ -2350,6 +2660,7 @@ body {
 
         <div class="page2-content">
             <div class="page2-columns">
+                
                 <div class="column">
                     <div class="box box--label-top large-box" style="min-height: 45mm;">
                         <div class="box__label">Character Appearance</div>
@@ -2360,6 +2671,7 @@ body {
                         <div class="large-box-content"><div class="text-content"><p>Born to a farming family in the borderlands, Aldric enlisted in the local militia at sixteen after his village was raided by bandits. His natural aptitude for combat and unwavering courage quickly earned him recognition, and he rose through the ranks to become a sergeant.</p><p>During a border skirmish three years ago, Aldric led a patrol into an ambush. Though he fought valiantly and saved several of his men, the battle cost the lives of half his squad. The weight of those deaths haunts him still.</p><p>Seeking redemption and purpose, Aldric left the military and turned to adventuring. He hopes that by protecting the innocent and fighting evil, he can honor the memory of those who fell under his command.</p></div></div>
                     </div>
                 </div>
+                
                 <div class="column">
                     <div class="box box--label-top large-box" style="min-height: 60mm;">
                         <div class="box__label">Allies & Organizations</div>
@@ -2412,6 +2724,7 @@ body {
         </div>
 
         <div class="spell-grid">
+            
             <div class="box spell-level-box cantrip-box">
                 <div class="spell-level-header">
                     <div class="spell-level-num">0</div>
@@ -2900,6 +3213,7 @@ body {
         </div>
 
         <div class="page4-grid">
+            
             <div class="column">
                 <div class="box ref-box turn-box">
                     <div class="ref-section-title">Your Turn</div>
@@ -3008,6 +3322,7 @@ body {
                     </div>
                 </div>
             </div>
+            
             <div class="column">
                 <div class="box ref-box">
                     <div class="ref-section-title">Spells</div>

@@ -1,12 +1,29 @@
-# D&D 5e Character Creation Guide
+# Character Creation Guide
 
-Create custom character sheets from JSON data files.
+Create custom D&D 5e character sheets from JSON data files.
 
 ## Quick Start
 
-1. Create a JSON file in `characters/`
-2. Add character images in `images/<character_name>/`
-3. Run: `python3 generate.py characters/<name>.json --compress --open`
+1. Create a JSON file: `characters/<name>.json`
+2. Add character images: `images/<name>/`
+3. Generate: `python3 generate.py <name> --compress --open`
+
+## File Structure
+
+```
+d_and_d/
+├── characters/
+│   └── thorek.json           # Character data + embedded items
+├── images/
+│   └── thorek/
+│       ├── portrait.jpg      # Main portrait
+│       ├── scene1.jpg        # Gallery images
+│       └── ironjaw.jpg       # Companion image
+└── output/
+    └── Thorek_Bearward/      # Generated files
+        ├── *.html
+        └── *.pdf
+```
 
 ## JSON Structure
 
@@ -14,10 +31,10 @@ Create custom character sheets from JSON data files.
 {
   "meta": {
     "version": "1.0",
-    "portrait": "../../images/<character>/portrait.jpg",
+    "portrait": "../../images/thorek/portrait.jpg",
     "gallery": [
-      "../../images/<character>/image1.jpg",
-      "../../images/<character>/image2.jpg"
+      "../../images/thorek/image1.jpg",
+      "../../images/thorek/image2.jpg"
     ]
   },
   "header": {
@@ -37,13 +54,14 @@ Create custom character sheets from JSON data files.
   "personality": { ... },
   "equipment": [ ... ],
   "spellcasting": { ... },
-  "companion": { ... }
+  "companion": { ... },
+  "items": [ ... ]
 }
 ```
 
-See `SCHEMA.md` for complete field documentation.
+See [SCHEMA.md](SCHEMA.md) for complete field documentation.
 
-## Questions to Gather
+## Information to Gather
 
 ### 1. Basic Info
 - Character name, class, level, race, background
@@ -79,6 +97,12 @@ Six scores: Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma
 ### 10. Spellcasting (if applicable)
 - Spellcasting ability, DC, attack bonus
 - Cantrips and spells by level
+
+### 11. Companion (optional)
+- Beast Master companion, familiar, etc.
+
+### 12. Magic Items (optional)
+- Items embedded in the `items` array
 
 ## JSON Sections
 
@@ -280,23 +304,44 @@ Six scores: Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma
 
 Set to `null` if no companion.
 
+### items (optional)
+
+Magic items are embedded directly in the character file. See [SCHEMA.md](SCHEMA.md) for item structure.
+
+```json
+"items": [
+  {
+    "type": "item",
+    "meta": { "version": "1.0" },
+    "header": { ... },
+    "footer": { ... },
+    "pages": [ ... ]
+  }
+]
+```
+
+Set to `[]` if no items.
+
 ## Tips
 
-- Image paths use `../../images/<name>/` (relative from characters/ folder)
+- Image paths use `../../images/<name>/` (relative from output folder)
 - Use `\n\n` for paragraph breaks in backstory
 - Spell format: `{ "name": "Spell Name", "prepared": true/false }`
 - Proficiency bonus: 1-4=+2, 5-8=+3, 9-12=+4, 13-16=+5, 17-20=+6
 - Initiative is calculated from DEX if left null
 
-## Generation
+## Generation Commands
 
 ```bash
 # HTML only
-python3 generate.py characters/thorek.json
+python3 generate.py thorek
 
 # With PDF
-python3 generate.py characters/thorek.json --pdf
+python3 generate.py thorek --pdf
 
 # Full pipeline with compressed PDF
-python3 generate.py characters/thorek.json --compress --open
+python3 generate.py thorek --compress --open
+
+# Include magic items in output
+python3 generate.py thorek --bundle --compress --open
 ```
