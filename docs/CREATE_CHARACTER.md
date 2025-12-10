@@ -126,7 +126,7 @@ Six scores: Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma
   "character_name": "Aldric the Brave",
   "class_level": "Ranger 3",
   "background": "Folk Hero",
-  "player_name": "Joe",
+  "player_name": "Player Name",
   "race": "Hill Dwarf",
   "alignment": "Neutral Good",
   "experience_points": 900
