@@ -10,25 +10,22 @@ Generate printable HTML character sheets and magic item cards from JSON data fil
 
 ```bash
 # Generate HTML only
-python3 generate.py aldric.json
+python3 generate.py aldric
 
 # Generate HTML + PDF
-python3 generate.py aldric.json --pdf
+python3 generate.py aldric --pdf
 
 # Full pipeline: HTML + PDF + compressed print version, then open
-python3 generate.py aldric.json --compress --open
+python3 generate.py aldric --compress --open
 
-# Generate character sheet bundled with their items
-python3 generate.py thorek.json --bundle --compress --open
-
-# Generate a magic item
-python3 generate.py characters/thorek/items/ring_of_wild_hunt.json --compress --open
+# Generate character sheet bundled with their magic items
+python3 generate.py thorek --bundle --compress --open
 ```
 
 ## Command Line Options
 
 ```
-python3 generate.py <input.json> [options]
+python3 generate.py <character_name> [options]
 
 Options:
   --pdf           Generate PDF via Chrome headless
@@ -36,6 +33,7 @@ Options:
   --dpi <value>   DPI for compression (default: 150)
   --open          Open output files when done
   --output <dir>  Custom output directory
+  --bundle        Include character's embedded items in output
   -h, --help      Show help message
 ```
 
@@ -45,8 +43,7 @@ Options:
 ┌─────────────────────────────────────────────────────────────────┐
 │                      generate.py                                │
 │                                                                 │
-│  Input: characters/aldric.json                                   │
-│         characters/<name>/items/<item>.json                     │
+│  Input: characters/aldric.json (includes embedded items)        │
 └─────────────────────────────────────────────────────────────────┘
                               │
         ┌─────────────────────┼─────────────────────┐
@@ -64,31 +61,70 @@ Options:
 ```
 d_and_d/
 ├── characters/
-│   ├── aldric/                   # Example character folder
-│   │   ├── aldric.json           # Character data (Aldric the Brave)
-│   │   └── items/
-│   │       └── flamebrand_longsword.json  # Example item
-│   └── <name>/                   # Each character in own folder
-│       ├── <name>.json           # Character data
-│       └── items/
-│           └── <item>.json       # Character's magic items
+│   ├── aldric.json              # Character with embedded items
+│   ├── thorek.json              # Character with embedded items
+│   └── kazrek.json              # Character data
 ├── images/
-│   ├── aldric/                   # Example character images + item
-│   └── <name>/                   # Character-specific images
-├── lib/                          # Core library (OOP architecture)
-│   ├── renderers.py              # Content type renderers
-│   ├── character_renderers.py    # Character-specific renderers
-│   ├── components.py             # Section, Column, Page classes
-│   └── document.py               # Document classes
+│   ├── aldric/                  # Character-specific images
+│   ├── thorek/                  # Including item images
+│   └── kazrek/
+├── lib/                         # Core library (OOP architecture)
+│   ├── __init__.py              # Package exports
+│   ├── renderers.py             # Content type registry & base renderer
+│   ├── character_renderers.py   # Character-specific renderers
+│   ├── components.py            # Layout components (Row, Col, Grid, Section, Page)
+│   ├── document.py              # Document classes (CharacterDocument, ItemDocument)
+│   └── pages.py                 # Page builders (StatsPage, SpellcastingPage, etc.)
 ├── styles/
-│   ├── sheet.css                 # Character sheet styling
-│   └── item.css                  # Magic item card styling
-├── output/                       # Generated files (gitignored)
+│   ├── base.css                 # Shared variables, reset, box component, layout
+│   ├── components.css           # Shared UI components (section box, tables, etc.)
+│   ├── sheet.css                # Character sheet-specific styling
+│   └── item.css                 # Magic item card styling
+├── docs/
+│   └── CHARACTER_SCHEMA.md      # JSON schema documentation
+├── output/                      # Generated files (gitignored)
 │   └── <CharacterName>/
 │       ├── *.html
 │       └── *.pdf
-└── generate.py                   # Main generator CLI
+└── generate.py                  # Main generator CLI
 ```
+
+## Architecture
+
+### OOP Design
+
+The generator uses an object-oriented architecture:
+
+- **Document Classes** (`lib/document.py`)
+  - `Document` - Abstract base class
+  - `CharacterDocument` - 4-page character sheets
+  - `ItemDocument` - Magic item cards
+
+- **Page Builders** (`lib/pages.py`)
+  - `PageBuilder` - Abstract base class
+  - `StatsPage` - Page 1 (abilities, combat, equipment)
+  - `BackgroundPage` - Page 2 (appearance, backstory, allies)
+  - `SpellcastingPage` - Page 3 (spells and slots)
+  - `ReferencePage` - Page 4 (quick reference, companion)
+
+- **Layout Components** (`lib/components.py`)
+  - `Row` - Horizontal flex container
+  - `Col` - Vertical flex container
+  - `Grid` - CSS Grid container
+  - `Section` - Titled content box
+  - `Page` - Full page container
+
+- **Content Renderers** (`lib/renderers.py`, `lib/character_renderers.py`)
+  - Registry pattern for extensible content types
+  - Each renderer handles a specific content type (tables, properties, spells, etc.)
+
+### CSS Architecture
+
+Styles are layered for reusability:
+
+1. `base.css` - CSS variables, reset, box component, layout utilities
+2. `components.css` - Shared UI components (section boxes, tables, lists)
+3. `sheet.css` / `item.css` - Document-specific styles
 
 ## Requirements
 
@@ -103,9 +139,9 @@ Note: poppler and img2pdf are only required for `--compress` option.
 
 | Guide | Description |
 |-------|-------------|
-| [CREATE_CHARACTER.md](CREATE_CHARACTER.md) | Character sheet creation guide with examples |
-| [CREATE_ITEM.md](CREATE_ITEM.md) | Magic item card creation guide with content types |
-| [SCHEMA.md](SCHEMA.md) | Complete JSON schema reference for all document types |
+| [docs/SCHEMA.md](docs/SCHEMA.md) | Complete JSON schema for characters and items |
+| [docs/CREATE_CHARACTER.md](docs/CREATE_CHARACTER.md) | Step-by-step character creation guide |
+| [docs/CREATE_ITEM.md](docs/CREATE_ITEM.md) | Magic item creation guide |
 
 ## Document Types
 
@@ -117,6 +153,8 @@ Note: poppler and img2pdf are only required for `--compress` option.
 - Page 4: Quick reference, companion stats
 
 ### Magic Items
+Items are embedded in character JSON files under the `items` array. When using `--bundle`, item pages are appended after the character sheet.
+
 Single-page item cards with:
 - Header with image, name, rarity, attunement
 - Two-column layout with customizable sections
@@ -132,9 +170,9 @@ When printing manually from browser:
 
 ## Customizing Styles
 
-Edit `styles/sheet.css` for characters or `styles/item.css` for items.
+Edit `styles/base.css` for shared styles or `styles/sheet.css` / `styles/item.css` for document-specific styles.
 
-Key CSS variables:
+Key CSS variables (in `base.css`):
 ```css
 :root {
     --bg-page: #ffffff;
@@ -145,4 +183,3 @@ Key CSS variables:
     --font-body: 'Scada', sans-serif;
 }
 ```
-

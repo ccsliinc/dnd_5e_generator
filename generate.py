@@ -208,6 +208,10 @@ def generate(
     result = {"html": html_path, "pdf": None, "compressed": None}
     print(f"[HTML] {html_path}")
 
+    # Copy to stable "latest" filename
+    latest_html = doc_output_dir / f"{safe_name}.html"
+    shutil.copy2(html_path, latest_html)
+
     # Generate PDF if requested
     if pdf or compress:
         pdf_path = doc_output_dir / f"{safe_name}_{timestamp}.pdf"
@@ -221,6 +225,10 @@ def generate(
                 if compress_pdf(pdf_path, compressed_path, dpi):
                     result["compressed"] = compressed_path
                     print(f"[PRINT] {compressed_path} ({get_file_size(compressed_path)})")
+
+                    # Copy print version to stable "latest" filename
+                    latest_pdf = doc_output_dir / f"{safe_name}.pdf"
+                    shutil.copy2(compressed_path, latest_pdf)
 
     # Open files if requested
     if open_files:
@@ -240,49 +248,25 @@ def find_json_file(input_arg: str) -> Optional[Path]:
 
     # Try as absolute/relative path first
     path = Path(input_arg)
-    if path.exists():
+    if path.is_file():
         return path
 
-    # Try in characters folder (old format: characters/<name>.json)
+    # Try in characters folder: "thorek" -> characters/thorek.json
+    path = characters_dir / f"{input_arg}.json"
+    if path.is_file():
+        return path
+
+    # Try with .json extension in characters folder
     path = characters_dir / input_arg
-    if path.exists():
+    if path.is_file():
         return path
-
-    # Try new format: characters/<name>/<name>.json
-    # e.g., "thorek.json" -> characters/thorek/thorek.json
-    name = input_arg.replace(".json", "")
-    path = characters_dir / name / input_arg
-    if path.exists():
-        return path
-
-    # Try just the name without .json: "thorek" -> characters/thorek/thorek.json
-    path = characters_dir / input_arg / f"{input_arg}.json"
-    if path.exists():
-        return path
-
-    # Try searching for items under characters/*/items/
-    for item_path in characters_dir.glob(f"*/items/{input_arg}"):
-        if item_path.exists():
-            return item_path
-
-    # Try partial match for items
-    for item_path in characters_dir.glob(f"*/items/*{input_arg}*"):
-        if item_path.exists():
-            return item_path
 
     return None
 
 
-def find_character_items(char_json_path: Path) -> list[Path]:
-    """Find all item JSON files for a character."""
-    # Look for items folder relative to character JSON
-    # New pattern: characters/<name>/<name>.json -> characters/<name>/items/*.json
-    # The items folder is now a sibling of the character JSON file
-    items_dir = char_json_path.parent / "items"
-
-    if items_dir.exists():
-        return sorted(items_dir.glob("*.json"))
-    return []
+def get_embedded_items(char_data: dict) -> list[dict]:
+    """Get embedded items from character data."""
+    return char_data.get("items", [])
 
 
 def generate_bundle(
@@ -315,11 +299,11 @@ def generate_bundle(
     char_doc = CharacterDocument(char_data)
     char_html = char_doc.build_html()
 
-    # Find character's items
-    item_files = find_character_items(json_path)
+    # Get embedded items from character data
+    embedded_items = get_embedded_items(char_data)
 
     # If we have items, inject the item CSS into the character HTML
-    if item_files:
+    if embedded_items:
         item_css = char_doc.load_css("item.css")
         # Insert item CSS before </style>
         style_end = char_html.find("</style>")
@@ -329,10 +313,7 @@ def generate_bundle(
     # Generate item HTML
     items_html_parts = []
 
-    for item_path in item_files:
-        with open(item_path, 'r', encoding='utf-8') as f:
-            item_data = json.load(f)
-
+    for item_data in embedded_items:
         base_path = "../.."  # Relative path from output/<char>/ to project root
         item_doc = ItemDocument(item_data, base_path)
 
@@ -369,8 +350,12 @@ def generate_bundle(
 
     result = {"html": html_path, "pdf": None, "compressed": None}
     print(f"[HTML] {html_path}")
-    if item_files:
-        print(f"       (includes {len(item_files)} item(s))")
+    if embedded_items:
+        print(f"       (includes {len(embedded_items)} item(s))")
+
+    # Copy to stable "latest" filename
+    latest_html = doc_output_dir / f"{safe_name}.html"
+    shutil.copy2(html_path, latest_html)
 
     # Generate PDF if requested
     if pdf or compress:
@@ -385,6 +370,10 @@ def generate_bundle(
                 if compress_pdf(pdf_path, compressed_path, dpi):
                     result["compressed"] = compressed_path
                     print(f"[PRINT] {compressed_path} ({get_file_size(compressed_path)})")
+
+                    # Copy print version to stable "latest" filename
+                    latest_pdf = doc_output_dir / f"{safe_name}.pdf"
+                    shutil.copy2(compressed_path, latest_pdf)
 
     # Open files if requested
     if open_files:
@@ -432,12 +421,10 @@ Examples:
             print(f"Error: Could not find {args.input}")
             sys.exit(1)
     else:
-        # Default to first character JSON in characters/<name>/<name>.json pattern
+        # Default to first character JSON in characters/*.json
         base_dir = Path(__file__).parent
         characters_dir = base_dir / "characters"
-        json_files = list(characters_dir.glob("*/*.json"))
-        # Filter to only character files (not items)
-        json_files = [f for f in json_files if "items" not in str(f)]
+        json_files = sorted(characters_dir.glob("*.json"))
         if json_files:
             json_path = json_files[0]
         else:

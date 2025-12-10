@@ -1,43 +1,42 @@
-# D&D 5e Magic Item Creation Guide
+# Magic Item Creation Guide
 
-Create custom magic item cards from JSON data files.
+Create custom magic item cards embedded in character JSON files.
 
 ## Quick Start
 
-1. Create a JSON file in `characters/<character_name>/items/`
-2. Run: `python3 generate.py characters/<name>/items/<item>.json --compress --open`
+1. Add item to `items` array in `characters/<name>.json`
+2. Add item images to `images/<name>/`
+3. Generate with bundle flag: `python3 generate.py <name> --bundle --compress --open`
 
-## JSON Structure
+## Item Structure
+
+Items are embedded in the character's `items` array. Each item generates a separate page.
 
 ```json
 {
-  "type": "item",
-  "meta": {
-    "version": "1.0"
-  },
-  "header": {
-    "name": "Item Name",
-    "subtitle": "Flavor text or origin",
-    "image": "images/<character>/item_image.jpg",
-    "background_svg": "images/<character>/decoration.svg",
-    "stats": [
-      { "label": "Rarity", "value": "Rare", "class": "rarity-rare" },
-      { "label": "Attunement", "value": "Required by..." },
-      { "label": "Weight", "value": "1 lb" }
-    ]
-  },
-  "footer": {
-    "left": "Item identifier or maker",
-    "right": "Market Value: X gp"
-  },
-  "pages": [
+  "items": [
     {
-      "layout": {
-        "columns": 2,
-        "gap": "3mm"
+      "type": "item",
+      "meta": { "version": "1.0" },
+      "header": {
+        "name": "Item Name",
+        "subtitle": "Flavor text or origin",
+        "image": "../../images/<name>/item_image.jpg",
+        "stats": [
+          { "label": "Rarity", "value": "Rare", "class": "rarity-rare" },
+          { "label": "Attunement", "value": "Required by..." },
+          { "label": "Weight", "value": "1 lb" }
+        ]
       },
-      "sections": [
-        // Section definitions go here
+      "footer": {
+        "left": "Item identifier or maker",
+        "right": "Market Value: X gp"
+      },
+      "pages": [
+        {
+          "layout": { "columns": 2, "gap": "3mm" },
+          "sections": [ ... ]
+        }
       ]
     }
   ]
@@ -55,7 +54,7 @@ Use these CSS classes for the rarity stat value:
 
 ## Section Definition
 
-Each section in a page has:
+Each section in a page:
 
 ```json
 {
@@ -79,7 +78,7 @@ Plain paragraph text.
 ```
 
 ### text_italic
-Italic paragraph (for descriptions/flavor text).
+Italic paragraph for descriptions.
 ```json
 {
   "type": "text_italic",
@@ -219,7 +218,7 @@ Multiple content blocks in sequence.
   "header": {
     "name": "Sword of Flames",
     "subtitle": "Forged in dragon fire",
-    "image": "images/character/sword.jpg",
+    "image": "../../images/hero/sword.jpg",
     "stats": [
       { "label": "Rarity", "value": "Very Rare", "class": "rarity-very-rare" },
       { "label": "Attunement", "value": "Any" },
@@ -277,21 +276,18 @@ Multiple content blocks in sequence.
 
 ## Tips
 
-- Use `variant: "lore"` for description sections to get the special background
-- Use `flex_grow: true` on the last section in a column to fill remaining space
-- Image paths are relative to the project root (e.g., `images/character/item.jpg`)
-- SVG decorations are optional - leave `background_svg` empty if not needed
-- Support for **bold** text in all text content via markdown
+- Use `variant: "lore"` for description sections (special background)
+- Use `flex_grow: true` on the last section in a column to fill space
+- Image paths use `../../images/<name>/` (relative from output folder)
+- SVG decorations are optional (`background_svg` field)
+- Support for **bold** text in all content via markdown
 
-## Generation
+## Generation Commands
 
 ```bash
-# HTML only
-python3 generate.py characters/name/items/item.json
+# Character only
+python3 generate.py thorek --compress --open
 
-# With PDF
-python3 generate.py characters/name/items/item.json --pdf
-
-# Full pipeline with compressed PDF
-python3 generate.py characters/name/items/item.json --compress --open
+# Character + all embedded items
+python3 generate.py thorek --bundle --compress --open
 ```

@@ -248,3 +248,126 @@
 .market-value {
     font-weight: 600;
 }
+
+/* -----------------------------------------------------------------
+   7. SCALING TABLE
+   ----------------------------------------------------------------- */
+.scaling-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7pt;
+}
+
+.scaling-table th {
+    background: var(--bg-label);
+    border: 1px solid var(--border-light);
+    padding: 1.5mm 2mm;
+    font-weight: 700;
+    text-align: center;
+    font-size: 6pt;
+    text-transform: uppercase;
+    color: var(--text-label);
+}
+
+.scaling-table td {
+    border: 1px solid var(--border-light);
+    padding: 1.5mm 2mm;
+    text-align: center;
+}
+
+.scaling-table tr:nth-child(even) td {
+    background: rgba(245, 240, 230, 0.5);
+}
+
+.scaling-table .highlight-row td {
+    background: var(--accent-highlight);
+    font-weight: 600;
+}
+
+/* -----------------------------------------------------------------
+   8. ABILITY BLOCKS (Subsections with bullets)
+   ----------------------------------------------------------------- */
+.ability-block {
+    margin-bottom: 2mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dotted var(--border-light);
+}
+
+.ability-block:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.ability-name {
+    font-weight: 700;
+    font-size: 8pt;
+    color: var(--accent-primary);
+    margin-bottom: 1mm;
+}
+
+.ability-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ability-bullets li {
+    font-size: 7pt;
+    padding-left: 3mm;
+    position: relative;
+    margin-bottom: 0.5mm;
+    line-height: 1.4;
+}
+
+.ability-bullets li::before {
+    content: '◆';
+    color: var(--accent-secondary);
+    font-size: 5pt;
+    position: absolute;
+    left: 0;
+    top: 0.5mm;
+}
+
+/* -----------------------------------------------------------------
+   9. LORE SECTION
+   ----------------------------------------------------------------- */
+.lore-quote {
+    font-style: italic;
+    font-size: 7.5pt;
+    line-height: 1.5;
+    text-align: justify;
+    padding: 2mm 3mm;
+    background: rgba(139, 69, 19, 0.05);
+    border-left: 2px solid var(--accent-primary);
+    margin-bottom: 2mm;
+}
+
+.lore-attribution {
+    font-size: 6pt;
+    text-align: right;
+    color: var(--text-label);
+    font-style: normal;
+    margin-top: 1mm;
+}
+
+/* -----------------------------------------------------------------
+   10. LEGENDARY TALES
+   ----------------------------------------------------------------- */
+.legendary-tale {
+    display: flex;
+    gap: 2mm;
+    margin-bottom: 1.5mm;
+    font-size: 7pt;
+}
+
+.tale-title {
+    font-weight: 700;
+    color: var(--accent-primary);
+    min-width: 30mm;
+    flex-shrink: 0;
+}
+
+.tale-desc {
+    color: var(--text-secondary);
+}
