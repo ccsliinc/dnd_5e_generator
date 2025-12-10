@@ -13,14 +13,14 @@ Create custom D&D 5e character sheets from JSON data files.
 ```
 d_and_d/
 ├── characters/
-│   └── thorek.json           # Character data + embedded items
+│   └── aldric.json           # Character data + embedded items
 ├── images/
-│   └── thorek/
+│   └── aldric/
 │       ├── portrait.jpg      # Main portrait
 │       ├── scene1.jpg        # Gallery images
-│       └── ironjaw.jpg       # Companion image
+│       └── companion.jpg     # Companion image
 └── output/
-    └── Thorek_Bearward/      # Generated files
+    └── Aldric_the_Brave/     # Generated files
         ├── *.html
         └── *.pdf
 ```
@@ -31,10 +31,10 @@ d_and_d/
 {
   "meta": {
     "version": "1.0",
-    "portrait": "../../images/thorek/portrait.jpg",
+    "portrait": "../../images/aldric/portrait.jpg",
     "gallery": [
-      "../../images/thorek/image1.jpg",
-      "../../images/thorek/image2.jpg"
+      "../../images/aldric/image1.jpg",
+      "../../images/aldric/image2.jpg"
     ]
   },
   "header": {
@@ -111,10 +111,10 @@ Six scores: Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma
 ```json
 "meta": {
   "version": "1.0",
-  "portrait": "../../images/thorek/portrait.jpg",
+  "portrait": "../../images/aldric/portrait.jpg",
   "gallery": [
-    "../../images/thorek/forest.jpg",
-    "../../images/thorek/combat.jpg"
+    "../../images/aldric/forest.jpg",
+    "../../images/aldric/combat.jpg"
   ]
 }
 ```
@@ -123,7 +123,7 @@ Six scores: Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma
 
 ```json
 "header": {
-  "character_name": "Thorek Bearward",
+  "character_name": "Aldric the Brave",
   "class_level": "Ranger 3",
   "background": "Folk Hero",
   "player_name": "Joe",
@@ -288,7 +288,7 @@ Six scores: Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma
   "armor_class": 12,
   "hit_points": 25,
   "speed": "40 ft, climb 30 ft",
-  "image": "../../images/thorek/ironjaw.jpg",
+  "image": "../../images/aldric/ironjaw.jpg",
   "abilities": {
     "str": 16, "dex": 12, "con": 14,
     "int": 2, "wis": 13, "cha": 7
@@ -334,14 +334,14 @@ Set to `[]` if no items.
 
 ```bash
 # HTML only
-python3 generate.py thorek
+python3 generate.py aldric
 
 # With PDF
-python3 generate.py thorek --pdf
+python3 generate.py aldric --pdf
 
 # Full pipeline with compressed PDF
-python3 generate.py thorek --compress --open
+python3 generate.py aldric --compress --open
 
 # Include magic items in output
-python3 generate.py thorek --bundle --compress --open
+python3 generate.py aldric --bundle --compress --open
 ```
