@@ -3,7 +3,7 @@
 
 from .renderers import ContentRenderer, get_renderer, render_content
 from .document import Document, CharacterDocument, ItemDocument
-from .components import Section, Page, Column
+from .components import Row, Col, Grid, Section, Page, Column
 
 # Import character renderers to register them
 from . import character_renderers
@@ -15,6 +15,9 @@ __all__ = [
     'Document',
     'CharacterDocument',
     'ItemDocument',
+    'Row',
+    'Col',
+    'Grid',
     'Section',
     'Page',
     'Column',
