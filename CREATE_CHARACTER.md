@@ -1,249 +1,302 @@
 # D&D 5e Character Creation Guide
 
-You are helping create a D&D 5e character. Ask the user questions to fill out each section below, then generate a complete JSON file.
+Create custom character sheets from JSON data files.
 
-## Questions to Ask
+## Quick Start
 
-### 1. Basic Info
-- What is your character's name?
-- What class and level? (e.g., "Ranger 3", "Wizard 5")
-- What race? (e.g., Hill Dwarf, High Elf, Human)
-- What background? (e.g., Folk Hero, Sage, Criminal)
-- What alignment? (e.g., Neutral Good, Chaotic Neutral)
-- Current XP?
-- Player name? (optional)
-- Do you have a portrait image file? (stored in `images/[character_name]/`)
+1. Create a JSON file in `characters/`
+2. Add character images in `images/<character_name>/`
+3. Run: `python3 generate.py characters/<name>.json --compress --open`
 
-### 2. Ability Scores
-Ask for each: Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma
-(Standard array: 15, 14, 13, 12, 10, 8 or point buy or rolled)
-
-### 3. Proficiencies
-- Which saving throws are you proficient in? (usually 2, based on class)
-- Which skills are you proficient in? (number varies by class/background)
-
-Skills list: Acrobatics, Animal Handling, Arcana, Athletics, Deception, History, Insight, Intimidation, Investigation, Medicine, Nature, Perception, Performance, Persuasion, Religion, Sleight of Hand, Stealth, Survival
-
-### 4. Combat Stats
-- Armor Class?
-- Speed? (usually 30ft, dwarves 25ft)
-- Hit Point Maximum?
-- Hit Dice? (e.g., "3d10" for level 3 ranger)
-
-### 5. Attacks (up to 5)
-For each attack ask:
-- Weapon/attack name?
-- Attack bonus? (e.g., "+5")
-- Damage and type? (e.g., "1d8+3 slashing")
-
-### 6. Personality
-- Personality traits? (1-2 sentences)
-- Ideals? (what drives them)
-- Bonds? (connections to people/places)
-- Flaws? (weaknesses)
-
-### 7. Equipment
-List all equipment items (armor, weapons, adventuring gear, etc.)
-
-### 8. Currency
-How much of each: CP, SP, EP, GP, PP?
-
-### 9. Features & Traits
-List racial features, class features, and background features
-
-### 10. Proficiencies & Languages
-List all: armor, weapon, tool proficiencies, and languages known
-
-### 11. Appearance
-- Age?
-- Height?
-- Weight?
-- Eye color?
-- Skin?
-- Hair?
-- Physical description? (1-2 sentences)
-
-### 12. Backstory
-Ask for 2-3 paragraphs of character history. Write in proper prose without dashes.
-
-### 13. Allies & Organizations
-- Organization or ally name?
-- Description of relationship?
-
-### 14. Spellcasting (if applicable)
-- Spellcasting class?
-- Spellcasting ability? (Int/Wis/Cha)
-- Spell Save DC?
-- Spell Attack Bonus?
-- Cantrips known?
-- For each spell level (1-9): slots total and spells known (with prepared status)
-
----
-
-## JSON Template
-
-After gathering all info, generate this JSON structure:
+## JSON Structure
 
 ```json
 {
   "meta": {
     "version": "1.0",
-    "generated": null,
-    "portrait": "../../images/[character_name]/portrait.jpg",
+    "portrait": "../../images/<character>/portrait.jpg",
     "gallery": [
-      "../../images/[character_name]/image1.jpg",
-      "../../images/[character_name]/image2.jpg"
+      "../../images/<character>/image1.jpg",
+      "../../images/<character>/image2.jpg"
     ]
   },
-
   "header": {
-    "character_name": "",
-    "class_level": "",
-    "background": "",
-    "player_name": "",
-    "race": "",
-    "alignment": "",
-    "experience_points": 0
+    "character_name": "Character Name",
+    "class_level": "Ranger 3",
+    "background": "Folk Hero",
+    "player_name": "Player",
+    "race": "Hill Dwarf",
+    "alignment": "Neutral Good",
+    "experience_points": 900
   },
+  "abilities": { ... },
+  "saving_throws": { ... },
+  "skills": { ... },
+  "combat": { ... },
+  "attacks": [ ... ],
+  "personality": { ... },
+  "equipment": [ ... ],
+  "spellcasting": { ... },
+  "companion": { ... }
+}
+```
 
-  "abilities": {
-    "strength":     { "score": 10 },
-    "dexterity":    { "score": 10 },
-    "constitution": { "score": 10 },
-    "intelligence": { "score": 10 },
-    "wisdom":       { "score": 10 },
-    "charisma":     { "score": 10 }
+See `SCHEMA.md` for complete field documentation.
+
+## Questions to Gather
+
+### 1. Basic Info
+- Character name, class, level, race, background
+- Alignment, XP, player name
+- Portrait image file
+
+### 2. Ability Scores
+Six scores: Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma
+(Standard array: 15, 14, 13, 12, 10, 8)
+
+### 3. Proficiencies
+- Saving throws (usually 2 based on class)
+- Skills (varies by class/background)
+
+### 4. Combat Stats
+- Armor Class, Speed, Hit Points, Hit Dice
+
+### 5. Attacks
+- Weapon name, attack bonus, damage/type
+
+### 6. Personality
+- Traits, Ideals, Bonds, Flaws
+
+### 7. Equipment & Currency
+- All items and coin amounts
+
+### 8. Features & Traits
+- Racial, class, and background features
+
+### 9. Appearance & Backstory
+- Physical description, character history
+
+### 10. Spellcasting (if applicable)
+- Spellcasting ability, DC, attack bonus
+- Cantrips and spells by level
+
+## JSON Sections
+
+### meta
+
+```json
+"meta": {
+  "version": "1.0",
+  "portrait": "../../images/thorek/portrait.jpg",
+  "gallery": [
+    "../../images/thorek/forest.jpg",
+    "../../images/thorek/combat.jpg"
+  ]
+}
+```
+
+### header
+
+```json
+"header": {
+  "character_name": "Thorek Bearward",
+  "class_level": "Ranger 3",
+  "background": "Folk Hero",
+  "player_name": "Joe",
+  "race": "Hill Dwarf",
+  "alignment": "Neutral Good",
+  "experience_points": 900
+}
+```
+
+### abilities
+
+```json
+"abilities": {
+  "strength":     { "score": 16 },
+  "dexterity":    { "score": 14 },
+  "constitution": { "score": 15 },
+  "intelligence": { "score": 10 },
+  "wisdom":       { "score": 12 },
+  "charisma":     { "score": 8 }
+}
+```
+
+### saving_throws
+
+```json
+"saving_throws": {
+  "strength":     { "proficient": true },
+  "dexterity":    { "proficient": true },
+  "constitution": { "proficient": false },
+  "intelligence": { "proficient": false },
+  "wisdom":       { "proficient": false },
+  "charisma":     { "proficient": false }
+}
+```
+
+### skills
+
+```json
+"skills": {
+  "acrobatics":       { "proficient": false },
+  "animal_handling":  { "proficient": true },
+  "arcana":           { "proficient": false },
+  "athletics":        { "proficient": true },
+  "deception":        { "proficient": false },
+  "history":          { "proficient": false },
+  "insight":          { "proficient": false },
+  "intimidation":     { "proficient": false },
+  "investigation":    { "proficient": false },
+  "medicine":         { "proficient": false },
+  "nature":           { "proficient": true },
+  "perception":       { "proficient": true },
+  "performance":      { "proficient": false },
+  "persuasion":       { "proficient": false },
+  "religion":         { "proficient": false },
+  "sleight_of_hand":  { "proficient": false },
+  "stealth":          { "proficient": true },
+  "survival":         { "proficient": true }
+}
+```
+
+### combat
+
+```json
+"combat": {
+  "armor_class": 16,
+  "initiative": null,
+  "speed": "25 ft",
+  "hp_maximum": 30,
+  "hp_current": null,
+  "hp_temporary": null,
+  "hit_dice": {
+    "total": "3d10",
+    "current": null
   },
+  "death_saves": {
+    "successes": 0,
+    "failures": 0
+  }
+}
+```
 
-  "proficiency_bonus": 2,
-  "inspiration": false,
+### attacks
 
-  "saving_throws": {
-    "strength":     { "proficient": false },
-    "dexterity":    { "proficient": false },
-    "constitution": { "proficient": false },
-    "intelligence": { "proficient": false },
-    "wisdom":       { "proficient": false },
-    "charisma":     { "proficient": false }
+```json
+"attacks": [
+  {
+    "name": "Battleaxe",
+    "atk_bonus": "+5",
+    "damage_type": "1d8+3 slashing"
   },
+  {
+    "name": "Longbow",
+    "atk_bonus": "+4",
+    "damage_type": "1d8+2 piercing"
+  }
+]
+```
 
-  "skills": {
-    "acrobatics":       { "proficient": false },
-    "animal_handling":  { "proficient": false },
-    "arcana":           { "proficient": false },
-    "athletics":        { "proficient": false },
-    "deception":        { "proficient": false },
-    "history":          { "proficient": false },
-    "insight":          { "proficient": false },
-    "intimidation":     { "proficient": false },
-    "investigation":    { "proficient": false },
-    "medicine":         { "proficient": false },
-    "nature":           { "proficient": false },
-    "perception":       { "proficient": false },
-    "performance":      { "proficient": false },
-    "persuasion":       { "proficient": false },
-    "religion":         { "proficient": false },
-    "sleight_of_hand":  { "proficient": false },
-    "stealth":          { "proficient": false },
-    "survival":         { "proficient": false }
-  },
+### personality
 
-  "combat": {
-    "armor_class": 10,
-    "initiative": null,
-    "speed": 30,
-    "hp_maximum": 10,
-    "hp_current": null,
-    "hp_temporary": null,
-    "hit_dice": {
-      "total": "1d8",
-      "current": null
-    },
-    "death_saves": {
-      "successes": 0,
-      "failures": 0
-    }
-  },
+```json
+"personality": {
+  "traits": "I watch over my friends as if they were a litter of newborn pups.",
+  "ideals": "Nature. The natural world is more important than all constructs of civilization.",
+  "bonds": "I will bring terrible wrath upon those who harm nature.",
+  "flaws": "I am slow to trust the words of any civilized folk."
+}
+```
 
-  "attacks": [
-    {
-      "name": "Weapon",
-      "atk_bonus": "+0",
-      "damage_type": "1d6 type"
-    }
-  ],
+### equipment
 
-  "personality": {
-    "traits": "",
-    "ideals": "",
-    "bonds": "",
-    "flaws": ""
-  },
+```json
+"proficiencies_languages": [
+  "Light armor", "Medium armor", "Shields",
+  "Simple weapons", "Martial weapons",
+  "Common", "Dwarvish", "Sylvan"
+],
 
-  "proficiencies_languages": [],
+"equipment": [
+  "Scale mail",
+  "Battleaxe",
+  "Handaxe (2)",
+  "Longbow",
+  "Quiver with 20 arrows",
+  "Explorer's pack"
+],
 
-  "equipment": [],
+"currency": {
+  "cp": 0, "sp": 5, "ep": 0, "gp": 45, "pp": 0
+}
+```
 
-  "currency": {
-    "cp": 0,
-    "sp": 0,
-    "ep": 0,
-    "gp": 0,
-    "pp": 0
-  },
+### spellcasting
 
-  "features_traits": [],
-
-  "appearance": {
-    "age": "",
-    "height": "",
-    "weight": "",
-    "eyes": "",
-    "skin": "",
-    "hair": ""
-  },
-
-  "character_appearance_description": "",
-
-  "backstory": "",
-
-  "allies_organizations": {
-    "name": "",
-    "description": ""
-  },
-
-  "additional_features_traits": [],
-
-  "treasure": [],
-
-  "spellcasting": {
-    "class": "",
-    "ability": "",
-    "spell_save_dc": 0,
-    "spell_attack_bonus": "+0",
-    "cantrips": [],
-    "spells": {
-      "1": { "slots_total": 0, "slots_expended": 0, "known": [] },
-      "2": { "slots_total": 0, "slots_expended": 0, "known": [] },
-      "3": { "slots_total": 0, "slots_expended": 0, "known": [] },
-      "4": { "slots_total": 0, "slots_expended": 0, "known": [] },
-      "5": { "slots_total": 0, "slots_expended": 0, "known": [] },
-      "6": { "slots_total": 0, "slots_expended": 0, "known": [] },
-      "7": { "slots_total": 0, "slots_expended": 0, "known": [] },
-      "8": { "slots_total": 0, "slots_expended": 0, "known": [] },
-      "9": { "slots_total": 0, "slots_expended": 0, "known": [] }
+```json
+"spellcasting": {
+  "class": "Ranger",
+  "ability": "WIS",
+  "spell_save_dc": 13,
+  "spell_attack_bonus": "+5",
+  "cantrips": [],
+  "spells": {
+    "1": {
+      "slots_total": 3,
+      "slots_expended": 0,
+      "known": [
+        { "name": "Cure Wounds", "prepared": true },
+        { "name": "Hunter's Mark", "prepared": true }
+      ]
     }
   }
 }
 ```
 
-## Notes
+### companion (optional)
 
-- For backstory, use `\n\n` between paragraphs
-- Spells format: `{ "name": "Spell Name", "prepared": true }`
-- Calculate proficiency bonus from level: 1-4=+2, 5-8=+3, 9-12=+4, etc.
-- Initiative is calculated automatically from Dexterity if left null
-- Save the file as `characters/[name].json`
-- Store images in `images/[name]/` folder (use lowercase, underscores)
-- Image paths use `../../images/[name]/` (relative from characters/ folder)
-- Run `./tools/build-sheet.sh characters/[name].json` to generate
+```json
+"companion": {
+  "name": "Ironjaw",
+  "size": "Medium",
+  "type": "Beast (Black Bear)",
+  "armor_class": 12,
+  "hit_points": 25,
+  "speed": "40 ft, climb 30 ft",
+  "image": "../../images/thorek/ironjaw.jpg",
+  "abilities": {
+    "str": 16, "dex": 12, "con": 14,
+    "int": 2, "wis": 13, "cha": 7
+  },
+  "traits": [
+    { "name": "Keen Smell", "description": "Advantage on Perception checks using smell." }
+  ],
+  "actions": [
+    { "name": "Bite", "description": "+5 to hit, 1d6+3 piercing." }
+  ]
+}
+```
+
+Set to `null` if no companion.
+
+## Tips
+
+- Image paths use `../../images/<name>/` (relative from characters/ folder)
+- Use `\n\n` for paragraph breaks in backstory
+- Spell format: `{ "name": "Spell Name", "prepared": true/false }`
+- Proficiency bonus: 1-4=+2, 5-8=+3, 9-12=+4, 13-16=+5, 17-20=+6
+- Initiative is calculated from DEX if left null
+
+## Generation
+
+```bash
+# HTML only
+python3 generate.py characters/thorek.json
+
+# With PDF
+python3 generate.py characters/thorek.json --pdf
+
+# Full pipeline with compressed PDF
+python3 generate.py characters/thorek.json --compress --open
+```

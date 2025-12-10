@@ -1,10 +1,24 @@
-# Character Sheet JSON Schema
+# D&D 5e Sheet JSON Schema
 
-Complete reference for all available fields in character JSON files.
+Complete reference for all available fields in character and item JSON files.
+
+---
+
+## Document Types
+
+This generator supports two document types:
+- **Character Sheets** - 4-page character sheets (default)
+- **Magic Items** - Single-page item cards
+
+The document type is determined by the `"type"` field in the JSON root:
+- `"type": "item"` - Magic item
+- No type field or any other value - Character sheet
 
 ---
 
 ## Table of Contents
+
+### Character Schema
 - [meta](#meta) - File metadata and images
 - [header](#header) - Basic character info
 - [abilities](#abilities) - Ability scores (STR, DEX, etc.)
@@ -22,7 +36,15 @@ Complete reference for all available fields in character JSON files.
 - [companion](#companion) - Beast companion (optional)
 - [reference](#reference) - Quick reference cards (Page 4)
 
+### Item Schema
+- [item-header](#item-header) - Item name, image, stats
+- [item-footer](#item-footer) - Identifier and value
+- [item-pages](#item-pages) - Page layout and sections
+- [content-types](#content-types) - Available content blocks
+
 ---
+
+# Character Schema
 
 ## meta
 
@@ -627,3 +649,308 @@ A bare-minimum character with only required fields:
 ```
 
 All other fields will use sensible defaults (empty arrays, blank strings, etc.).
+
+---
+
+# Item Schema
+
+Magic items use a different structure with `"type": "item"` at the root.
+
+## Item Structure Overview
+
+```json
+{
+  "type": "item",
+  "meta": { "version": "1.0" },
+  "header": { ... },
+  "footer": { ... },
+  "pages": [ ... ]
+}
+```
+
+---
+
+## item-header
+
+Item identification and display information.
+
+```json
+"header": {
+  "name": "Ring of the Wild Hunt",
+  "subtitle": "Forged in the Moonwell of Eternal Spring",
+  "image": "images/character/item.jpg",
+  "background_svg": "images/character/decoration.svg",
+  "stats": [
+    { "label": "Rarity", "value": "Rare", "class": "rarity-rare" },
+    { "label": "Attunement", "value": "Beast Master Ranger" },
+    { "label": "Weight", "value": "0.1 lbs" }
+  ]
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | string | Item name (displayed large) |
+| `subtitle` | string | Flavor text or origin (optional) |
+| `image` | string | Path to item image |
+| `background_svg` | string | Path to SVG decoration (optional) |
+| `stats` | array | Stat badges displayed below title |
+
+**Rarity CSS classes**: `rarity-common`, `rarity-uncommon`, `rarity-rare`, `rarity-very-rare`, `rarity-legendary`
+
+---
+
+## item-footer
+
+Footer information.
+
+```json
+"footer": {
+  "left": "Item identifier or maker info",
+  "right": "Market Value: 5,000 gp"
+}
+```
+
+---
+
+## item-pages
+
+Array of page definitions. Each page contains layout and sections.
+
+```json
+"pages": [
+  {
+    "layout": {
+      "columns": 2,
+      "gap": "3mm"
+    },
+    "sections": [ ... ]
+  }
+]
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `layout.columns` | integer | Number of columns (1 or 2) |
+| `layout.gap` | string | Gap between columns (CSS value) |
+| `sections` | array | Section definitions |
+
+---
+
+## Section Definition
+
+Each section in a page:
+
+```json
+{
+  "column": 1,
+  "title": "Section Title",
+  "variant": "default",
+  "flex_grow": false,
+  "content": { ... }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `column` | integer | Which column (1 or 2) |
+| `title` | string/null | Section title (null = no title bar) |
+| `variant` | string | `"default"` or `"lore"` (special background) |
+| `flex_grow` | boolean | Fill remaining vertical space |
+| `content` | object | Content type object |
+
+---
+
+## content-types
+
+### text
+
+Plain paragraph text.
+
+```json
+{ "type": "text", "text": "Content with **bold** support." }
+```
+
+### text_italic
+
+Italic paragraph for descriptions.
+
+```json
+{ "type": "text_italic", "text": "This ancient ring glows..." }
+```
+
+### bullets
+
+Bullet point list.
+
+```json
+{
+  "type": "bullets",
+  "items": ["First point", "Second with **bold**"]
+}
+```
+
+### properties
+
+Icon + name + description rows.
+
+```json
+{
+  "type": "properties",
+  "items": [
+    { "icon": "⚔", "name": "Enhanced Damage", "desc": "+2 to damage" }
+  ]
+}
+```
+
+### table
+
+Data table with optional footer.
+
+```json
+{
+  "type": "table",
+  "columns": ["Level", "Bonus"],
+  "rows": [["3", "+1"], ["5", "+2"]],
+  "footer": "* Optional footnote"
+}
+```
+
+### quote
+
+Lore quote with attribution.
+
+```json
+{
+  "type": "quote",
+  "text": "The ring was forged...",
+  "attribution": "— From the Archives"
+}
+```
+
+### comparison
+
+Before/after stat rows.
+
+```json
+{
+  "type": "comparison",
+  "items": [
+    { "before": "HP: 19", "after": "HP: 25 (+31%)" }
+  ]
+}
+```
+
+### tales
+
+Title + description pairs.
+
+```json
+{
+  "type": "tales",
+  "items": [
+    { "title": "Battle of X", "desc": "The item saved a kingdom" }
+  ]
+}
+```
+
+### subsections
+
+Named groups with bullet lists.
+
+```json
+{
+  "type": "subsections",
+  "items": [
+    {
+      "name": "Subsection Name",
+      "bullets": ["Point 1", "Point 2"]
+    }
+  ]
+}
+```
+
+### synergy
+
+Special composite for companion effects.
+
+```json
+{
+  "type": "synergy",
+  "header": {
+    "icon": "🐻",
+    "title": "Synergy with Companion",
+    "subtitle": "Character's Animal"
+  },
+  "comparisons": [
+    { "before": "HP: 19", "after": "HP: 25" }
+  ],
+  "subsections": [
+    { "name": "Tactics", "bullets": ["Point 1"] }
+  ]
+}
+```
+
+### mixed
+
+Multiple content blocks in sequence.
+
+```json
+{
+  "type": "mixed",
+  "blocks": [
+    { "type": "quote", "text": "...", "attribution": "..." },
+    { "type": "tales", "items": [...] }
+  ]
+}
+```
+
+---
+
+## Complete Item Example
+
+```json
+{
+  "type": "item",
+  "meta": { "version": "1.0" },
+  "header": {
+    "name": "Sword of Flames",
+    "subtitle": "Forged in dragon fire",
+    "image": "images/hero/sword.jpg",
+    "stats": [
+      { "label": "Rarity", "value": "Rare", "class": "rarity-rare" },
+      { "label": "Type", "value": "Longsword" }
+    ]
+  },
+  "footer": {
+    "left": "Crafted by Smith",
+    "right": "Value: 5,000 gp"
+  },
+  "pages": [
+    {
+      "layout": { "columns": 2 },
+      "sections": [
+        {
+          "column": 1,
+          "title": "Description",
+          "variant": "lore",
+          "content": {
+            "type": "text_italic",
+            "text": "The blade glows with inner fire..."
+          }
+        },
+        {
+          "column": 2,
+          "title": "Properties",
+          "content": {
+            "type": "properties",
+            "items": [
+              { "icon": "🔥", "name": "Flame", "desc": "+1d6 fire" }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+```

@@ -1,15 +1,31 @@
 #!/usr/bin/env python3
 """
-D&D 5e Character Sheet Generator v2
-Generates HTML character sheets from JSON data files.
-Uses external CSS for clean separation of concerns.
+D&D 5e Sheet Generator v3
+Generates HTML character sheets and item cards from JSON data files.
+Supports PDF generation and compression via Chrome headless.
+
+Usage:
+    python3 generate.py <input.json> [options]
+
+Options:
+    --pdf           Generate PDF via Chrome headless
+    --compress      Compress PDF for printing (implies --pdf)
+    --dpi <value>   DPI for compression (default: 150)
+    --open          Open output files when done
+    --output <dir>  Custom output directory
 """
 
+import argparse
 import json
+import os
+import re
+import shutil
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from datetime import datetime
-from typing import Any
+from typing import Any, Optional
 
 # =============================================================================
 # HTML TEMPLATES - Module-level constants for reusability
@@ -140,6 +156,42 @@ TPL_COMPANION_ACTION = '''
 
 
 # =============================================================================
+# ITEM TEMPLATES
+# =============================================================================
+
+TPL_ITEM_PROPERTY = '''
+                        <li class="property-item">
+                            <div class="property-icon">{icon}</div>
+                            <div class="property-content">
+                                <div class="property-name">{name}</div>
+                                <div class="property-desc">{desc}</div>
+                            </div>
+                        </li>'''
+
+TPL_ITEM_BULLET = '''
+                            <li>{text}</li>'''
+
+TPL_ITEM_TALE = '''
+                        <div class="legendary-tale">
+                            <span class="tale-title">{title}</span>
+                            <span class="tale-desc">{desc}</span>
+                        </div>'''
+
+TPL_ITEM_COMPARISON = '''
+                    <div class="stat-comparison">
+                        <div class="stat-before">{before}</div>
+                        <div class="stat-arrow">→</div>
+                        <div class="stat-after">{after}</div>
+                    </div>'''
+
+TPL_ITEM_STAT = '''
+                    <div class="item-stat">
+                        <span class="item-stat-label">{label}</span>
+                        <span class="item-stat-value {css_class}">{value}</span>
+                    </div>'''
+
+
+# =============================================================================
 # HELPER FUNCTIONS
 # =============================================================================
 
@@ -203,13 +255,22 @@ def format_modifier(value: int) -> str:
     return f"+{value}" if value >= 0 else str(value)
 
 
-def load_css() -> str:
-    """Load CSS from external file."""
+def load_css(doc_type: str = "character") -> str:
+    """Load CSS from external file based on document type."""
     css_path = Path(__file__).parent / "styles" / "sheet.css"
     if css_path.exists():
         return css_path.read_text()
     else:
         raise FileNotFoundError(f"CSS file not found: {css_path}")
+
+
+def load_item_css() -> str:
+    """Load item-specific CSS from external file."""
+    css_path = Path(__file__).parent / "styles" / "item.css"
+    if css_path.exists():
+        return css_path.read_text()
+    else:
+        raise FileNotFoundError(f"Item CSS file not found: {css_path}")
 
 
 def calculate_modifier(score: int) -> str:
@@ -1074,6 +1135,683 @@ def main():
 
     print(f"Generated: {output_path}")
     return output_path
+
+
+# =============================================================================
+# ITEM CONTENT TYPE RENDERERS
+# =============================================================================
+
+def render_markdown_bold(text: str) -> str:
+    """Convert **bold** markdown to <strong> tags."""
+    import re
+    return re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', text)
+
+
+def render_text(content: dict) -> str:
+    """Render text content type."""
+    text = content.get("text", "")
+    return f'<div class="section-content">{render_markdown_bold(text)}</div>'
+
+
+def render_text_italic(content: dict) -> str:
+    """Render italic text content type."""
+    text = content.get("text", "")
+    return f'<div class="section-content description-text">{render_markdown_bold(text)}</div>'
+
+
+def render_bullets(content: dict) -> str:
+    """Render bullet list content type."""
+    items = content.get("items", [])
+    bullets_html = "".join([
+        f'<li>{render_markdown_bold(item)}</li>'
+        for item in items
+    ])
+    return f'<ul class="ability-bullets">{bullets_html}</ul>'
+
+
+def render_properties(content: dict) -> str:
+    """Render properties list content type."""
+    items = content.get("items", [])
+    props_html = "".join([
+        TPL_ITEM_PROPERTY.format(
+            icon=item.get("icon", ""),
+            name=item.get("name", ""),
+            desc=item.get("desc", "")
+        )
+        for item in items
+    ])
+    return f'<ul class="property-list">{props_html}</ul>'
+
+
+def render_table(content: dict) -> str:
+    """Render table content type."""
+    columns = content.get("columns", [])
+    rows = content.get("rows", [])
+    footer = content.get("footer", "")
+
+    # Build header
+    header_cells = "".join([f'<th>{col}</th>' for col in columns])
+    header_html = f'<thead><tr>{header_cells}</tr></thead>'
+
+    # Build rows
+    rows_html = ""
+    for row in rows:
+        cells = "".join([f'<td>{cell}</td>' for cell in row])
+        rows_html += f'<tr>{cells}</tr>'
+    body_html = f'<tbody>{rows_html}</tbody>'
+
+    # Build footer if present
+    footer_html = ""
+    if footer:
+        footer_html = f'''
+                    <div style="font-size: 6pt; color: var(--text-label); margin-top: 1mm; font-style: italic;">
+                        {footer}
+                    </div>'''
+
+    return f'''<table class="scaling-table">
+                        {header_html}
+                        {body_html}
+                    </table>{footer_html}'''
+
+
+def render_quote(content: dict) -> str:
+    """Render quote content type."""
+    text = content.get("text", "")
+    attribution = content.get("attribution", "")
+
+    attr_html = ""
+    if attribution:
+        attr_html = f'<div class="lore-attribution">{attribution}</div>'
+
+    return f'''<div class="lore-quote">
+                        {text}
+                        {attr_html}
+                    </div>'''
+
+
+def render_comparison(content: dict) -> str:
+    """Render comparison content type (before → after rows)."""
+    items = content.get("items", [])
+    comparisons_html = "".join([
+        TPL_ITEM_COMPARISON.format(
+            before=item.get("before", ""),
+            after=item.get("after", "")
+        )
+        for item in items
+    ])
+    return comparisons_html
+
+
+def render_tales(content: dict) -> str:
+    """Render tales content type (title + description pairs)."""
+    items = content.get("items", [])
+    tales_html = "".join([
+        TPL_ITEM_TALE.format(
+            title=item.get("title", ""),
+            desc=item.get("desc", "")
+        )
+        for item in items
+    ])
+    return f'<div class="section-content" style="margin-top: 2mm;">{tales_html}</div>'
+
+
+def render_subsections(content: dict) -> str:
+    """Render subsections content type (named groups with bullet lists)."""
+    items = content.get("items", [])
+    subsections_html = ""
+
+    for item in items:
+        name = item.get("name", "")
+        bullets = item.get("bullets", [])
+
+        bullets_html = "".join([
+            f'<li>{render_markdown_bold(bullet)}</li>'
+            for bullet in bullets
+        ])
+
+        subsections_html += f'''
+                    <div class="ability-block">
+                        <div class="ability-name">{name}</div>
+                        <ul class="ability-bullets">{bullets_html}</ul>
+                    </div>'''
+
+    return subsections_html
+
+
+def render_synergy(content: dict) -> str:
+    """Render synergy content type (special composite)."""
+    header = content.get("header", {})
+    comparisons = content.get("comparisons", [])
+    subsections = content.get("subsections", [])
+
+    # Build header
+    header_html = f'''
+                    <div class="synergy-header">
+                        <div class="synergy-icon">{header.get("icon", "")}</div>
+                        <div>
+                            <div class="synergy-title">{header.get("title", "")}</div>
+                            <div class="synergy-subtitle">{header.get("subtitle", "")}</div>
+                        </div>
+                    </div>'''
+
+    # Build comparisons
+    comparisons_html = render_comparison({"items": comparisons})
+
+    # Build subsections
+    subsections_html = ""
+    for item in subsections:
+        name = item.get("name", "")
+        bullets = item.get("bullets", [])
+
+        bullets_html = "".join([
+            f'<li>{render_markdown_bold(bullet)}</li>'
+            for bullet in bullets
+        ])
+
+        subsections_html += f'''
+                    <div class="ability-block" style="margin-top: 2mm;">
+                        <div class="ability-name">{name}</div>
+                        <ul class="ability-bullets">{bullets_html}</ul>
+                    </div>'''
+
+    return f'{header_html}{comparisons_html}{subsections_html}'
+
+
+def render_mixed(content: dict) -> str:
+    """Render mixed content type (multiple content blocks in sequence)."""
+    blocks = content.get("blocks", [])
+    html = ""
+
+    for block in blocks:
+        html += render_content(block)
+
+    return html
+
+
+def render_content(content: dict) -> str:
+    """Dispatch to the correct content renderer based on type."""
+    content_type = content.get("type", "text")
+
+    renderers = {
+        "text": render_text,
+        "text_italic": render_text_italic,
+        "bullets": render_bullets,
+        "properties": render_properties,
+        "table": render_table,
+        "quote": render_quote,
+        "comparison": render_comparison,
+        "tales": render_tales,
+        "subsections": render_subsections,
+        "synergy": render_synergy,
+        "mixed": render_mixed,
+    }
+
+    renderer = renderers.get(content_type, render_text)
+    return renderer(content)
+
+
+# =============================================================================
+# ITEM LAYOUT ENGINE
+# =============================================================================
+
+def render_item_section(section: dict) -> str:
+    """Render a single section box for an item."""
+    title = section.get("title")
+    variant = section.get("variant", "default")
+    flex_grow = section.get("flex_grow", False)
+    content = section.get("content", {})
+
+    # Build CSS classes
+    classes = ["box", "section-box"]
+    if variant == "lore":
+        classes.append("description-box")
+    if flex_grow:
+        classes.append("flex-grow")
+
+    class_str = " ".join(classes)
+
+    # Build title HTML
+    title_html = ""
+    if title:
+        title_html = f'<div class="section-title">{title}</div>'
+
+    # Render content
+    content_html = render_content(content)
+
+    return f'''
+                <div class="{class_str}">{title_html}
+                    {content_html}
+                </div>'''
+
+
+def render_item_header(header: dict, base_path: str = "") -> str:
+    """Render the item header with image, title, and stats."""
+    name = header.get("name", "")
+    subtitle = header.get("subtitle", "")
+    image = header.get("image", "")
+    background_svg = header.get("background_svg", "")
+    stats = header.get("stats", [])
+
+    # Build image path (relative to base)
+    if base_path and image:
+        image_path = f"{base_path}/{image}"
+    else:
+        image_path = image
+
+    # Build SVG background decoration
+    svg_html = ""
+    if background_svg:
+        # Load SVG content
+        svg_path = Path(__file__).parent / background_svg
+        if svg_path.exists():
+            svg_content = svg_path.read_text()
+            # Extract just the path data from the SVG
+            import re
+            path_match = re.search(r'<path[^>]*d="([^"]*)"', svg_content)
+            if path_match:
+                path_d = path_match.group(1)
+                viewbox_match = re.search(r'viewBox="([^"]*)"', svg_content)
+                viewbox = viewbox_match.group(1) if viewbox_match else "0 0 2893.32 468.16"
+                svg_html = f'''
+            <svg class="header-bg-decoration" viewBox="{viewbox}" preserveAspectRatio="xMidYMid slice">
+                <path d="{path_d}"/>
+            </svg>'''
+
+    # Build stats row
+    stats_html = ""
+    for stat in stats:
+        css_class = stat.get("class", "")
+        stats_html += TPL_ITEM_STAT.format(
+            label=stat.get("label", ""),
+            value=stat.get("value", ""),
+            css_class=css_class
+        )
+
+    # Build subtitle HTML
+    subtitle_html = ""
+    if subtitle:
+        subtitle_html = f'<div class="item-subtitle">{subtitle}</div>'
+
+    return f'''
+        <div class="item-header">{svg_html}
+            <div class="item-image-frame">
+                <img src="{image_path}" alt="{name}" class="item-image">
+            </div>
+            <div class="item-title-block">
+                <div class="item-title-group">
+                    <div class="item-name">{name}</div>
+                    {subtitle_html}
+                </div>
+                <div class="item-stats-row">{stats_html}
+                </div>
+            </div>
+        </div>'''
+
+
+def render_item_footer(footer: dict) -> str:
+    """Render the item footer."""
+    left = footer.get("left", "")
+    right = footer.get("right", "")
+
+    return f'''
+        <div class="item-footer">
+            <div>{left}</div>
+            <div class="market-value">{right}</div>
+        </div>'''
+
+
+def render_item_page(page: dict, header_html: str = "", footer_html: str = "", is_first: bool = False) -> str:
+    """Render a single page of an item document."""
+    layout = page.get("layout", {})
+    sections = page.get("sections", [])
+    columns = layout.get("columns", 2)
+    gap = layout.get("gap", "3mm")
+
+    # Separate sections by column
+    col1_sections = [s for s in sections if s.get("column", 1) == 1]
+    col2_sections = [s for s in sections if s.get("column", 2) == 2]
+
+    # Render sections for each column
+    col1_html = "".join([render_item_section(s) for s in col1_sections])
+    col2_html = "".join([render_item_section(s) for s in col2_sections])
+
+    # Only include header on first page
+    header_section = header_html if is_first else ""
+    footer_section = footer_html if is_first else ""
+
+    if columns == 2:
+        return f'''
+    <div class="page">{header_section}
+
+        <div class="item-content">
+            <div class="content-column">{col1_html}
+            </div>
+            <div class="content-column">{col2_html}
+            </div>
+        </div>{footer_section}
+    </div>'''
+    else:
+        # Single column layout
+        all_sections = "".join([render_item_section(s) for s in sections])
+        return f'''
+    <div class="page">{header_section}
+
+        <div class="item-content" style="grid-template-columns: 1fr;">{all_sections}
+        </div>{footer_section}
+    </div>'''
+
+
+def build_item_html(data: dict, base_path: str = "") -> str:
+    """Build the complete HTML document for a magic item."""
+    # Load CSS (base + item-specific)
+    base_css = load_css()
+    item_css = load_item_css()
+
+    header = data.get("header", {})
+    footer = data.get("footer", {})
+    pages = data.get("pages", [])
+
+    # Render header and footer
+    header_html = render_item_header(header, base_path)
+    footer_html = render_item_footer(footer)
+
+    # Render all pages
+    pages_html = ""
+    for i, page in enumerate(pages):
+        pages_html += render_item_page(page, header_html, footer_html, is_first=(i == 0))
+
+    item_name = header.get("name", "Magic Item")
+
+    return f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{item_name} - Magic Item</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Scada:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+{base_css}
+{item_css}
+    </style>
+</head>
+<body>{pages_html}
+</body>
+</html>'''
+
+
+# =============================================================================
+# PDF GENERATION & COMPRESSION
+# =============================================================================
+
+CHROME_PATHS = [
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/usr/bin/google-chrome",
+    "/usr/bin/chromium-browser",
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+]
+
+
+def find_chrome() -> Optional[str]:
+    """Find Chrome executable on the system."""
+    for path in CHROME_PATHS:
+        if Path(path).exists():
+            return path
+    # Try 'which' on Unix
+    try:
+        result = subprocess.run(["which", "google-chrome"], capture_output=True, text=True)
+        if result.returncode == 0:
+            return result.stdout.strip()
+    except Exception:
+        pass
+    return None
+
+
+def generate_pdf(html_path: Path, pdf_path: Path) -> bool:
+    """Generate PDF from HTML using Chrome headless."""
+    chrome = find_chrome()
+    if not chrome:
+        print("Error: Chrome not found. Install Google Chrome for PDF generation.")
+        return False
+
+    try:
+        subprocess.run([
+            chrome,
+            "--headless",
+            "--disable-gpu",
+            "--no-pdf-header-footer",
+            f"--print-to-pdf={pdf_path}",
+            "--print-background",
+            f"file://{html_path.absolute()}"
+        ], capture_output=True, check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Error generating PDF: {e}")
+        return False
+
+
+def compress_pdf(pdf_path: Path, output_path: Path, dpi: int = 150) -> bool:
+    """Compress PDF by rasterizing and recombining."""
+    # Check for required tools
+    if not shutil.which("pdftoppm"):
+        print("Error: pdftoppm not found. Install poppler (brew install poppler)")
+        return False
+    if not shutil.which("img2pdf"):
+        print("Error: img2pdf not found. Install img2pdf (brew install img2pdf)")
+        return False
+
+    try:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+
+            # Convert PDF to images
+            subprocess.run([
+                "pdftoppm", "-png", "-r", str(dpi),
+                str(pdf_path), str(temp_path / "page")
+            ], check=True, capture_output=True)
+
+            # Get all generated images
+            images = sorted(temp_path.glob("page*.png"))
+            if not images:
+                print("Error: No images generated from PDF")
+                return False
+
+            # Recombine into PDF
+            subprocess.run([
+                "img2pdf", *[str(img) for img in images],
+                "-o", str(output_path)
+            ], check=True, capture_output=True)
+
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Error compressing PDF: {e}")
+        return False
+
+
+def get_file_size(path: Path) -> str:
+    """Get human-readable file size."""
+    size = path.stat().st_size
+    for unit in ['B', 'KB', 'MB', 'GB']:
+        if size < 1024:
+            return f"{size:.1f}{unit}"
+        size /= 1024
+    return f"{size:.1f}TB"
+
+
+def open_file(path: Path) -> None:
+    """Open file with system default application."""
+    if sys.platform == "darwin":
+        subprocess.run(["open", str(path)])
+    elif sys.platform == "win32":
+        os.startfile(str(path))
+    else:
+        subprocess.run(["xdg-open", str(path)])
+
+
+# =============================================================================
+# UNIFIED GENERATION PIPELINE
+# =============================================================================
+
+def generate(
+    json_path: Path,
+    output_dir: Optional[Path] = None,
+    pdf: bool = False,
+    compress: bool = False,
+    dpi: int = 150,
+    open_files: bool = False
+) -> dict:
+    """
+    Unified generation pipeline for both characters and items.
+
+    Returns dict with paths to generated files:
+        {"html": Path, "pdf": Path|None, "compressed": Path|None}
+    """
+    base_dir = Path(__file__).parent
+    if output_dir is None:
+        output_dir = base_dir / "output"
+
+    # Load JSON data
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    doc_type = data.get("type", "character")
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
+
+    # Generate HTML based on document type
+    if doc_type == "item":
+        # Item generation
+        base_path = "../.."  # Relative path from output/items to project root
+        html = build_item_html(data, base_path)
+        item_name = data.get("header", {}).get("name", "item")
+        safe_name = item_name.replace(" ", "_").replace("'", "")
+        doc_output_dir = output_dir / "items"
+    else:
+        # Character generation
+        template_data = prepare_template_data(data)
+        html = build_html(template_data)
+        char_name = data.get("header", {}).get("character_name", "character")
+        safe_name = char_name.replace(" ", "_")
+        doc_output_dir = output_dir / safe_name
+
+    # Ensure output directory exists
+    doc_output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Write HTML
+    html_path = doc_output_dir / f"{safe_name}_{timestamp}.html"
+    with open(html_path, 'w', encoding='utf-8') as f:
+        f.write(html)
+
+    result = {"html": html_path, "pdf": None, "compressed": None}
+    print(f"[HTML] {html_path}")
+
+    # Generate PDF if requested
+    if pdf or compress:
+        pdf_path = doc_output_dir / f"{safe_name}_{timestamp}.pdf"
+        if generate_pdf(html_path, pdf_path):
+            result["pdf"] = pdf_path
+            print(f"[PDF]  {pdf_path} ({get_file_size(pdf_path)})")
+
+            # Compress if requested
+            if compress and pdf_path.exists():
+                compressed_path = doc_output_dir / f"{safe_name}_{timestamp}_print.pdf"
+                if compress_pdf(pdf_path, compressed_path, dpi):
+                    result["compressed"] = compressed_path
+                    print(f"[PRINT] {compressed_path} ({get_file_size(compressed_path)})")
+
+    # Open files if requested
+    if open_files:
+        open_file(html_path)
+        if result["compressed"]:
+            open_file(result["compressed"])
+        elif result["pdf"]:
+            open_file(result["pdf"])
+
+    return result
+
+
+def find_json_file(input_arg: str) -> Optional[Path]:
+    """Find JSON file from argument (supports multiple search locations)."""
+    base_dir = Path(__file__).parent
+    characters_dir = base_dir / "characters"
+
+    # Try as absolute/relative path first
+    path = Path(input_arg)
+    if path.exists():
+        return path
+
+    # Try in characters folder
+    path = characters_dir / input_arg
+    if path.exists():
+        return path
+
+    # Try searching for items under characters/*/items/
+    for item_path in characters_dir.glob(f"*/items/{input_arg}"):
+        if item_path.exists():
+            return item_path
+
+    # Try partial match
+    for item_path in characters_dir.glob(f"*/items/*{input_arg}*"):
+        if item_path.exists():
+            return item_path
+
+    return None
+
+
+def main():
+    """Main entry point with argument parsing."""
+    parser = argparse.ArgumentParser(
+        description="D&D 5e Sheet Generator - Generate character sheets and item cards from JSON",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python3 generate.py example.json                    # Generate HTML only
+  python3 generate.py example.json --pdf              # Generate HTML + PDF
+  python3 generate.py example.json --compress --open  # Full pipeline + open
+  python3 generate.py characters/thorek/items/ring_of_wild_hunt.json --compress
+        """
+    )
+    parser.add_argument("input", nargs="?", help="JSON file (character or item)")
+    parser.add_argument("--pdf", action="store_true", help="Generate PDF via Chrome headless")
+    parser.add_argument("--compress", action="store_true", help="Compress PDF for printing (implies --pdf)")
+    parser.add_argument("--dpi", type=int, default=150, help="DPI for compression (default: 150)")
+    parser.add_argument("--open", action="store_true", help="Open output files when done")
+    parser.add_argument("--output", type=Path, help="Custom output directory")
+
+    args = parser.parse_args()
+
+    # Find input file
+    if args.input:
+        json_path = find_json_file(args.input)
+        if not json_path:
+            print(f"Error: Could not find {args.input}")
+            sys.exit(1)
+    else:
+        # Default to first JSON in characters folder
+        base_dir = Path(__file__).parent
+        json_files = list((base_dir / "characters").glob("*.json"))
+        if json_files:
+            json_path = json_files[0]
+        else:
+            print("Error: No character files found. Provide a JSON file path.")
+            parser.print_help()
+            sys.exit(1)
+
+    # Compress implies PDF
+    if args.compress:
+        args.pdf = True
+
+    # Run generation
+    print("=== D&D Sheet Generator ===\n")
+    result = generate(
+        json_path=json_path,
+        output_dir=args.output,
+        pdf=args.pdf,
+        compress=args.compress,
+        dpi=args.dpi,
+        open_files=args.open
+    )
+    print("\n=== Done! ===")
+
+    return result["html"]
 
 
 if __name__ == "__main__":

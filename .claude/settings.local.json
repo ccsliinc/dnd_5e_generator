@@ -33,7 +33,19 @@
       "Bash(do sips -Z 400 \"$f\" --out \"preview/$f%.png_preview.png\")",
       "Bash(done)",
       "Bash(git branch:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(git checkout:*)",
+      "Bash(git stash:*)",
+      "Bash(./tools/build-sheet.sh:*)",
+      "Bash(git remote add:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(git fetch:*)",
+      "Bash(git remote:*)",
+      "Bash(sips:*)",
+      "Bash(convert:*)",
+      "Bash(magick:*)",
+      "Bash(brew list:*)",
+      "mcp__puppeteer__puppeteer_navigate"
     ],
     "deny": [],
     "ask": []
