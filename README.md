@@ -19,7 +19,7 @@ python3 generate.py aldric --pdf
 python3 generate.py aldric --compress --open
 
 # Generate character sheet bundled with their magic items
-python3 generate.py thorek --bundle --compress --open
+python3 generate.py aldric --bundle --compress --open
 ```
 
 ## Command Line Options
@@ -61,13 +61,9 @@ Options:
 ```
 d_and_d/
 ├── characters/
-│   ├── aldric.json              # Character with embedded items
-│   ├── thorek.json              # Character with embedded items
-│   └── kazrek.json              # Character data
+│   └── aldric.json              # Character with embedded items (example)
 ├── images/
-│   ├── aldric/                  # Character-specific images
-│   ├── thorek/                  # Including item images
-│   └── kazrek/
+│   └── aldric/                  # Character-specific images
 ├── lib/                         # Core library (OOP architecture)
 │   ├── __init__.py              # Package exports
 │   ├── renderers.py             # Content type registry & base renderer
