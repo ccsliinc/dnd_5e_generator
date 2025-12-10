@@ -2,10 +2,6 @@
 
 Generate printable HTML character sheets and magic item cards from JSON data files.
 
-![Character Sheet Preview](images/aldric/preview_page1.png)
-
-**[View Example PDF](output/Aldric_the_Brave/Aldric_the_Brave.pdf)**
-
 ## Quick Start
 
 ```bash

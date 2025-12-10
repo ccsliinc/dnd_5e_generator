@@ -53,7 +53,8 @@
       "WebFetch(domain:pixabay.com)",
       "WebFetch(domain:opengameart.org)",
       "Bash(curl:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git merge:*)"
     ],
     "deny": [],
     "ask": []

@@ -36,5 +36,10 @@ tmp/
 *.backup
 
 # Generated output (can be regenerated)
-output/*
-!output/Aldric_the_Brave/
+output/
+
+# Images (keep locally, not in repo)
+images/
+
+# Reference files (local only)
+reference/
