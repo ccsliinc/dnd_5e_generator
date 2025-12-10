@@ -64,11 +64,12 @@ Options:
 ```
 d_and_d/
 ├── characters/
-│   ├── aldric.json               # Example character (Aldric the Brave)
-│   ├── aldric/
+│   ├── aldric/                   # Example character folder
+│   │   ├── aldric.json           # Character data (Aldric the Brave)
 │   │   └── items/
 │   │       └── flamebrand_longsword.json  # Example item
-│   └── <name>/
+│   └── <name>/                   # Each character in own folder
+│       ├── <name>.json           # Character data
 │       └── items/
 │           └── <item>.json       # Character's magic items
 ├── images/

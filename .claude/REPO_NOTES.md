@@ -8,17 +8,18 @@ This project generates printable D&D 5th Edition character sheets from JSON data
 
 ```
 d_and_d/
-├── characters/           # Character JSON data files
-│   ├── aldric.json       # Template/example character (Aldric the Brave)
-│   ├── aldric/           # Aldric's items
+├── characters/           # Character JSON data files (each in own subfolder)
+│   ├── aldric/           # Template/example character
+│   │   ├── aldric.json   # Aldric the Brave character data
 │   │   └── items/
 │   │       └── flamebrand_longsword.json  # Example item card
-│   ├── thorek.json       # Joe's Ranger (Thorek Bearward + Ironjaw companion)
-│   ├── thorek/           # Thorek's items
+│   ├── thorek/           # Joe's Ranger
+│   │   ├── thorek.json   # Thorek Bearward + Ironjaw companion
 │   │   └── items/
 │   │       └── ring_of_wild_hunt.json
-│   ├── kazrek.json       # Mountain Dwarf Sorcerer (Kazrek Spellforge)
-│   └── kazrek/           # Kazrek's items (empty)
+│   └── kazrek/           # Mountain Dwarf Sorcerer
+│       ├── kazrek.json   # Kazrek Spellforge
+│       └── items/        # (empty)
 │
 ├── images/               # Character artwork and assets
 │   ├── aldric/           # Example character + item images (for public repo)
