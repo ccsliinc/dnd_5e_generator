@@ -77,7 +77,9 @@ d_and_d/
 │   ├── sheet.css                # Character sheet-specific styling
 │   └── item.css                 # Magic item card styling
 ├── docs/
-│   └── CHARACTER_SCHEMA.md      # JSON schema documentation
+│   ├── SCHEMA.md                # Complete JSON schema documentation
+│   ├── CREATE_CHARACTER.md      # Step-by-step character creation guide
+│   └── CREATE_ITEM.md           # Magic item creation guide
 ├── output/                      # Generated files (gitignored)
 │   └── <CharacterName>/
 │       ├── *.html
