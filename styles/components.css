@@ -1,0 +1,293 @@
+/* =================================================================
+   D&D 5e Sheet Generator - Shared Components
+   =================================================================
+
+   SHARED UI COMPONENTS:
+   1. Section Box (titled content container)
+   2. Lined Paper (notes/spell lists)
+   3. Stat Box (numeric display with label)
+   4. Property List (icon + name + description)
+   5. Data Table (rows and columns)
+   6. Quote Block (attributed quotes)
+   7. Subsections (nested content blocks)
+
+   ================================================================= */
+
+/* -----------------------------------------------------------------
+   1. SECTION BOX - Titled content container
+   ----------------------------------------------------------------- */
+.section-box {
+    padding: var(--box-padding);
+}
+
+.section-box.flex-grow {
+    flex: 1;
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: 9pt;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 2mm;
+    padding-bottom: 1mm;
+    border-bottom: 1px solid var(--border-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.section-content {
+    font-size: 7.5pt;
+    line-height: 1.5;
+}
+
+/* -----------------------------------------------------------------
+   2. LINED PAPER - Notes and spell lists
+   ----------------------------------------------------------------- */
+.lined-paper {
+    min-height: 20mm;
+    background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 5.5mm,
+        #c4beb3 5.5mm,
+        #c4beb3 6mm
+    );
+    background-position: 0 2mm;
+}
+
+.lined-paper--tight {
+    background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 4mm,
+        #c4beb3 4mm,
+        #c4beb3 4.5mm
+    );
+}
+
+/* -----------------------------------------------------------------
+   3. STAT BOX - Numeric display with label
+   (AC, Initiative, Speed, HP, etc.)
+   ----------------------------------------------------------------- */
+.stat-box {
+    padding: 1mm 2mm 4mm;
+    text-align: center;
+}
+
+.stat-box__value {
+    min-height: 10mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-box__value--large {
+    font-family: var(--font-display);
+    font-size: 16pt;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* -----------------------------------------------------------------
+   4. PROPERTY LIST - Icon + name + description
+   (Magic item properties, features, etc.)
+   ----------------------------------------------------------------- */
+.property-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.property-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 2mm;
+    margin-bottom: 2mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dotted var(--border-light);
+}
+
+.property-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.property-icon {
+    width: 5mm;
+    height: 5mm;
+    background: var(--accent-highlight);
+    border: 1px solid var(--accent-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8pt;
+    flex-shrink: 0;
+    margin-top: 0.5mm;
+}
+
+.property-content {
+    flex: 1;
+}
+
+.property-name {
+    font-weight: 700;
+    font-size: 8pt;
+    color: var(--text-primary);
+}
+
+.property-desc {
+    font-size: 7pt;
+    color: var(--text-secondary);
+    margin-top: 0.5mm;
+}
+
+/* -----------------------------------------------------------------
+   5. DATA TABLE - Rows and columns
+   ----------------------------------------------------------------- */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7pt;
+}
+
+.data-table th {
+    background: var(--bg-label);
+    border: 1px solid var(--border-light);
+    padding: 1.5mm 2mm;
+    font-weight: 700;
+    text-align: center;
+    font-size: 6pt;
+    text-transform: uppercase;
+    color: var(--text-label);
+}
+
+.data-table td {
+    border: 1px solid var(--border-light);
+    padding: 1.5mm 2mm;
+    text-align: center;
+}
+
+.data-table tr:nth-child(even) td {
+    background: rgba(245, 240, 230, 0.5);
+}
+
+.data-table .highlight-row td {
+    background: var(--accent-highlight);
+    font-weight: 600;
+}
+
+/* Alias for item compatibility */
+.scaling-table { /* Uses .data-table styles */ }
+
+/* -----------------------------------------------------------------
+   6. QUOTE BLOCK - Attributed quotes
+   ----------------------------------------------------------------- */
+.quote-block {
+    font-style: italic;
+    font-size: 7.5pt;
+    line-height: 1.5;
+    text-align: justify;
+    padding: 2mm 3mm;
+    background: rgba(139, 69, 19, 0.05);
+    border-left: 2px solid var(--accent-primary);
+    margin-bottom: 2mm;
+}
+
+.quote-block__text {
+    margin-bottom: 1mm;
+}
+
+.quote-block__attribution {
+    font-size: 6pt;
+    text-align: right;
+    color: var(--text-label);
+    font-style: normal;
+}
+
+/* Alias for item compatibility */
+.lore-quote { /* Uses .quote-block styles */ }
+.lore-attribution { /* Uses .quote-block__attribution styles */ }
+
+/* -----------------------------------------------------------------
+   7. SUBSECTIONS - Nested content blocks
+   ----------------------------------------------------------------- */
+.subsection {
+    margin-bottom: 2mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dotted var(--border-light);
+}
+
+.subsection:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.subsection__name {
+    font-weight: 700;
+    font-size: 8pt;
+    color: var(--accent-primary);
+    margin-bottom: 1mm;
+}
+
+.subsection__bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.subsection__bullets li {
+    font-size: 7pt;
+    padding-left: 3mm;
+    position: relative;
+    margin-bottom: 0.5mm;
+    line-height: 1.4;
+}
+
+.subsection__bullets li::before {
+    content: '◆';
+    color: var(--accent-secondary);
+    font-size: 5pt;
+    position: absolute;
+    left: 0;
+    top: 0.5mm;
+}
+
+/* Aliases for item compatibility */
+.ability-block { /* Uses .subsection styles */ }
+.ability-name { /* Uses .subsection__name styles */ }
+.ability-bullets { /* Uses .subsection__bullets styles */ }
+
+/* -----------------------------------------------------------------
+   8. LEGENDARY TALES - Lore items
+   ----------------------------------------------------------------- */
+.tales-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tale-item {
+    display: flex;
+    gap: 2mm;
+    margin-bottom: 1.5mm;
+    font-size: 7pt;
+}
+
+.tale-item__title {
+    font-weight: 700;
+    color: var(--accent-primary);
+    min-width: 30mm;
+    flex-shrink: 0;
+}
+
+.tale-item__desc {
+    color: var(--text-secondary);
+}
+
+/* Aliases for item compatibility */
+.legendary-tale { /* Uses .tale-item styles */ }
+.tale-title { /* Uses .tale-item__title styles */ }
+.tale-desc { /* Uses .tale-item__desc styles */ }
