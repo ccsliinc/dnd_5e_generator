@@ -45,3 +45,7 @@ images/*
 
 # Reference files (local only)
 reference/
+
+# Character files (keep example only)
+characters/*
+!characters/aldric.json
